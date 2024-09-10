@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Vatsim events</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv" th:with="event=${event.data}">
+
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-5">
+            <img src="#" th:src="${event.banner}" class="img-fluid rounded-start" alt="#" th:alt="${event.name}"/>
+          </div>
+          <div class="col-md-7">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${event.name}">Card title</h5>
+              <p class="card-text" th:text="${event.description}">Description</p>
+              <div class="row">
+                <dl class="col-12 col-md-6 mb-3">
+                  <dt>Start time</dt>
+                  <dd th:text="${event.startTimeFormatted}">-</dd>
+                </dl>
+                <dl class="col-12 col-md-6 mb-0 mb-md-3">
+                  <dt>End time</dt>
+                  <dd th:text="${event.endTimeFormatted}">-</dd>
+                </dl>
+              </div>
+              <!--<p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>-->
+              <div class="">
+                <a href="#" th:href="${event.link}" class="btn btn-primary" target="_blank">Link to event</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

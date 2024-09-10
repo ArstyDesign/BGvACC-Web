@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Web application</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      <!--<div>Member info</div>-->
+
+      <div th:if="${memberDetails eq null}">
+        <h1 class="h4 fst-italic">Member with CID <span class="h4" th:text="${cid}">CID</span> is not found</h1>
+      </div>
+
+      <div th:if="${memberDetails ne null}">
+        <div class="row">
+          <div class="col-12 col-xl-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <dl class="col-12 col-md-6 mb-3 mb-md-0">
+                    <dt>Member ID (CID)</dt>
+                    <dd class="mb-0">
+                      <a href="#" th:href="'https://stats.vatsim.net/stats/' + ${memberDetails.id}" target="_blank" style="text-decoration: none;"
+                         th:text="${memberDetails.id}">CID</a>
+                    </dd>
+                  </dl>
+                  <dl class="col-12 col-md-6 mb-0 text-md-end">
+                    <dt>Registered on</dt>
+                    <dd class="mb-0" th:if="${memberDetails.registrationDate eq null}">-</dd>
+                    <dd class="mb-0" th:if="${memberDetails.registrationDate ne null}" th:text="${#dates.format(memberDetails.registrationDate, 'dd MMMM yyyy HH:mm')}">-</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <dl class="col-12 col-md-4 mb-3 mb-md-0">
+                    <dt>Region</dt>
+                    <dd class="mb-0" th:text="${memberDetails.regionId ne null} ? ${memberDetails.regionId} : '-'">Region ID</dd>
+                  </dl>
+                  <dl class="col-12 col-md-4 mb-3 mb-md-0 text-md-center">
+                    <dt>Division</dt>
+                    <dd class="mb-0" th:text="${memberDetails.divisionId ne null} ? ${memberDetails.divisionId} : '-'">Division ID</dd>
+                  </dl>
+                  <dl class="col-12 col-md-4 mb-0 text-md-end">
+                    <dt>Subdivision</dt>
+                    <dd class="mb-0" th:text="${memberDetails.subdivisionId ne null} ? ${memberDetails.subdivisionId} : '-'">Subdivision ID</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <dl class="col-12 col-md-4 mb-3 mb-md-0">
+                    <dt>Pilot rating</dt>
+                    <dd class="mb-0" th:if="${memberDetails.pilotRating eq -1}">-</dd>
+                    <dd class="mb-0" th:if="${memberDetails.pilotRating gt -1}" th:text="${memberDetails.pilotRatingSymbol} + ' - ' + ${memberDetails.pilotRatingName}">Pilot rating</dd>
+                  </dl>
+                  <dl class="col-12 col-md-4 mb-3 mb-md-0 text-md-center">
+                    <dt>Military rating</dt>
+                    <dd class="mb-0" th:if="${memberDetails.militaryRating eq -1}">-</dd>
+                    <dd class="mb-0" th:if="${memberDetails.militaryRating gt -1}" th:text="${memberDetails.militaryRatingSymbol} + ' - ' + ${memberDetails.militaryRatingName}">Military rating</dd>
+                  </dl>
+                  <dl class="col-12 col-md-4 mb-0 text-md-end">
+                    <dt>ATC rating</dt>
+                    <dd class="mb-0" th:text="${memberDetails.atcRatingSymbol} + ' - ' + ${memberDetails.atcRatingName}">ATC rating</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-xl-6 mb-3 mb-xl-5">
+            <div class="card">
+              <div class="card-header">Connections by type</div>
+              <div class="card-body">
+                <div class="fw-bold" th:if="${memberStatistics eq null}">No connections yet</div>
+                <table class="table table-striped" th:if="${memberStatistics ne null}">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="fw-bold">Type</th>
+                      <th scope="col" class="fw-bold text-end text-md-start">Total time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:if="${!memberStatistics.pilotTime.isTimeEmptyOrNull}">
+                      <th scope="row">Pilot</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.pilotTime}">Pilot</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.atcTime.isTimeEmptyOrNull}">
+                      <th scope="row">ATC</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.atcTime}">ATC</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-xl-6 mb-5">
+            <div class="card">
+              <div class="card-header">ATC Ratings</div>
+              <div class="card-body">
+                <div class="fw-bold" th:if="${memberStatistics eq null or memberStatistics.atcTime.isTimeEmptyOrNull}">No ATC connections yet</div>
+                <table class="table table-striped" th:if="${memberStatistics ne null and !memberStatistics.atcTime.isTimeEmptyOrNull}">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="fw-bold">Rating</th>
+                      <th scope="col" class="fw-bold text-end text-md-start">Total time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:if="${!memberStatistics.s1Time.isTimeEmptyOrNull}">
+                      <th scope="row">Student 1</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.s1Time}">S1</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.s2Time.isTimeEmptyOrNull}">
+                      <th scope="row">Student 2</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.s2Time}">S2</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.s3Time.isTimeEmptyOrNull}">
+                      <th scope="row">Student 3</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.s3Time}">S3</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.c1Time.isTimeEmptyOrNull}">
+                      <th scope="row">Controller</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.c1Time}">C1</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.c3Time.isTimeEmptyOrNull}">
+                      <th scope="row">Senior Controller</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.c3Time}">C3</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.i1Time.isTimeEmptyOrNull}">
+                      <th scope="row">Instructor</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.i1Time}">I1</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.i3Time.isTimeEmptyOrNull}">
+                      <th scope="row">Senior Instructor</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.i3Time}">I3</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.supTime.isTimeEmptyOrNull}">
+                      <th scope="row">Supervisor</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.supTime}">SUP</td>
+                    </tr>
+                    <tr th:if="${!memberStatistics.admTime.isTimeEmptyOrNull}">
+                      <th scope="row">Administrator</th>
+                      <td class="text-end text-md-start" th:text="${memberStatistics.admTime}">ADM</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="fw-bold">Total time</th>
+                      <td class="fw-bold text-end text-md-start" th:text="${memberStatistics.atcTime}"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <dl class="col-12 col-md-6 mb-3 mb-md-0">
+            <dt>Suspension date</dt>
+            <dd class="mb-0" th:if="${memberDetails.suspensionDate eq null}">-</dd>
+            <dd class="mb-0" th:if="${memberDetails.suspensionDate ne null}" th:text="${#dates.format(memberDetails.suspensionDate, 'dd MMMM yyyy HH:mm')}">-</dd>
+          </dl>
+          <dl class="col-12 col-md-6 mb-0 text-md-end">
+            <dt>Last rating change date</dt>
+            <dd class="mb-0" th:if="${memberDetails.lastRatingChange eq null}">-</dd>
+            <dd class="mb-0" th:if="${memberDetails.lastRatingChange ne null}" th:text="${#dates.format(memberDetails.lastRatingChange, 'dd MMMM yyyy HH:mm')}">-</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

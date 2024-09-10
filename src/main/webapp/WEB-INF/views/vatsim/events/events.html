@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Vatsim events</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <h2 class="h3 mb-3">Vatsim Events</h2>
+
+      <!--<div th:text="${events}"></div>-->
+
+      <div class="row">
+        <div class="col-12 col-md-4 mb-3" th:each="e : ${bulgariaEvents.data}">
+          <div class="card">
+            <a href="#" th:href="@{/events/} + ${e.id}">
+              <img src="#" th:src="${e.banner}" class="card-img-top" alt="..."/>
+            </a>
+            <div class="card-body">
+              <h5 class="card-title" th:text="${e.name}">Card title</h5>
+              <p class="card-text" th:text="${e.shortDescription}">Description</p>
+              <div class="mb-3">
+                <span th:text="${e.timeFrame}">-</span>
+              </div>
+              <div class="mb-3">
+                <span class="fw-bold" th:text="${e.airports.size gt 1} ? 'Airports:' : 'Airport:'">Airports:</span>
+                <span th:each="a, iStat : ${e.airports}" th:text="${iStat.last} ? ${a.icao} : (${a.icao} + ', ')"></span>
+              </div>
+
+              <a href="#" th:href="@{/events/} + ${e.id}" class="btn btn-primary">View event</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

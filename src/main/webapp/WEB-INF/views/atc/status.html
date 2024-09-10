@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div id="statusCard" th:remove="tag" th:with="isPositionNull=${position eq null}">
+      <div class="card" th:classappend="${!isPositionNull} ? 'border-success' : 'border-light-subtle'">
+        <div class="card-body">
+          <div class="card-title h5">
+            <a href="#" th:href="@{/members/} + ${position.id}" style="text-decoration: none;"
+               th:if="${!isPositionNull}" th:text="'CID: ' + ${position.id}">ID</a>
+            <span th:if="${isPositionNull}">-</span>
+          </div>
+          <div class="card-subtitle mb-2 h6 text-body-secondary"
+               th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</div>
+          <div class='card-subtitel mb-0 text-body-secondary' th:text="'Controller info: ' + (${!isPositionNull} ? (${position.atcRatingSymbol} + ' - ' + ${position.atcRatingName}) : '-')"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

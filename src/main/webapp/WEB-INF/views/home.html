@@ -4,11 +4,262 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Web application</title>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
-      <div>Web application</div>
+
+      <div class="row">
+        <div class="col-12 col-md-8 mb-3">
+          <p>Welcome to the website of the Sofia FIR, a part of the BGvACC Regional Group on the <a href="https://vatsim.net">VATSIM</a> Network. Here you will find informations about how to become a controller within our vACC, and how to find and use all the necessary information about flying in the Bulgarian FIR.</p>
+
+          <p>BGvACC is part of the <a href="http://vateud.net" target="_blank">VATSIM Europe Division</a>, which with <a href="https://www.vatsim-uk.co.uk" target="_blank">VATSIM UK</a> and <a href="http://www.vatrus.info" target="_blank">VATSIM Russia</a> form the <a href="http://www.vateur.org" target="_blank">VATSIM Europe Region</a>. This forms the European part of the global <a href="http://www.vatsim.net" target="_blank">VATSIM</a> network, which provides ATC services over the internet free of charge to pilots connected to this network using their flight simulator.</p>
+
+          <p>Enjoy your stay in Sofia FIR!</p>
+
+          <hr/>
+
+          <div class="row">
+            <h2 class="h5 mb-3">Sofia Control (LBSR_CTR)</h2>
+            <div id="lbsrCtrStatusDiv" class="col-12 mb-3 mb-md-5">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Control (LBSR_CTR) - 131.225</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <h2 class="h5 mb-3">Controllers in Sofia (LBSF)</h2>
+            <div id="lbsfTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Tower (LBSF_TWR) - 118.100</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="lbsfAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Approach (LBSF_APP) - 123.700</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <h2 class="h5 mb-3">Controllers in Burgas (LBBG)</h2>
+            <div id="lbbgTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Burgas Tower (LBBG_TWR) - 118.000</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="lbbgAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Burgas Approach (LBBG_APP) - 125.100</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <h2 class="h5 mb-3">Controllers in Varna (LBWN)</h2>
+            <div id="lbwnTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Varna Tower (LBWN_TWR) - 119.500</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="lbwnAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Varna Approach (LBWN_APP) - 124.600</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <h2 class="h5 mb-3">Controllers in Plovdiv (LBPD) and Gorna (LBGO)</h2>
+            <div id="lbpdTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Plovdiv Tower (LBPD_TWR) - 125.500</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="lbgoTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
+              <div class="card border-light-subtle">
+                <div class="card-body">
+                  <div class="card-title h5">-</div>
+                  <div class="card-subtitle mb-2 h6 text-body-secondary">Gorna Tower (LBGO_TWR) - 124.500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 mb-3">
+          <div class="mb-3">
+            <div class="fw-bold">Sofia Airport Metar (LBSF)</div>
+            <div id="metarLBSF"></div>
+          </div>
+          <hr/>
+          <div class="mb-3">
+            <div class="fw-bold">Burgas Airport Metar (LBBG)</div>
+            <div id="metarLBBG"></div>
+          </div>
+          <hr/>
+          <div class="mb-3">
+            <div class="fw-bold">Varna Airport Metar (LBWN)</div>
+            <div id="metarLBWN"></div>
+          </div>
+          <hr/>
+          <div class="mb-3">
+            <div class="fw-bold">Plovdiv Airport Metar (LBPD)</div>
+            <div id="metarLBPD"></div>
+          </div>
+          <hr/>
+          <div class="mb-3">
+            <div class="fw-bold">Gorna Airport Metar (LBGO)</div>
+            <div id="metarLBGO"></div>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let metarUrl = /*[[@{/metar}]]*/;
+                let lbsrCtrStatusUrl = /*[[@{/atc/status/lbsr-ctr}]]*/;
+                let lbsfTwrStatusUrl = /*[[@{/atc/status/lbsf-twr}]]*/;
+                let lbsfAppStatusUrl = /*[[@{/atc/status/lbsf-app}]]*/;
+                let lbbgTwrStatusUrl = /*[[@{/atc/status/lbbg-twr}]]*/;
+                let lbbgAppStatusUrl = /*[[@{/atc/status/lbbg-app}]]*/;
+                let lbwnTwrStatusUrl = /*[[@{/atc/status/lbwn-twr}]]*/;
+                let lbwnAppStatusUrl = /*[[@{/atc/status/lbwn-app}]]*/;
+                let lbpdTwrStatusUrl = /*[[@{/atc/status/lbpd-twr}]]*/;
+                let lbgoTwrStatusUrl = /*[[@{/atc/status/lbgo-twr}]]*/;
+                let aux = /*[[@{/}]]*/;
+        /*]]>*/
+
+        function getAllMetars() {
+          getMetarAtICAO("LBSF", "metarLBSF");
+          getMetarAtICAO("LBBG", "metarLBBG");
+          getMetarAtICAO("LBWN", "metarLBWN");
+          getMetarAtICAO("LBPD", "metarLBPD");
+          getMetarAtICAO("LBGO", "metarLBGO");
+        }
+        
+        function reloadControllerCard(url, element) {
+          $.ajax({
+            url: url,
+            type: 'get',
+            success: function (data)
+            {
+              $("#" + element).empty().append(data);
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+        }
+
+        function reloadSofiaControlCard() {
+          reloadControllerCard(lbsrCtrStatusUrl, "lbsrCtrStatusDiv");
+        }
+
+        function reloadSofiaTowerCard() {
+          reloadControllerCard(lbsfTwrStatusUrl, "lbsfTwrStatusDiv");
+        }
+
+        function reloadSofiaApproachCard() {
+          reloadControllerCard(lbsfAppStatusUrl, "lbsfAppStatusDiv");
+        }
+        
+        function reloadBurgasTowerCard() {
+          reloadControllerCard(lbbgTwrStatusUrl, "lbbgTwrStatusDiv");
+        }
+        
+        function reloadBurgasApproachCard() {
+          reloadControllerCard(lbbgAppStatusUrl, "lbbgAppStatusDiv");
+        }
+        
+        function reloadVarnaTowerCard() {
+          reloadControllerCard(lbwnTwrStatusUrl, "lbwnTwrStatusDiv");
+        }
+        
+        function reloadVarnaApproachCard() {
+          reloadControllerCard(lbwnAppStatusUrl, "lbwnAppStatusDiv");
+        }
+        
+        function reloadPlovdivTowerCard() {
+          reloadControllerCard(lbpdTwrStatusUrl, "lbpdTwrStatusDiv");
+        }
+        
+        function reloadGornaTowerCard() {
+          reloadControllerCard(lbgoTwrStatusUrl, "lbgoTwrStatusDiv");
+        }
+
+        function getMetarAtICAO(icao, htmlTagId) {
+          $.ajax({
+            url: metarUrl + "/" + icao,
+            type: 'get',
+            success: function (data)
+            {
+              $("#" + htmlTagId).empty().append(data[0].id + ' ' + data[0].metar);
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+          return false;
+        }
+        
+        let refreshIntervalSeconds = 15;
+        let atisRefreshIntervalSeconds = 600; // 10 minutes
+
+        (function () {
+          window.setInterval(reloadSofiaControlCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadSofiaTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadSofiaApproachCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadBurgasTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadBurgasApproachCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadVarnaTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadVarnaApproachCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadPlovdivTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadGornaTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(getAllMetars, atisRefreshIntervalSeconds * 1000);
+          reloadSofiaControlCard();
+          reloadSofiaTowerCard();
+          reloadSofiaApproachCard();
+          reloadBurgasTowerCard();
+          reloadBurgasApproachCard();
+          reloadVarnaTowerCard();
+          reloadVarnaApproachCard();
+          reloadPlovdivTowerCard();
+          reloadGornaTowerCard();
+          getAllMetars();
+        })();
+      </script>
     </div>
   </body>
 </html>

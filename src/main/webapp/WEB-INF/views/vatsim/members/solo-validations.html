@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Web application</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      <!--<div>Member info</div>-->
+
+      <!--<div>Here</div>-->
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col" class="fw-bold">Name</th>
+            <th scope="col" class="fw-bold">VATSIM CID</th>
+            <th scope="col" class="fw-bold">Approved position</th>
+            <th scope="col" class="fw-bold">Expires on</th>
+            <th scope="col" class="fw-bold">Mentor CID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="sv : ${soloValidations.data}">
+            <th scope="row" th:text="${sv.id}">1</th>
+            <td>
+              <a href="#" th:href="@{/members/} + ${sv.userCid}" target="_blank" style="text-decoration: none;"
+                 th:text="${sv.userCid}">CID</a>
+            </td>
+            <td th:text="${sv.position}">Position</td>
+            <td th:text="${#dates.format(sv.expiry, 'dd MMMM yyyy')}">Expires on</td>
+            <td>
+              <a href="#" th:href="@{/members/} + ${sv.instructorCid}" target="_blank" style="text-decoration: none;"
+                 th:text="${sv.instructorCid}">Mentor CID</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
