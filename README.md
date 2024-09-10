@@ -1,1 +1,1 @@
-# Web application template
+# BGvACC Web application
