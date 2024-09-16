@@ -1,12 +1,15 @@
 package com.bgvacc.web.controllers.vatsim;
 
+import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
 import com.bgvacc.web.vatsim.memory.Memory;
+import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +27,23 @@ public class VatsimCoreController {
 
   private final String BULGARIAN_PREFIX = "LB";
 
+  @Autowired
+  private VatEudCoreApi vatEudCoreApi;
+
   @GetMapping("/atc/status/{atc}")
   public String getCallsignStatusCard(@PathVariable("atc") String atc, Model model) {
 
     final String callsign = atc.replace("-", "_").toUpperCase();
 
     VatsimATC position = getOnlinePosition(callsign);
+//    VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(vmsv.getUserCid());
+
     VatsimATCInfo atcInfo = getPositionFrequency(callsign);
 
     model.addAttribute("atcInfo", atcInfo);
     model.addAttribute("position", position);
 
-    return "atc/status :: #statusCard";
+    return "atc/controller-status :: #statusCard";
   }
 
   private VatsimATCInfo getPositionFrequency(String callsign) {
@@ -71,6 +79,10 @@ public class VatsimCoreController {
 
     for (VatsimATC onlineBulgarianATC : getAllVatsimBGOnlineATCs()) {
       if (onlineBulgarianATC.getCallsign().equalsIgnoreCase(position)) {
+
+        VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(onlineBulgarianATC.getId());
+        onlineBulgarianATC.setFirstName(memberDetails.getData().getFirstName());
+        onlineBulgarianATC.setLastName(memberDetails.getData().getLastName());
         return onlineBulgarianATC;
       }
     }

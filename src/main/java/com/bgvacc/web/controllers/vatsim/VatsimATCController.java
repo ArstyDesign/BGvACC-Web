@@ -1,5 +1,6 @@
 package com.bgvacc.web.controllers.vatsim;
 
+import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.ATCApplicationModel;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,16 +20,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @since 1.0.0
  */
 @Controller
-public class VatsimATCController {
+public class VatsimATCController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   @GetMapping("/atc/career-application")
   public String prepareATCCareerApplication(Model model) {
 
-    model.addAttribute("pageTitle", "ATC Career Application");
+    model.addAttribute("pageTitle", getMessage("atcapplication.title"));
 
     model.addAttribute("aam", new ATCApplicationModel());
+
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "application");
 
     return "atc/career-application";
   }
@@ -38,10 +42,13 @@ public class VatsimATCController {
           BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
 
     log.debug("TEsting");
-    
+
     if (bindingResult.hasErrors()) {
 
-      model.addAttribute("pageTitle", "ATC Career Application");
+      model.addAttribute("pageTitle", getMessage("atcapplication.title"));
+
+      model.addAttribute("page", "atc");
+      model.addAttribute("subpage", "application");
 
       return "atc/career-application";
     }

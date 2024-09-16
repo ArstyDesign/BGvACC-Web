@@ -48,6 +48,9 @@ public class VatsimEventsController {
 
     model.addAttribute("bulgariaEvents", bulgariaEvents);
 
+    model.addAttribute("pageTitle", "VATSIM Events");
+    model.addAttribute("page", "events");
+
     return "vatsim/events/events";
   }
 
@@ -57,6 +60,8 @@ public class VatsimEventsController {
     VatsimEvent vatsimEvent = eventApi.getVatsimEvent(eventId);
 
     model.addAttribute("event", vatsimEvent);
+
+    model.addAttribute("page", "events");
 
     return "vatsim/events/event";
   }

@@ -13,16 +13,17 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since 1.0.0
  */
 @Controller
-public class HomeController extends Base {
+public class RulesController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @GetMapping(value = "/")
-  public String home(Model model) {
+  @GetMapping("/rules/privacy-policy")
+  public String getPrivacyPolicy(Model model) {
 
-    model.addAttribute("pageTitle", getMessage("home.title"));
-    model.addAttribute("page", "home");
+    model.addAttribute("pageTitle", "Privacy Policy for VATSIM BULGARIA");
+    model.addAttribute("page", "rules");
+    model.addAttribute("subpage", "privacy-policy");
 
-    return "home";
+    return "rules/privacy-policy";
   }
 }

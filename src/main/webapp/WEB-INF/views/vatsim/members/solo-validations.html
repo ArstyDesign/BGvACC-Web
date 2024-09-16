@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Web application</title>
+    <title th:text="#{app.title('Solo validations')}">BGvACC</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
@@ -20,11 +20,12 @@
             <th scope="col" class="fw-bold">Approved position</th>
             <th scope="col" class="fw-bold">Expires on</th>
             <th scope="col" class="fw-bold">Mentor CID</th>
+            <th scope="col" class="fw-bold">Mentor name</th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="sv : ${soloValidations.data}">
-            <th scope="row" th:text="${sv.id}">1</th>
+            <th scope="row" th:text="${sv.fullName}">Name</th>
             <td>
               <a href="#" th:href="@{/members/} + ${sv.userCid}" target="_blank" style="text-decoration: none;"
                  th:text="${sv.userCid}">CID</a>
@@ -35,6 +36,7 @@
               <a href="#" th:href="@{/members/} + ${sv.instructorCid}" target="_blank" style="text-decoration: none;"
                  th:text="${sv.instructorCid}">Mentor CID</a>
             </td>
+            <td th:text="${sv.instructorFullName}">Mentor name</td>
           </tr>
         </tbody>
       </table>

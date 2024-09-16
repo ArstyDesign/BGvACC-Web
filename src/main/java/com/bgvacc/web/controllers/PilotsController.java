@@ -13,16 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since 1.0.0
  */
 @Controller
-public class HomeController extends Base {
+public class PilotsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @GetMapping(value = "/")
-  public String home(Model model) {
+  @GetMapping("/pilots/bulgarian-sceneries")
+  public String getBulgarianSceneries(Model model) {
 
-    model.addAttribute("pageTitle", getMessage("home.title"));
-    model.addAttribute("page", "home");
+    model.addAttribute("pageTitle", "LBSF FIR Airports Sceneries");
 
-    return "home";
+    return "vatsim/pilots/bulgarian-sceneries";
   }
 }

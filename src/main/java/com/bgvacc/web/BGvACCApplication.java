@@ -3,6 +3,7 @@ package com.bgvacc.web;
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
+import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import java.nio.charset.StandardCharsets;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,5 +40,10 @@ public class BGvACCApplication {
   @Bean
   public CoreApi coreApi() {
     return new CoreApi();
+  }
+
+  @Bean
+  public VatEudCoreApi vatEudCoreApi() {
+    return new VatEudCoreApi();
   }
 }

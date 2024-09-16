@@ -4,61 +4,68 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{atcapplication.title})}">BGvACC</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div class="row">
         <div class="col-12 col-lg-8 m-lg-auto mb-3">
-          <div class="mb-4">ATC Career Application in BGvACC:</div>
+          <div class="mb-4" th:text="#{atcapplication.header}">ATC Career Application in BGvACC:</div>
 
           <form class="row" th:action="@{/atc/career-application}" method="post" th:object="${aam}">
             <div class="col-12 col-md-6 mb-3">
-              <label for="firstNameInput" class="form-label required">First name</label>
+              <label for="firstNameInput" class="form-label required"
+                     th:text="#{atcapplication.form.firstname}">First name</label>
               <input type="text" class="form-control" id="firstNameInput" autofocus="autofocus"
                      th:field="*{firstName}" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{firstName}">Error</span>
             </div>
             <div class="col-12 col-md-6 mb-3">
-              <label for="lastNameInput" class="form-label required">Last name</label>
+              <label for="lastNameInput" class="form-label required"
+                     th:text="#{atcapplication.form.lastname}">Last name</label>
               <input type="text" class="form-control" id="lastNameInput"
                      th:field="*{lastName}" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{lastName}">Error</span>
             </div>
             <div class="col-12 col-md-6 mb-3">
-              <label for="vatsimCIDInput" class="form-label required">VATSIM CID</label>
+              <label for="vatsimCIDInput" class="form-label required"
+                     th:text="#{atcapplication.form.vatsimcid}">VATSIM CID</label>
               <input type="text" class="form-control" id="vatsimCIDInput"
                      th:field="*{cid}" th:classappend="${#fields.hasErrors('cid')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{cid}">Error</span>
             </div>
             <div class="col-12 col-md-6 mb-3">
-              <label for="emailInput" class="form-label required">Email</label>
+              <label for="emailInput" class="form-label required"
+                     th:text="#{atcapplication.form.email}">Email</label>
               <input type="email" class="form-control" id="emailInput"
                      th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{email}">Error</span>
             </div>
             <div class="col-12 mb-3">
-              <label for="currentRatingInput" class="form-label required">Current rating</label>
-              <select class="form-select" id="currentRatingInput"
+              <label for="currentRatingInput" class="form-label required"
+                     th:text="#{atcapplication.form.currentrating}">Current rating</label>
+              <select class="form-select" id="currentRatingInput" aria-describedby="currentRatingHelp"
                       th:field="*{currentRating}" th:classappend="${#fields.hasErrors('currentRating')} ? 'is-invalid'">
-                <option value="No rating (OBS)">No rating (OBS)</option>
-                <option value="S1">S1</option>
-                <option value="S2">S2</option>
-                <option value="S3">S3</option>
-                <option value="C1">C1</option>
-                <option value="C3">C3</option>
+                <option value="OBS" th:text="#{atcapplication.form.currentrating.obs}">No rating (OBS)</option>
+                <option value="S1" th:text="#{atcapplication.form.currentrating.s1}">S1 - Tower trainee</option>
+                <option value="S2" th:text="#{atcapplication.form.currentrating.s2}">S2 - Tower controller</option>
+                <option value="S3" th:text="#{atcapplication.form.currentrating.s3}">S3 - TMA controller</option>
+                <option value="C1" th:text="#{atcapplication.form.currentrating.c1}">C1 - Enroute controller</option>
+                <option value="C3" th:text="#{atcapplication.form.currentrating.c3}">C3 - Senior controller</option>
               </select>
+              <span id="currentRatingHelp" class="form-text" th:utext="#{atcapplication.form.currentrating.help}">If you don't have...</span>
               <span class="invalid-feedback" th:errors="*{currentRating}">Error</span>
             </div>
             <div class="col-12 mb-3">
-              <label for="reasonToStartInput" class="form-label required">Reason to start ATC training</label>
+              <label for="reasonToStartInput" class="form-label required"\
+                     th:text="#{atcapplication.form.reason}">Reason to start ATC training</label>
               <textarea class="form-control" id="reasonToStartInput" rows="5"
                         th:field="*{reason}" th:classappend="${#fields.hasErrors('reason')} ? 'is-invalid'"></textarea>
               <span class="invalid-feedback" th:errors="*{reason}">Error</span>
             </div>
             <div class="col-12 mb-3">
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="submit" class="btn btn-primary" th:text="#{atcapplication.form.submit}">Submit</button>
             </div>
           </form>
         </div>

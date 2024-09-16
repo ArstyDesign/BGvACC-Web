@@ -60,7 +60,7 @@ public abstract class Api {
    * @return
    */
   protected <T, E> T doRequest(Methods method, String url, E requestBody, Class<T> responseType) {
-    return doRequest(method, url, requestBody, responseType, null, false);
+    return doRequest(method, url, requestBody, responseType, null, null, null);
   }
 
   /**
@@ -76,7 +76,7 @@ public abstract class Api {
    * @return
    */
   protected <T, E> T doRequest(Methods method, String url, E requestBody, Class<T> responseType, HttpServletRequest httpRequest) {
-    return doRequest(method, url, requestBody, responseType, httpRequest, false);
+    return doRequest(method, url, requestBody, responseType, httpRequest, null, null);
   }
 
   /**
@@ -89,14 +89,18 @@ public abstract class Api {
    * @param requestBody the request body
    * @param responseType the response class type
    * @param httpRequest the HTTP request
-   * @param isAuthorizationRequired true - if the authorization header should be
-   * added; false - if not
+   * @param authHeaderKey
+   * @param authHeaderValue
    * @return
    */
-  protected <T, E> T doRequest(Methods method, String url, E requestBody, Class<T> responseType, HttpServletRequest httpRequest, boolean isAuthorizationRequired) {
+  protected <T, E> T doRequest(Methods method, String url, E requestBody, Class<T> responseType, HttpServletRequest httpRequest, String authHeaderKey, String authHeaderValue) {
 
     HttpHeaders headers = getHeaders();
     HttpEntity entity;
+
+    if (isAuthPairNotNull(authHeaderKey, authHeaderValue)) {
+      headers.set(authHeaderKey, authHeaderValue);
+    }
 
 //    if (isAuthorizationRequired && httpRequest != null) {
 //      headers.set("Authorization", getAuthorizationToken(httpRequest));
@@ -225,5 +229,9 @@ public abstract class Api {
       log.info("No data found {}", response.getStatusCode());
     }
     return result;
+  }
+
+  private boolean isAuthPairNotNull(String key, String value) {
+    return !((key == null || key.trim().isEmpty()) || (value == null || value.trim().isEmpty()));
   }
 }

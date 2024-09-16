@@ -1,14 +1,13 @@
 package com.bgvacc.web.api;
 
+import static com.bgvacc.web.api.APIConstants.VATEUD_API_KEY_HEADER_KEY;
+import static com.bgvacc.web.api.APIConstants.VATEUD_API_KEY_HEADER_VALUE;
 import com.bgvacc.web.enums.Methods;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.members.VatsimMemberDetails;
-import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
 import com.bgvacc.web.vatsim.members.VatsimMemberStatistics;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
+import com.bgvacc.web.vatsim.roster.VatEudRoster;
 import java.util.List;
 
 /**
@@ -76,14 +75,21 @@ public class CoreApi extends Api {
     return doRequestList(Methods.GET, url, null, VatsimATC.class);
   }
 
-  public VatsimMemberDetails getMemberDetails(String cid) {
+  public VatEudRoster getRoster() {
+
+    final String url = "https://core.vateud.net/api/facility/roster";
+
+    return doRequest(Methods.GET, url, null, VatEudRoster.class, null, VATEUD_API_KEY_HEADER_KEY, VATEUD_API_KEY_HEADER_VALUE);
+  }
+
+  public VatsimMemberDetails getMemberDetails(Long cid) {
 
     final String url = "https://api.vatsim.net/v2/members/" + cid;
 
     return doRequest(Methods.GET, url, null, VatsimMemberDetails.class);
   }
 
-  public VatsimMemberStatistics getMemberStatistics(String cid) {
+  public VatsimMemberStatistics getMemberStatistics(Long cid) {
 
     final String url = "https://api.vatsim.net/v2/members/" + cid + "/stats";
 
@@ -92,97 +98,8 @@ public class CoreApi extends Api {
 
   public VatsimMemberSoloValidations getMemberSoloValidations() {
 
-    VatsimMemberSoloValidations result = new VatsimMemberSoloValidations();
-    result.setSuccess(true);
-    
-    List<VatsimMemberSoloValidation> data = new ArrayList<>();
+    final String url = "https://core.vateud.net/api/facility/endorsements/solo";
 
-    VatsimMemberSoloValidation vmsv = new VatsimMemberSoloValidation();
-    vmsv.setId(1);
-    vmsv.setUserCid(1720051);
-    vmsv.setInstructorCid(1008143);
-    vmsv.setPosition("LBSF_APP");
-    
-    Calendar c = Calendar.getInstance();
-    c.set(Calendar.YEAR, 2024);
-    c.set(Calendar.MONTH, 8); // September (9-1)
-    c.set(Calendar.DAY_OF_MONTH, 21);
-    vmsv.setExpiry(new Timestamp(c.getTimeInMillis()));
-    vmsv.setMaxDays(30);
-    vmsv.setFacility(1);
-    
-    data.add(vmsv);
-    
-    vmsv = new VatsimMemberSoloValidation();
-    vmsv.setId(2);
-    vmsv.setUserCid(1724433);
-    vmsv.setInstructorCid(1604267);
-    vmsv.setPosition("LBSF_TWR");
-    
-    c = Calendar.getInstance();
-    c.set(Calendar.YEAR, 2024);
-    c.set(Calendar.MONTH, 9);
-    c.set(Calendar.DAY_OF_MONTH, 1);
-    vmsv.setExpiry(new Timestamp(c.getTimeInMillis()));
-    vmsv.setMaxDays(30);
-    vmsv.setFacility(1);
-    
-    data.add(vmsv);
-    
-    vmsv = new VatsimMemberSoloValidation();
-    vmsv.setId(3);
-    vmsv.setUserCid(1779345);
-    vmsv.setInstructorCid(1664545);
-    vmsv.setPosition("LBSF_TWR");
-    
-    c = Calendar.getInstance();
-    c.set(Calendar.YEAR, 2024);
-    c.set(Calendar.MONTH, 9);
-    c.set(Calendar.DAY_OF_MONTH, 1);
-    vmsv.setExpiry(new Timestamp(c.getTimeInMillis()));
-    vmsv.setMaxDays(30);
-    vmsv.setFacility(1);
-    
-    data.add(vmsv);
-    
-    vmsv = new VatsimMemberSoloValidation();
-    vmsv.setId(4);
-    vmsv.setUserCid(1704000);
-    vmsv.setInstructorCid(1008143);
-    vmsv.setPosition("LBSF_APP");
-    
-    c = Calendar.getInstance();
-    c.set(Calendar.YEAR, 2024);
-    c.set(Calendar.MONTH, 8);
-    c.set(Calendar.DAY_OF_MONTH, 16);
-    vmsv.setExpiry(new Timestamp(c.getTimeInMillis()));
-    vmsv.setMaxDays(30);
-    vmsv.setFacility(1);
-    
-    data.add(vmsv);
-    
-    vmsv = new VatsimMemberSoloValidation();
-    vmsv.setId(5);
-    vmsv.setUserCid(1604267);
-    vmsv.setInstructorCid(1008143);
-    vmsv.setPosition("LBSR_CTR");
-    
-    c = Calendar.getInstance();
-    c.set(Calendar.YEAR, 2024);
-    c.set(Calendar.MONTH, 8);
-    c.set(Calendar.DAY_OF_MONTH, 22);
-    vmsv.setExpiry(new Timestamp(c.getTimeInMillis()));
-    vmsv.setMaxDays(30);
-    vmsv.setFacility(1);
-    
-    data.add(vmsv);
-    
-    result.setData(data);
-    
-    return result;
-
-//    final String url = "https://core.vateud.net/api/solo";
-//
-//    return doRequest(Methods.GET, url, null, VatsimMemberSoloValidations.class);
+    return doRequest(Methods.GET, url, null, VatsimMemberSoloValidations.class, null, VATEUD_API_KEY_HEADER_KEY, VATEUD_API_KEY_HEADER_VALUE);
   }
 }

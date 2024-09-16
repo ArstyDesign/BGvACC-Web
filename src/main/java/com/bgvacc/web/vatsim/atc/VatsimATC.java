@@ -1,6 +1,7 @@
 package com.bgvacc.web.vatsim.atc;
 
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -35,11 +36,21 @@ public class VatsimATC implements Serializable {
   @JsonProperty("rating")
   private Integer rating;
 
+  @JsonIgnore
+  private String firstName;
+
+  @JsonIgnore
+  private String lastName;
+
   public String getAtcRatingSymbol() {
     return VatsimRatingUtils.getATCRatingSymbol(this.rating);
   }
 
   public String getAtcRatingName() {
     return VatsimRatingUtils.getATCRatingName(this.rating);
+  }
+
+  public String getFullName() {
+    return (lastName != null) ? firstName + ' ' + lastName : firstName;
   }
 }

@@ -14,104 +14,113 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#" th:href="@{/}">Home</a>
+                <a class="nav-link" aria-current="page" href="#" th:href="@{/}" th:text="#{menu.home}"
+                   th:classappend="${page eq 'home'} ? 'active'">Home</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span>Rules</span>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   th:classappend="${page eq 'rules'} ? 'active'">
+                  <span th:text="#{menu.rules}">Rules</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#">Privacy Policy for VATSIM Bulgaria</a>
+                    <a class="dropdown-item" href="#" th:href="@{/rules/privacy-policy}"
+                       th:classappend="${page eq 'rules' and subpage eq 'privacy-policy'} ? 'active'" th:text="#{menu.rules.privacypolicy}">Privacy Policy for VATSIM Bulgaria</a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="#">Terms and conditions</a>
-                  </li>
+                  <!--                  <li>
+                                      <a class="dropdown-item" href="#">Terms and conditions</a>
+                                    </li>-->
                   <!--<li><hr class="dropdown-divider"></li>-->
                   <li>
-                    <a class="dropdown-item" href="#">Constitution</a>
+                    <a class="dropdown-item" href="https://bgvacc.com/wp-content/uploads/2021/07/BGvACC_constitution.docx-2.pdf" target="_blank"
+                       th:text="#{menu.rules.constitution}">Constitution</a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="https://community.vatsim.net/" target="_blank">Discord</a>
+                <a class="nav-link" href="https://community.vatsim.net/" target="_blank" th:text="#{menu.discord}">Discord</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span>Partners</span>
+                  <span th:text="#{menu.partners}">Partners</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#">Virtual Airlines Partners</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.partners.virtualairlines}">Virtual Airlines Partners</a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/events}">Events</a>
+                <a class="nav-link" href="#" th:href="@{/events}"
+                   th:classappend="${page eq 'events'} ? 'active'" th:text="#{menu.events}">Events</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/feedback-report}">Feedback report</a>
+                <a class="nav-link" href="#" th:href="@{/feedback-report}"
+                   th:classappend="${page eq 'feedback-report'} ? 'active'" th:text="#{menu.feedbackreport}">Feedback report</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span>ATC</span>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   th:classappend="${page eq 'atc'} ? 'active'">
+                  <span th:text="#{menu.atc}">ATC</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/atc/career-application}">Application</a>
+                    <a class="dropdown-item" href="#" th:href="@{/atc/career-application}"
+                       th:classappend="${page eq 'atc' and subpage eq 'application'} ? 'active'" th:text="#{menu.atc.application}">Application</a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="#" th:text="#{menu.atc.information}">Information</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Information</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.atc.trainingfiles}">Training files</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Training files</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.atc.loas}">Letter of Agreements</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Letter of Agreements</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.atc.stations}">Stations</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Stations</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">ATC Downloads</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.atc.atcdownloads}">ATC Downloads</a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span>Pilots</span>
+                  <span th:text="#{menu.pilots}">Pilots</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#">Airspace</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.pilots.airspace}">Airspace</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Charts</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.pilots.charts}">Charts</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Sceneries</a>
+                    <a class="dropdown-item" href="#" th:href="@{/pilots/bulgarian-sceneries}" th:text="#{menu.pilots.sceneries}">Sceneries</a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="#">Info</a>
-                  </li>
+                  <!--                  <li>
+                                      <a class="dropdown-item" href="#">Info</a>
+                                    </li>-->
                 </ul>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span>Members &amp; staff</span>
+                  <span th:text="#{menu.membersstaff}">Members &amp; staff</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#">Staff team</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/staff}" th:text="#{menu.membersstaff.staff}">Staff team</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/solo-validations}">Solo validations</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/solo-validations}" th:text="#{menu.membersstaff.solos}">Solo validations</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Examiners</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/training-staff}" th:text="#{menu.membersstaff.trainingstaff}">Training staff</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Visiting controllers</a>
+                    <a class="dropdown-item" href="#" th:text="#{menu.membersstaff.visitingcontrollers}">Visiting controllers</a>
                   </li>
                 </ul>
               </li>
@@ -142,7 +151,7 @@
 
             <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
               <li class="ms-4">
-                <a class="text-body-secondary" href="#">
+                <a class="text-body-secondary" href="https://instagram.com/vatsim.bulgaria" target="_blank">
                   <i class="fa-brands fa-instagram fs-4"></i>
                 </a>
               </li>
@@ -220,9 +229,21 @@
                 <span>BGvACC, Inc. All rights reserved.</span>
               </p>
               <ul class="list-unstyled d-flex">
-                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
+                <li class="ms-3">
+                  <a class="link-body-emphasis" href="https://instagram.com/vatsim.bulgaria" target="_blank">
+                    <svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg>
+                  </a>
+                </li>
+                <li class="ms-3">
+                  <a class="link-body-emphasis" href="#" target="_blank">
+                    <svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg>
+                  </a>
+                </li>
+                <li class="ms-3">
+                  <a class="link-body-emphasis" href="#" target="_blank">
+                    <svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg>
+                  </a>
+                </li>
               </ul>
             </div>
           </footer>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title('Staff')}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      <!--<div>Member info</div>-->
+
+      <!--<div>Here</div>-->
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col" class="fw-bold">Name</th>
+            <th scope="col" class="fw-bold">Callsign</th>
+            <th scope="col" class="fw-bold">Position</th>
+            <th scope="col" class="fw-bold">VATSIM CID</th>
+            <th scope="col" class="fw-bold">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="s : ${roster.data.staff[0]}">
+            <td scope="row" th:text="${s.fullName ne null} ? ${s.fullName} : '-'">Name</td>
+            <td scope="row" th:text="${s.nameShort} ? ${s.nameShort} : '-'">CID</td>
+            <td scope="row" th:text="${s.name} ? ${s.name} : '-'">Position</td>
+            <td scope="row">
+              <a href="#" th:href="@{/members/} + ${s.cid}" th:text="${s.cid} ? ${s.cid} : '-'"
+                 style="text-decoration: none;">VATSIM CID</a>
+            </td>
+            <td scope="row" th:text="${s.email} ? ${s.email} : '-'">Email</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!--      <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="fw-bold">CID</th>
+                  <th scope="col" class="fw-bold">Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="c : ${roster.data.controllers}">
+                  <th scope="row" th:text="${c.cid}">CID</th>
+                  <th scope="row" th:text="${c.fullName}">Name</th>
+                </tr>
+              </tbody>
+            </table>-->
+    </div>
+  </body>
+</html>

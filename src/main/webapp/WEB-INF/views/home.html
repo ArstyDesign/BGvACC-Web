@@ -11,16 +11,16 @@
 
       <div class="row">
         <div class="col-12 col-md-8 mb-3">
-          <p>Welcome to the website of the Sofia FIR, a part of the BGvACC Regional Group on the <a href="https://vatsim.net">VATSIM</a> Network. Here you will find informations about how to become a controller within our vACC, and how to find and use all the necessary information about flying in the Bulgarian FIR.</p>
+          <p th:utext="#{home.p1}">Welcome to the website of the Sofia FIR, a part of the BGvACC Regional Group on the <a href="https://vatsim.net">VATSIM</a> Network. Here you will find informations about how to become a controller within our vACC, and how to find and use all the necessary information about flying in the Bulgarian FIR.</p>
 
-          <p>BGvACC is part of the <a href="http://vateud.net" target="_blank">VATSIM Europe Division</a>, which with <a href="https://www.vatsim-uk.co.uk" target="_blank">VATSIM UK</a> and <a href="http://www.vatrus.info" target="_blank">VATSIM Russia</a> form the <a href="http://www.vateur.org" target="_blank">VATSIM Europe Region</a>. This forms the European part of the global <a href="http://www.vatsim.net" target="_blank">VATSIM</a> network, which provides ATC services over the internet free of charge to pilots connected to this network using their flight simulator.</p>
+          <p th:utext="#{home.p2}">BGvACC is part of the <a href="http://vateud.net" target="_blank">VATSIM Europe Division</a>, which with <a href="https://www.vatsim-uk.co.uk" target="_blank">VATSIM UK</a> and <a href="http://www.vatrus.info" target="_blank">VATSIM Russia</a> form the <a href="http://www.vateur.org" target="_blank">VATSIM Europe Region</a>. This forms the European part of the global <a href="http://www.vatsim.net" target="_blank">VATSIM</a> network, which provides ATC services over the internet free of charge to pilots connected to this network using their flight simulator.</p>
 
-          <p>Enjoy your stay in Sofia FIR!</p>
+          <p th:text="#{home.p3}">Enjoy your stay in Sofia FIR!</p>
 
           <hr/>
 
           <div class="row">
-            <h2 class="h5 mb-3">Sofia Control (LBSR_CTR)</h2>
+            <h2 class="h5 mb-3" th:text="#{home.controllers.sofiactrl.title}">Sofia Control (LBSR_CTR)</h2>
             <div id="lbsrCtrStatusDiv" class="col-12 mb-3 mb-md-5">
               <div class="card">
                 <div class="card-body">
@@ -32,7 +32,7 @@
           </div>
 
           <div class="row">
-            <h2 class="h5 mb-3">Controllers in Sofia (LBSF)</h2>
+            <h2 class="h5 mb-3" th:text="#{home.controllers.sofia.title}">Controllers in Sofia (LBSF)</h2>
             <div id="lbsfTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
               <div class="card border-light-subtle">
                 <div class="card-body">
@@ -53,7 +53,7 @@
           </div>
 
           <div class="row">
-            <h2 class="h5 mb-3">Controllers in Burgas (LBBG)</h2>
+            <h2 class="h5 mb-3" th:text="#{home.controllers.burgas.title}">Controllers in Burgas (LBBG)</h2>
             <div id="lbbgTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
               <div class="card border-light-subtle">
                 <div class="card-body">
@@ -74,7 +74,7 @@
           </div>
 
           <div class="row">
-            <h2 class="h5 mb-3">Controllers in Varna (LBWN)</h2>
+            <h2 class="h5 mb-3" th:text="#{home.controllers.varna.title}">Controllers in Varna (LBWN)</h2>
             <div id="lbwnTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
               <div class="card border-light-subtle">
                 <div class="card-body">
@@ -95,7 +95,7 @@
           </div>
 
           <div class="row">
-            <h2 class="h5 mb-3">Controllers in Plovdiv (LBPD) and Gorna (LBGO)</h2>
+            <h2 class="h5 mb-3" th:text="#{home.controllers.gornaplovdiv.title}">Controllers in Plovdiv (LBPD) and Gorna (LBGO)</h2>
             <div id="lbpdTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
               <div class="card border-light-subtle">
                 <div class="card-body">
