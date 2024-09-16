@@ -26,13 +26,13 @@ public class VatEudCoreApi extends Api {
 
     final String url = "https://core.vateud.net/api/facility/user/" + cid;
 
-    return doRequest(Methods.GET, url, null, VatEudUser.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getAPIKey());
+    return doRequest(Methods.GET, url, null, VatEudUser.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getVatEudApiKey());
   }
 
   public VatsimMemberTrainingStaff getTrainingStaff() {
 
     final String url = "https://core.vateud.net/api/facility/training/staff";
 
-    return doRequest(Methods.GET, url, null, VatsimMemberTrainingStaff.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getAPIKey());
+    return doRequest(Methods.GET, url, null, VatsimMemberTrainingStaff.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getVatEudApiKey());
   }
 }

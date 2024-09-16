@@ -36,7 +36,7 @@ public class CoreApi extends Api {
 
     final String url = "https://core.vateud.net/api/facility/roster";
 
-    return doRequest(Methods.GET, url, null, VatEudRoster.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getAPIKey());
+    return doRequest(Methods.GET, url, null, VatEudRoster.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getVatEudApiKey());
   }
 
   public VatsimMemberDetails getMemberDetails(Long cid) {
@@ -57,6 +57,6 @@ public class CoreApi extends Api {
 
     final String url = "https://core.vateud.net/api/facility/endorsements/solo";
 
-    return doRequest(Methods.GET, url, null, VatsimMemberSoloValidations.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getAPIKey());
+    return doRequest(Methods.GET, url, null, VatsimMemberSoloValidations.class, null, VATEUD_API_KEY_HEADER_KEY, authProps.getVatEudApiKey());
   }
 }

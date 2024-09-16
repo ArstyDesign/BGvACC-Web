@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:authentication.properties")
 public class AuthenticationProperties {
 
-  @Value("${api.key}")
-  private String apiKey;
+  @Value("${vateud.api.key}")
+  private String vateudApiKey;
 
-  public String getAPIKey() {
-    return apiKey;
+  public String getVatEudApiKey() {
+    return vateudApiKey;
   }
 }
