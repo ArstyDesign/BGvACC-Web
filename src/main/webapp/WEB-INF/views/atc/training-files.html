@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{atc.trainingfiles.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div th:text="#{atc.trainingfiles.message}">Here you will find PDF documents, regarding the training for certain positions.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-lg-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <a href="#" th:href="@{/resources/training-files/S2_Position_Overview.pdf}" style="text-decoration: none;"
+                 th:text="#{atc.trainingfiles.s2}">Tower (TWR) S2 ATC Guide</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <a href="#" th:href="@{/resources/training-files/S3_Position_Overview.pdf}" style="text-decoration: none;"
+                 th:text="#{atc.trainingfiles.s3}">Approach (APP) S3 ATC Guide</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <a href="#" th:href="@{/resources/training-files/C1_Position_Overview.pdf}" style="text-decoration: none;"
+                 th:text="#{atc.trainingfiles.c1}">Control (CTR) C1 ATC Guide</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

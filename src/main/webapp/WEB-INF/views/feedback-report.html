@@ -34,21 +34,21 @@
           <form class="row" th:action="@{/feedback-report}" method="post" th:object="${frm}">
             <div class="col-12 col-md-6 mb-3">
               <label for="firstNameInput" class="form-label required"
-                     th:text="#{atcapplication.form.firstname}">First name</label>
+                     th:text="#{atc.application.form.firstname}">First name</label>
               <input type="text" class="form-control" id="firstNameInput" autofocus="autofocus"
                      th:field="*{firstName}" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{firstName}">Error</span>
             </div>
             <div class="col-12 col-md-6 mb-3">
               <label for="lastNameInput" class="form-label required"
-                     th:text="#{atcapplication.form.lastname}">Last name</label>
+                     th:text="#{atc.application.form.lastname}">Last name</label>
               <input type="text" class="form-control" id="lastNameInput"
                      th:field="*{lastName}" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{lastName}">Error</span>
             </div>
             <div class="col-12 mb-3">
               <label for="emailInput" class="form-label required"
-                     th:text="#{atcapplication.form.email}">Email</label>
+                     th:text="#{atc.application.form.email}">Email</label>
               <input type="email" class="form-control" id="emailInput"
                      th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{email}">Error</span>
@@ -75,7 +75,7 @@
               <span class="invalid-feedback" th:errors="*{feedback}">Error</span>
             </div>
             <div class="col-12 mb-3">
-              <button type="submit" class="btn btn-primary" th:text="#{atcapplication.form.submit}">Submit</button>
+              <button type="submit" class="btn btn-primary" th:text="#{atc.application.form.submit}">Submit</button>
             </div>
           </form>
         </div>

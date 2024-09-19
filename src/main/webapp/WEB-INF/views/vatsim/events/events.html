@@ -9,7 +9,7 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      <div th:if="${#lists.isEmpty(bulgariaEvents.data)}">
+      <div th:if="${#lists.isEmpty(bulgariaEvents.data)}" th:remove="tag">
         <h1 class="h4 fst-italic">Events not found.</h1>
       </div>
 

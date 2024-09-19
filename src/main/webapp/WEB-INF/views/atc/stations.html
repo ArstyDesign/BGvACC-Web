@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{atc.stations.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col" class="fw-bold" th:text="#{atc.stations.callsign}">Callsign</th>
+                <th scope="col" class="fw-bold" th:text="#{atc.stations.frequency}">Frequency</th>
+                <th scope="col" class="fw-bold" th:text="#{atc.stations.name}">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">LBSR_CTR</th>
+                <td>131.225</td>
+                <td>Sofia Control (Main or West Sector)</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSR_E_CTR</th>
+                <td>129.100</td>
+                <td>Sofia Control East Sector (High Traffic Loads)</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSR_V_CTR</th>
+                <td>134.700</td>
+                <td>Sofia Varna Control (Main or East sector)</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSR_B_CTR</th>
+                <td>132.950</td>
+                <td>Sofia Varna East Control (High Traffic Loads)</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSR_I_CTR</th>
+                <td>130.600</td>
+                <td>Sofia Information</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSF_APP</th>
+                <td>123.700</td>
+                <td>Sofia Approach</td>
+              </tr>
+              <tr>
+                <th scope="row">LBWN_APP</th>
+                <td>124.600</td>
+                <td>Varna Approach</td>
+              </tr>
+              <tr>
+                <th scope="row">LBBG_APP</th>
+                <td>125.100</td>
+                <td>Burgas Approach</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSF_TWR</th>
+                <td>118.100</td>
+                <td>Sofia Tower</td>
+              </tr>
+              <tr>
+                <th scope="row">LBWN_TWR</th>
+                <td>119.500</td>
+                <td>Varna Tower</td>
+              </tr>
+              <tr>
+                <th scope="row">LBBG_TWR</th>
+                <td>118.000</td>
+                <td>Burgas Tower</td>
+              </tr>
+              <tr>
+                <th scope="row">LBPD_TWR</th>
+                <td>133.600</td>
+                <td>Plovdiv Tower</td>
+              </tr>
+              <tr>
+                <th scope="row">LBGO_TWR</th>
+                <td>133.500</td>
+                <td>Gorna Tower</td>
+              </tr>
+              <tr>
+                <th scope="row">LBSF_ATIS</th>
+                <td>126.680</td>
+                <td>Sofia ATIS</td>
+              </tr>
+              <tr>
+                <th scope="row">LBWN_ATIS</th>
+                <td>126.880</td>
+                <td>Varna ATIS</td>
+              </tr>
+              <tr>
+                <th scope="row">LBBG_ATIS</th>
+                <td>126.980</td>
+                <td>Burgas ATIS</td>
+              </tr>
+              <tr>
+                <th scope="row">LBGO_ATIS</th>
+                <td>127.130</td>
+                <td>Gorna ATIS</td>
+              </tr>
+              <tr>
+                <th scope="row">LBPD_ATIS</th>
+                <td>127.205</td>
+                <td>Plovdiv ATIS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

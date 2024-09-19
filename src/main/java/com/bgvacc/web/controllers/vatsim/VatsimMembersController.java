@@ -57,8 +57,6 @@ public class VatsimMembersController {
   @GetMapping("/members/staff")
   public String getStaff(Model model) {
 
-    model.addAttribute("pageTitle", "Staff");
-
     VatEudRoster vatEudRoster = coreApi.getRoster();
 
     for (VatEudRoster.VatEudRosterData.VatEudRosterStaff vers : vatEudRoster.getData().getStaff().get(0)) {
@@ -90,13 +88,15 @@ public class VatsimMembersController {
 
     model.addAttribute("roster", vatEudRoster);
 
+    model.addAttribute("pageTitle", "Staff");
+    model.addAttribute("page", "members");
+    model.addAttribute("subpage", "staff");
+
     return "vatsim/members/staff";
   }
 
   @GetMapping("/members/solo-validations")
   public String getMembersSoloValidations(Model model) {
-
-    model.addAttribute("pageTitle", "Solo validations");
 
     VatsimMemberSoloValidations memberSoloValidations = coreApi.getMemberSoloValidations();
 
@@ -112,6 +112,10 @@ public class VatsimMembersController {
     }
 
     model.addAttribute("soloValidations", memberSoloValidations);
+
+    model.addAttribute("pageTitle", "Solo validations");
+    model.addAttribute("page", "members");
+    model.addAttribute("subpage", "solo-validations");
 
     return "vatsim/members/solo-validations";
   }
@@ -135,6 +139,8 @@ public class VatsimMembersController {
 //      VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(vmsv.getUserCid());
 //    }
     model.addAttribute("pageTitle", "Training staff");
+    model.addAttribute("page", "members");
+    model.addAttribute("subpage", "training-staff");
 
     return "vatsim/members/training-staff";
   }

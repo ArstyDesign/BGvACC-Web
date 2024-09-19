@@ -27,7 +27,7 @@ public class VatsimATCController extends Base {
   @GetMapping("/atc/career-application")
   public String prepareATCCareerApplication(Model model) {
 
-    model.addAttribute("pageTitle", getMessage("atcapplication.title"));
+    model.addAttribute("pageTitle", getMessage("atc.application.title"));
 
     model.addAttribute("aam", new ATCApplicationModel());
 
@@ -45,7 +45,7 @@ public class VatsimATCController extends Base {
 
     if (bindingResult.hasErrors()) {
 
-      model.addAttribute("pageTitle", getMessage("atcapplication.title"));
+      model.addAttribute("pageTitle", getMessage("atc.application.title"));
 
       model.addAttribute("page", "atc");
       model.addAttribute("subpage", "application");
@@ -54,5 +54,35 @@ public class VatsimATCController extends Base {
     }
 
     return "redirect:/atc/career-application";
+  }
+
+  @GetMapping("/atc/training-files")
+  public String getTrainingFiles(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("atc.trainingfiles.title"));
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "training-files");
+
+    return "atc/training-files";
+  }
+  
+  @GetMapping("/atc/stations")
+  public String getStations(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("atc.stations.title"));
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "stations");
+
+    return "atc/stations";
+  }
+  
+  @GetMapping("/atc/downloads")
+  public String getDownloads(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("atc.downloads.title"));
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "downloads");
+
+    return "atc/downloads";
   }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{pilots.charts.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      <div class="row">
+
+        <!-- LBSF -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbsf-airport.jpg', alt='Sofia Airport', airportName=#{pilots.charts.lbsf}, link=@{/pilots/charts/lbsf})"></div>
+        </div>
+
+        <!-- LBWN -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbwn-airport.jpg', alt='Varna Airport', airportName=#{pilots.charts.lbwn}, link=@{/pilots/charts/lbwn})"></div>
+        </div>
+
+        <!-- LBBG -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbbg-airport.jpg', alt='Burgas Airport', airportName=#{pilots.charts.lbbg}, link=@{/pilots/charts/lbbg})"></div>
+        </div>
+
+        <!-- LBPD -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbpd-airport.jpg', alt='Plovdiv Airport', airportName=#{pilots.charts.lbpd}, link=@{/pilots/charts/lbpd})"></div>
+        </div>
+
+        <!-- LBGO -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbgo-airport.jpg', alt='Gorna Oryahovitsa Airport', airportName=#{pilots.charts.lbgo}, link=@{/pilots/charts/lbgo})"></div>
+        </div>
+
+        <!-- LBHT -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbht-airport.jpg', alt='Ihtiman Airport', airportName=#{pilots.charts.lbht}, link=@{/pilots/charts/lbht})"></div>
+        </div>
+
+        <!-- LBLS -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbls-airport.jpg', alt='Lesnovo Airport', airportName=#{pilots.charts.lbls}, link=@{/pilots/charts/lbls})"></div>
+        </div>
+
+        <!-- LBRS -->
+        <div class="col-12 col-xl-3 mb-4">
+          <div th:replace="fragments/fragments :: #chartCard(image='lbrs-airport.jpg', alt='Ruse Airport', airportName=#{pilots.charts.lbrs}, link=@{/pilots/charts/lbrs})"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

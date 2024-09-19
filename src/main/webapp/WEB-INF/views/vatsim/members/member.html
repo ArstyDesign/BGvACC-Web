@@ -75,7 +75,15 @@
                   </dl>
                   <dl class="col-12 col-md-4 mb-0 text-md-end">
                     <dt th:text="#{vatsim.members.member.atc.rating}">ATC rating</dt>
-                    <dd class="mb-0" th:text="#{vatsim.members.member.atc. + ${#strings.toLowerCase(memberDetails.atcRatingSymbol)}}">ATC rating</dd>
+                    <dd class="mb-0 d-flex align-items-center justify-content-end">
+                      <img src="#" th:src="@{/resources/icons/svg/atc-tower-trainee.svg}" width="20" class="me-2"
+                           th:if="${#strings.toLowerCase(memberDetails.atcRatingSymbol) eq 's1'}"/>
+                      <img src="#" th:src="@{/resources/icons/svg/atc-tower.svg}" width="20" class="me-2"
+                           th:if="${#strings.toLowerCase(memberDetails.atcRatingSymbol) eq 's2'}"/>
+                      <img src="#" th:src="@{/resources/icons/svg/atc-tma-sofia.svg}" width="20" class="me-2"
+                           th:if="${#strings.toLowerCase(memberDetails.atcRatingSymbol) eq 's3'}"/>
+                      <span th:text="#{vatsim.members.member.atc. + ${#strings.toLowerCase(memberDetails.atcRatingSymbol)}}">ATC rating</span>
+                    </dd>
                   </dl>
                 </div>
               </div>
@@ -123,15 +131,24 @@
                   </thead>
                   <tbody>
                     <tr th:if="${!memberStatistics.s1Time.isTimeEmptyOrNull}">
-                      <th scope="row" th:text="#{vatsim.members.member.connections.atcratings.s1}">Student 1</th>
+                      <th scope="row" class="d-flex align-items-center">
+                        <img src="#" th:src="@{/resources/icons/svg/atc-tower-trainee.svg}" width="25" class="me-2"/>
+                        <span th:text="#{vatsim.members.member.connections.atcratings.s1}">Student 1</span>
+                      </th>
                       <td class="text-end text-md-start" th:text="${memberStatistics.s1Time}">S1</td>
                     </tr>
                     <tr th:if="${!memberStatistics.s2Time.isTimeEmptyOrNull}">
-                      <th scope="row" th:text="#{vatsim.members.member.connections.atcratings.s2}">Student 2</th>
+                      <th scope="row" class="d-flex align-item-center">
+                        <img src="#" th:src="@{/resources/icons/svg/atc-tower.svg}" width="25" class="me-2"/>
+                        <span th:text="#{vatsim.members.member.connections.atcratings.s2}">Student 2</span>
+                      </th>
                       <td class="text-end text-md-start" th:text="${memberStatistics.s2Time}">S2</td>
                     </tr>
                     <tr th:if="${!memberStatistics.s3Time.isTimeEmptyOrNull}">
-                      <th scope="row" th:text="#{vatsim.members.member.connections.atcratings.s3}">Student 3</th>
+                      <th scope="row"  class="d-flex align-item-center">
+                        <img src="#" th:src="@{/resources/icons/svg/atc-tma-sofia.svg}" width="25" class="me-2"/>
+                        <span th:text="#{vatsim.members.member.connections.atcratings.s3}">Student 3</span>
+                      </th>
                       <td class="text-end text-md-start" th:text="${memberStatistics.s3Time}">S3</td>
                     </tr>
                     <tr th:if="${!memberStatistics.c1Time.isTimeEmptyOrNull}">

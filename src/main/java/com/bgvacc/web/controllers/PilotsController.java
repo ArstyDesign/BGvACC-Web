@@ -1,11 +1,15 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.utils.ChartsService;
+import com.bgvacc.web.vatsim.charts.AirportCharts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -17,11 +21,57 @@ public class PilotsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
+  @Autowired
+  private ChartsService chartsService;
+
   @GetMapping("/pilots/bulgarian-sceneries")
   public String getBulgarianSceneries(Model model) {
 
-    model.addAttribute("pageTitle", "LBSF FIR Airports Sceneries");
+    model.addAttribute("pageTitle", getMessage("pilots.bgsceneries.title"));
+    model.addAttribute("page", "pilots");
+    model.addAttribute("subpage", "bulgarian-sceneries");
 
-    return "vatsim/pilots/bulgarian-sceneries";
+    return "pilots/bulgarian-sceneries";
+  }
+
+  @GetMapping("/pilots/charts")
+  public String getCharts(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("pilots.charts.title"));
+    model.addAttribute("page", "pilots");
+    model.addAttribute("subpage", "charts");
+
+    return "pilots/charts";
+  }
+
+  @GetMapping("/pilots/charts/{airportIcao}")
+  public String getAirportCharts(@PathVariable("airportIcao") String airportIcao, Model model) {
+
+    AirportCharts charts = chartsService.getAirportCharts(airportIcao);
+    model.addAttribute("charts", charts);
+
+    String pageTitle = getMessage("pilots.charts.view." + airportIcao.toLowerCase() + ".title");
+
+    if (pageTitle != null && !pageTitle.trim().isEmpty()) {
+      model.addAttribute("pageTitle", pageTitle);
+      model.addAttribute("title", pageTitle);
+    } else {
+      model.addAttribute("title", getMessage("pilots.charts.view.defaulttitle"));
+    }
+
+    model.addAttribute("page", "pilots");
+    model.addAttribute("subpage", "charts");
+
+    return "pilots/charts-view";
+  }
+
+  @GetMapping("/pilots/airspace")
+  public String getBulgarianAirspace(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("pilots.airspace.title"));
+    model.addAttribute("page", "pilots");
+    model.addAttribute("subpage", "airspace");
+
+    return "pilots/airspace";
   }
 }

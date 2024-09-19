@@ -32,7 +32,7 @@
                                     </li>-->
                   <!--<li><hr class="dropdown-divider"></li>-->
                   <li>
-                    <a class="dropdown-item" href="https://bgvacc.com/wp-content/uploads/2021/07/BGvACC_constitution.docx-2.pdf" target="_blank"
+                    <a class="dropdown-item" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}" target="_blank"
                        th:text="#{menu.rules.constitution}">Constitution</a>
                   </li>
                 </ul>
@@ -73,32 +73,39 @@
                     <a class="dropdown-item" href="#" th:text="#{menu.atc.information}">Information</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.atc.trainingfiles}">Training files</a>
+                    <a class="dropdown-item" href="#" th:href="@{/atc/training-files}"
+                       th:classappend="${page eq 'atc' and subpage eq 'training-files'} ? 'active'" th:text="#{menu.atc.trainingfiles}">Training files</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="#" th:text="#{menu.atc.loas}">Letter of Agreements</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.atc.stations}">Stations</a>
+                    <a class="dropdown-item" href="#" th:href="@{/atc/stations}"
+                       th:classappend="${page eq 'atc' and subpage eq 'stations'} ? 'active'" th:text="#{menu.atc.stations}">Stations</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.atc.atcdownloads}">ATC Downloads</a>
+                    <a class="dropdown-item" href="#" th:href="@{/atc/downloads}"
+                       th:classappend="${page eq 'atc' and subpage eq 'downloads'} ? 'active'" th:text="#{menu.atc.atcdownloads}">ATC Downloads</a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   th:classappend="${page eq 'pilots'} ? 'active'">
                   <span th:text="#{menu.pilots}">Pilots</span>
                 </a>
                 <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.pilots.airspace}">Airspace</a>
+                    <a class="dropdown-item" href="#" th:href="@{/pilots/airspace}"
+                       th:classappend="${page eq 'pilots' and subpage eq 'airspace'} ? 'active'" th:text="#{menu.pilots.airspace}">Airspace</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.pilots.charts}">Charts</a>
+                    <a class="dropdown-item" href="#" th:href="@{/pilots/charts}"
+                       th:classappend="${page eq 'pilots' and subpage eq 'charts'} ? 'active'" th:text="#{menu.pilots.charts}">Charts</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/pilots/bulgarian-sceneries}" th:text="#{menu.pilots.sceneries}">Sceneries</a>
+                    <a class="dropdown-item" href="#" th:href="@{/pilots/bulgarian-sceneries}"
+                       th:classappend="${page eq 'pilots' and subpage eq 'bulgarian-sceneries'} ? 'active'" th:text="#{menu.pilots.sceneries}">Sceneries</a>
                   </li>
                   <!--                  <li>
                                       <a class="dropdown-item" href="#">Info</a>
@@ -106,29 +113,51 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span th:text="#{menu.membersstaff}">Members &amp; staff</span>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   th:classappend="${page eq 'members'} ? 'active'">
+                  <span th:utext="#{menu.membersstaff}">Members &amp; staff</span>
                 </a>
                 <ul class="dropdown-menu" style="z-index: 1500 !important;">
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/staff}" th:text="#{menu.membersstaff.staff}">Staff team</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/staff}"
+                       th:classappend="${page eq 'members' and subpage eq 'staff'} ? 'active'" th:text="#{menu.membersstaff.staff}">Staff team</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/solo-validations}" th:text="#{menu.membersstaff.solos}">Solo validations</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/solo-validations}"
+                       th:classappend="${page eq 'members' and subpage eq 'solo-validations'} ? 'active'" th:text="#{menu.membersstaff.solos}">Solo validations</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/training-staff}" th:text="#{menu.membersstaff.trainingstaff}">Training staff</a>
+                    <a class="dropdown-item" href="#" th:href="@{/members/training-staff}"
+                       th:classappend="${page eq 'members' and subpage eq 'training-staff'} ? 'active'" th:text="#{menu.membersstaff.trainingstaff}">Training staff</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="#" th:text="#{menu.membersstaff.visitingcontrollers}">Visiting controllers</a>
                   </li>
                 </ul>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
+                  <!--<span th:text="#{language. + #{language.current}}">Language</span>-->
+                </a>
+                <ul class="dropdown-menu" style="z-index: 1500 !important;" th:with="lang=#{language.current}">
+                  <li>
+                    <a class="dropdown-item" href="?lang=en"
+                       th:classappend="${lang eq 'en'} ? 'active'">
+                      <i class="fi fi-gb me-1"></i>
+                      <span th:text="#{language.en}">English</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="?lang=bg"
+                       th:classappend="${lang eq 'bg'} ? 'active'">
+                      <i class="fi fi-bg me-1"></i>
+                      <span th:text="#{language.bg}">Bulgarian</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
             </ul>
-            <!--            <form class="d-flex" role="search">
-                          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                          <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>-->
           </div>
         </div>
       </nav>
@@ -247,6 +276,20 @@
               </ul>
             </div>
           </footer>
+        </div>
+      </div>
+    </div>
+
+    <div id="chartCard" th:remove="tag">
+      <div class="card h-100">
+        <a href="#" th:href="${link}">
+          <img src="#" th:src="@{/resources/img/airports/} + ${image}" class="card-img-top" alt="#" th:alt="${alt}"/>
+        </a>
+        <div class="card-body">
+          <h5 class="card-title" th:text="${airportName}">Airport name</h5>
+          <div class="card-text">
+            <a href="#" th:href="${link}" class="btn btn-success" th:text="#{pilots.charts.view}">View charts</a>
+          </div>
         </div>
       </div>
     </div>

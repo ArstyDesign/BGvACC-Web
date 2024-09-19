@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{pilots.airspace.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      <div class="row">
+        <div class="col-12 mb-3">
+
+          <p th:text="#{pilots.airspace.p1}">Bulgarian airspace is mainly divided into two parts.</p>
+          
+          <p th:text="#{pilots.airspace.sofiactr.p1}">The western part is Sofia Control (LBSR_CTR), which covers central and western Bulgaria with the three major airports - Sofia (LBSF), Plovdiv (LBPD), Gorna Oryahovitsa (LBGO). This sector controls traffic from FL105 to FL660.</p>
+          <p th:text="#{pilots.airspace.sofiactr.p2}">The frequency of this sector is 131.225</p>
+          
+          <p th:text="#{pilots.airspace.varnactr.p1}">The eastern part is Varna Control (LBSR_V_CTR), which covers the eastern parts of Bulgaria, including the Black Sea coast as well as parts of the Black Sea. This includes the two major airports on the Black Sea - Varna (LBWN) and Burgas (LBBG). This sector controls traffic from FL105 to FL660.</p>
+          <p th:text="#{pilots.airspace.varnactr.p2}">The frequency of this sector is 134.700</p>
+
+          <div>
+            <img src="#" th:src="@{/resources/img/bg_map_outline.png}"/>
+          </div>
+
+          <div>
+            <img src="#" th:src="@{/resources/img/levels.png}"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{atc.downloads.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <h2>Recommended Euroscope version</h2>
+          <ul>
+            <li>
+              <a href="https://www.euroscope.hu/wp/2024/06/09/v3-2-2-3-and-v3-2-3-2-with-token-authentication-update/" target="_blank" style="text-decoration: none;">Euroscope 3.2.2.3 &amp; Euroscope 3.2.3.2</a>
+            </li>
+          </ul>
+          
+          <h2>vATIS</h2>
+          <ul>
+            <li>
+              <a href="https://github.com/vatis-project/vatis/releases" target="_blank" style="text-decoration: none;">vATIS Download</a>
+            </li>
+            <li>
+              <a href="https://bgvacc.com/download/vatis-profile-bulgaria/" target="_blank" style="text-decoration: none;">vATIS Profile – Bulgaria</a>
+            </li>
+          </ul>
+          
+          <h2>Sector files</h2>
+          <ul>
+            <li>
+              <a href="https://files.aero-nav.com/LBSR" target="_blank" style="text-decoration: none;">Sector files download</a>
+            </li>
+          </ul>
+          
+          <h2>Standard Operating Procedures</h2>
+          <ul>
+            <li>
+              <a href="#" th:href="@{/resources/atc-downloads/Standard_operations_in_Bulgaria.pdf}" target="_blank" style="text-decoration: none;">SOP</a>
+            </li>
+          </ul>
+          
+          <h2>Airport information</h2>
+          <ul>
+            <li>
+              <a href="https://bgvacc.com/download/sofia-airport/" target="_blank" style="text-decoration: none;">Sofia Airport</a>
+            </li>
+            <li>
+              <a href="https://bgvacc.com/download/varna-airport/" target="_blank" style="text-decoration: none;">Varna Airport</a>
+            </li>
+            <li>
+              <a href="https://bgvacc.com/download/sofia-airport/" target="_blank" style="text-decoration: none;">Burgas Airport</a>
+            </li>
+          </ul>
+          
+          <h2>Visiting controllers</h2>
+          <ul>
+            <li>
+              <a href="#" th:href="@{/resources/atc-downloads/BGvACC_Visiting_Controller_Procedure.pdf}" target="_blank" style="text-decoration: none;">Visiting Procedures</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
