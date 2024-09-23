@@ -8,7 +8,6 @@
   </head>
   <body>
     <div layout:fragment="contentDiv">
-      <!--<div>Member info</div>-->
 
       <div th:if="${memberDetails eq null}">
         <h1 class="h4 fst-italic">Member with CID <span class="h4" th:text="${cid}">CID</span> is not found</h1>

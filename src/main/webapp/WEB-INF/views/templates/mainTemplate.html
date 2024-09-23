@@ -37,8 +37,8 @@
     <!--<div th:replace="fragments :: #topbar"></div>-->
     <div th:replace="fragments/fragments :: #mainMenu"></div>
 
-    <div class="container-fluid bg-secondary p-0" th:if="${pageTitle ne null}"
-         th:style="'background-image: url(\'' + @{/resources/img/bg.png} + '\'); background-repeat: no-repeat; background-size: cover;'">
+    <div class="container-fluid bg-primary bg-gradient p-0" th:if="${pageTitle ne null}">
+         <!--th:style="'background-image: url(\'' + @{/resources/img/bg.png} + '\'); background-repeat: no-repeat; background-size: cover;'">-->
       <div class="px-2 py-5" style="background: rgba(0, 0, 0, 0.4);">
         <div class="container px-0">
           <h1 class="text-white" th:text="${pageTitle}">Title</h1>

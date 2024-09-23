@@ -8,22 +8,15 @@
   </head>
   <body>
     <div layout:fragment="contentDiv">
-      <!--<div>Member info</div>-->
-
-      <div>
-        
-      </div>
-
-      <!--<div>Here</div>-->
 
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col" class="fw-bold">Name</th>
-            <th scope="col" class="fw-bold">Callsign</th>
-            <th scope="col" class="fw-bold">Position</th>
-            <th scope="col" class="fw-bold">VATSIM CID</th>
-            <th scope="col" class="fw-bold">Email</th>
+            <th scope="col" class="fw-bold" th:text="#{members.staff.name}">Name</th>
+            <th scope="col" class="fw-bold" th:text="#{members.staff.callsign}">Callsign</th>
+            <th scope="col" class="fw-bold" th:text="#{members.staff.position}">Position</th>
+            <th scope="col" class="fw-bold" th:text="#{members.staff.vatsimcid}">VATSIM CID</th>
+            <th scope="col" class="fw-bold" th:text="#{members.staff.email}">Email</th>
           </tr>
         </thead>
         <tbody>
@@ -32,28 +25,13 @@
             <td scope="row" th:text="${s.nameShort} ? ${s.nameShort} : '-'">CID</td>
             <td scope="row" th:text="${s.name} ? ${s.name} : '-'">Position</td>
             <td scope="row">
-              <a href="#" th:href="@{/members/} + ${s.cid}" th:text="${s.cid} ? ${s.cid} : '-'"
-                 style="text-decoration: none;">VATSIM CID</a>
+              <a href="#" th:href="@{/members/} + ${s.cid}" class="text-primary"
+                 th:text="${s.cid} ? ${s.cid} : '-'">VATSIM CID</a>
             </td>
             <td scope="row" th:text="${s.email} ? ${s.email} : '-'">Email</td>
           </tr>
         </tbody>
       </table>
-
-      <!--      <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="fw-bold">CID</th>
-                  <th scope="col" class="fw-bold">Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="c : ${roster.data.controllers}">
-                  <th scope="row" th:text="${c.cid}">CID</th>
-                  <th scope="row" th:text="${c.fullName}">Name</th>
-                </tr>
-              </tbody>
-            </table>-->
     </div>
   </body>
 </html>

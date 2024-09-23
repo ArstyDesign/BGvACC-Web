@@ -1,0 +1,1 @@
+sass --watch src/main/webapp/WEB-INF/resources/theme/scss/theme.scss src/main/webapp/WEB-INF/resources/theme/css/theme.css

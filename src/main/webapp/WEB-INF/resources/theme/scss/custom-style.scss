@@ -1,3 +1,9 @@
+* {
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .required::after {
   content: "*";
   margin-left: 2px;

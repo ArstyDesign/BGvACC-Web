@@ -4,45 +4,28 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title th:text="#{app.title('Training staff')}">BGvACC</title>
+    <title th:text="#{app.title(#{members.trainingstaff.title})}">BGvACC</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
-      <!--<div>Member info</div>-->
-
-      <!--<div>Here</div>-->
 
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col" class="fw-bold">Name</th>
-            <th scope="col" class="fw-bold">VATSIM CID</th>
-            <th scope="col" class="fw-bold">Rating</th>
+            <th scope="col" class="fw-bold" th:text="#{members.trainingstaff.name}">Name</th>
+            <th scope="col" class="fw-bold" th:text="#{members.trainingstaff.vatsimcid}">VATSIM CID</th>
+            <th scope="col" class="fw-bold" th:text="#{members.trainingstaff.rating}">Rating</th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="ts : ${trainingStaff.data}">
             <td th:text="${ts.fullName}">Name</td>
             <td scope="row">
-              <a href="#" th:href="@{/members/} + ${ts.cid}" th:text="${ts.cid} ? ${ts.cid} : '-'"
-                 style="text-decoration: none;">VATSIM CID</a>
+              <a href="#" th:href="@{/members/} + ${ts.cid}" class="text-primary"
+                 th:text="${ts.cid} ? ${ts.cid} : '-'">VATSIM CID</a>
             </td>
             <td th:text="#{members.member.atc. + ${#strings.toLowerCase(ts.atcRatingSymbol)}}">Rating</td>
           </tr>
-          <!--          <tr th:each="sv : ${examiners.data}">
-                      <th scope="row" th:text="${sv.fullName}">Name</th>
-                      <td>
-                        <a href="#" th:href="@{/members/} + ${sv.userCid}" target="_blank" style="text-decoration: none;"
-                           th:text="${sv.userCid}">CID</a>
-                      </td>
-                      <td th:text="${sv.position}">Position</td>
-                      <td th:text="${#dates.format(sv.expiry, 'dd MMMM yyyy')}">Expires on</td>
-                      <td>
-                        <a href="#" th:href="@{/members/} + ${sv.instructorCid}" target="_blank" style="text-decoration: none;"
-                           th:text="${sv.instructorCid}">Mentor CID</a>
-                      </td>
-                      <td th:text="${sv.instructorFullName}">Mentor name</td>
-                    </tr>-->
         </tbody>
       </table>
     </div>
