@@ -4,11 +4,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title th:text="#{app.title('Staff')}">BGvACC</title>
+    <title th:text="#{app.title(#{members.staff.title})}">BGvACC</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
       <!--<div>Member info</div>-->
+
+      <div>
+        
+      </div>
 
       <!--<div>Here</div>-->
 

@@ -27,7 +27,7 @@
               <a href="#" th:href="@{/members/} + ${ts.cid}" th:text="${ts.cid} ? ${ts.cid} : '-'"
                  style="text-decoration: none;">VATSIM CID</a>
             </td>
-            <td th:text="#{vatsim.members.member.atc. + ${#strings.toLowerCase(ts.atcRatingSymbol)}}">Rating</td>
+            <td th:text="#{members.member.atc. + ${#strings.toLowerCase(ts.atcRatingSymbol)}}">Rating</td>
           </tr>
           <!--          <tr th:each="sv : ${examiners.data}">
                       <th scope="row" th:text="${sv.fullName}">Name</th>

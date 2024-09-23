@@ -14,6 +14,8 @@ public class Memory {
   private static Memory instance;
 
   private final List<VatsimATC> onlineATCList;
+  
+  public boolean isAdded = false;
 
   private Memory() {
     this.onlineATCList = new ArrayList<>();

@@ -16,16 +16,21 @@
           </div>
 
           <div th:if="${charts ne null}" th:remove="tag">
-            <div th:text="#{pilots.charts.view.totalcharts(${charts.totalChartsCount})}" class="mb-4"></div>
+            <div th:text="#{pilots.charts.view.totalcharts(${charts.totalChartsCount})}" class="h5 mb-4"></div>
 
             <div class="row">
               <div class="col-12 mb-4">
-                <h2 class="h4 mb-3" th:text="#{pilots.charts.view.general}">General Charts</h2>
+                <h2 class="h4 mb-3">
+                  <i class="fa-solid fa-map me-2"></i>
+                  <span th:text="#{pilots.charts.view.general}">General Charts</span>
+                </h2>
                 <div class="" th:if="${charts.general eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
                 <div class="card" th:if="${charts.general ne null}">
                   <div class="card-body">
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${gc.pdf}" target="_blank" th:each="gc, iterStat : ${charts.general}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${gc.name}"></a>
+                    <div th:each="gc, iterStat : ${charts.general}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${gc.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${gc.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -33,54 +38,83 @@
 
             <div class="row">
               <div class="col-12 mb-4">
-                <h2 class="h4 mb-3" th:text="#{pilots.charts.view.taxi}">Taxi &amp; parking Charts</h2>
+                <h2 class="h4 mb-3">
+                  <i class="fa-solid fa-road me-2"></i>
+                  <span th:text="#{pilots.charts.view.taxi}">Taxi &amp; parking Charts</span>
+                </h2>
                 <div class="" th:if="${charts.taxi eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
                 <div class="card" th:if="${charts.taxi ne null}">
                   <div class="card-body">
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${tc.pdf}" target="_blank" th:each="tc, iterStat : ${charts.taxi}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${tc.name}"></a>
+                    <div th:each="tc, iterStat : ${charts.taxi}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${tc.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${tc.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <h2 class="h4 mb-3" th:text="#{pilots.charts.view.sid}">SID - Standard Instrument Departure Charts</h2>
+            <h2 class="h4 mb-3">
+              <i class="fa-solid fa-plane-departure me-2"></i>
+              <span th:text="#{pilots.charts.view.sid}">SID - Standard Instrument Departure Charts</span>
+            </h2>
             <div class="row">
               <div class="mb-4" th:if="${charts.sid eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
               <div class="col-12 col-lg-6 mb-4" th:each="c : ${charts.sid}" th:if="${charts.sid ne null}">
                 <div class="card h-100">
                   <div class="card-body">
-                    <div class="card-title h6" th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</div>
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" th:each="cr, iterStat : ${c.value}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    <div class="card-title h5">
+                      <i class="fa-solid fa-road"></i>
+                      <span th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</span>
+                    </div>
+                    <div th:each="cr, iterStat : ${c.value}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <h2 class="h4 mb-3" th:text="#{pilots.charts.view.star}">STAR - Standard Arrival Charts</h2>
+            <h2 class="h4 mb-3">
+              <i class="fa-solid fa-plane me-2"></i>
+              <span th:text="#{pilots.charts.view.star}">STAR - Standard Arrival Charts</span>
+            </h2>
             <div class="row">
               <div class="mb-4" th:if="${charts.star eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
               <div class="col-12 col-lg-6 mb-4" th:each="c : ${charts.star}" th:if="${charts.star ne null}">
                 <div class="card h-100">
                   <div class="card-body">
-                    <div class="card-title h6" th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</div>
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" th:each="cr, iterStat : ${c.value}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    <div class="card-title h5">
+                      <i class="fa-solid fa-road"></i>
+                      <span th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</span>
+                    </div>
+                    <div th:each="cr, iterStat : ${c.value}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <h2 class="h4 mb-3" th:text="#{pilots.charts.view.app}">APP - Instrument Approach Charts</h2>
+            <h2 class="h4 mb-3">
+              <i class="fa-solid fa-plane-arrival me-2"></i>
+              <span th:text="#{pilots.charts.view.app}">APP - Instrument Approach Charts</span>
+            </h2>
             <div class="row">
               <div class="mb-4" th:if="${charts.app eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
               <div class="col-12 col-lg-6 mb-4" th:each="c : ${charts.app}" th:if="${charts.app ne null}">
                 <div class="card h-100">
                   <div class="card-body">
-                    <div class="card-title h6" th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</div>
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" th:each="cr, iterStat : ${c.value}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    <div class="card-title h5">
+                      <i class="fa-solid fa-road"></i>
+                      <span th:text="#{pilots.charts.view.runwayd(${c.key})}">RWY</span>
+                    </div>
+                    <div th:each="cr, iterStat : ${c.value}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${cr.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${cr.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -88,22 +122,32 @@
 
             <div class="row">
               <div class="col-12 col-lg-6 mb-4">
-                <h2 class="h4 mb-3" th:text="#{pilots.charts.view.visualapp}">Visual APP - Visual Approach Charts</h2>
+                <h2 class="h4 mb-3">
+                  <i class="fa-solid fa-eye me-2"></i>
+                  <span th:text="#{pilots.charts.view.visualapp}">Visual APP - Visual Approach Charts</span>
+                </h2>
                 <div class="" th:if="${charts.visualApp eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
                 <div class="card" th:if="${charts.visualApp ne null}">
                   <div class="card-body">
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${vac.pdf}" target="_blank" th:each="vac, iterStat : ${charts.visualApp}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${vac.name}"></a>
+                    <div th:each="vac, iterStat : ${charts.visualApp}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${vac.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${vac.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 mb-4">
-                <h2 class="h4 mb-3" th:text="#{pilots.charts.view.other}">Other charts and documents</h2>
+                <h2 class="h4 mb-3">
+                  <i class="fa-solid fa-file me-2"></i>
+                  <span th:text="#{pilots.charts.view.other}">Other charts and documents</span>
+                </h2>
                 <div class="" th:if="${charts.others eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
                 <div class="card" th:if="${charts.others ne null}">
                   <div class="card-body">
-                    <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${oc.pdf}" target="_blank" th:each="oc, iterStat : ${charts.others}" class="d-block" style="text-decoration: none;"
-                       th:text="${iterStat.count} + '. ' + ${oc.name}"></a>
+                    <div th:each="oc, iterStat : ${charts.others}" th:classappend="${!iterStat.isLast} ? 'mb-2'">
+                      <a href="#" th:href="@{/resources/charts/} + ${charts.directory} + '/' + ${oc.pdf}" target="_blank" class="text-primary link-underline"
+                         th:text="${iterStat.count} + '. ' + ${oc.name}"></a>
+                    </div>
                   </div>
                 </div>
               </div>

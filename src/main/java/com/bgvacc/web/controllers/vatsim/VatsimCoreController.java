@@ -51,6 +51,8 @@ public class VatsimCoreController {
     switch (callsign.toUpperCase()) {
       case "LBSR_CTR":
         return new VatsimATCInfo(callsign, "Sofia Control", "131.225");
+      case "LBSR_V_CTR":
+        return new VatsimATCInfo(callsign, "Sofia Control", "134.700");
       case "LBSF_TWR":
         return new VatsimATCInfo(callsign, "Sofia Tower", "118.100");
       case "LBSF_APP":

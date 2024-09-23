@@ -4,6 +4,7 @@ import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
+import com.bgvacc.web.beans.Version;
 import java.nio.charset.StandardCharsets;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,11 @@ public class BGvACCApplication {
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
     return restTemplate;
+  }
+
+  @Bean
+  public Version version() {
+    return new Version();
   }
 
   @Bean

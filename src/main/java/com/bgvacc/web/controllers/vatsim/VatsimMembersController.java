@@ -2,12 +2,12 @@ package com.bgvacc.web.controllers.vatsim;
 
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
+import com.bgvacc.web.base.Base;
 import com.bgvacc.web.vatsim.members.VatsimMemberDetails;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
 import com.bgvacc.web.vatsim.members.VatsimMemberTrainingStaff;
 import com.bgvacc.web.vatsim.roster.VatEudRoster;
-import com.bgvacc.web.vatsim.roster.VatEudRoster.VatEudRosterData.VatEudRosterController;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.controller;
 
 /**
  *
@@ -26,7 +25,7 @@ import static org.springframework.web.servlet.mvc.method.annotation.MvcUriCompon
  * @since 1.0.0
  */
 @Controller
-public class VatsimMembersController {
+public class VatsimMembersController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -88,7 +87,7 @@ public class VatsimMembersController {
 
     model.addAttribute("roster", vatEudRoster);
 
-    model.addAttribute("pageTitle", "Staff");
+    model.addAttribute("pageTitle", getMessage("#{members.staff.title}"));
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "staff");
 
@@ -113,7 +112,7 @@ public class VatsimMembersController {
 
     model.addAttribute("soloValidations", memberSoloValidations);
 
-    model.addAttribute("pageTitle", "Solo validations");
+    model.addAttribute("pageTitle", getMessage("members.solo.title"));
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "solo-validations");
 
