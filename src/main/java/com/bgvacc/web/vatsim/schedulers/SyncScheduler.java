@@ -1,7 +1,7 @@
 package com.bgvacc.web.vatsim.schedulers;
 
 import com.bgvacc.web.api.CoreApi;
-import com.bgvacc.web.vatsim.atc.VatsimATC;
+import com.bgvacc.web.services.VatsimEudRosterService;
 import com.bgvacc.web.vatsim.memory.Memory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,12 @@ public class SyncScheduler {
   @Autowired
   private CoreApi coreApi;
 
-  @Scheduled(fixedRate = 20000)
+  @Autowired
+  private VatsimEudRosterService vatsimEudRosterService;
+
+  @Scheduled(fixedRate = 30000)
   public void syncLiveATCs() {
+
     log.debug("Syncing live ATCs...");
 
     Memory memory = Memory.getInstance();
@@ -37,4 +41,19 @@ public class SyncScheduler {
 //      memory.addATC(new VatsimATC(1773453L, "LBBG_TWR", "1", 3, "Kristian", "Hristov"));
 //    }
   }
+
+  @Scheduled(cron = "0 0 0 * * *", zone = "UTC")
+  public void syncRosterControllers() {
+
+    log.debug("Syncing roster controllers...");
+
+    vatsimEudRosterService.getRosterControllers();
+  }
+
+//  @EventListener(ContextRefreshedEvent.class)
+//  public void onApplicationStart() throws InterruptedException {
+//    Thread.sleep(60000);
+//
+//    test();
+//  }
 }

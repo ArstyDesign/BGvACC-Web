@@ -21,7 +21,7 @@
         </thead>
         <tbody>
           <tr th:each="s : ${roster.data.staff[0]}">
-            <td scope="row" th:text="${s.fullName ne null} ? ${s.fullName} : '-'">Name</td>
+            <th scope="row" th:text="${s.fullName ne null} ? ${s.fullName} : '-'">Name</th>
             <td scope="row" th:text="${s.nameShort} ? ${s.nameShort} : '-'">CID</td>
             <td scope="row" th:text="${s.name} ? ${s.name} : '-'">Position</td>
             <td scope="row">

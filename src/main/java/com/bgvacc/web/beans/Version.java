@@ -1,7 +1,6 @@
 package com.bgvacc.web.beans;
 
 import com.bgvacc.web.base.Base;
-import static com.sun.deploy.uitoolkit.impl.fx.ui.resources.ResourceManager.getMessage;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;

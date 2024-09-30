@@ -5,6 +5,52 @@
     <div id="statusCard" th:remove="tag" th:with="isPositionNull=${position eq null}">
 
       <!--Card-->
+      <div class="overflow-hidden card card-body py-5 rounded-4 hover-lift
+           hover-shadow-lg flex-row align-items-stretch" th:classappend="${isPositionNull} ? 'border-light-subtle' : (${position.atcRatingSymbol eq 'S1' or position.atcRatingSymbol eq 'S2' or position.atcRatingSymbol eq 'S3'} ? 'border-success' : 'border-accent')">
+        <!--Icon-->
+        <div class="me-4 flex-shrink-0 width-6x height-6x text-success flex-center position-relative">
+          <!--Icon bg shape-->
+          <svg class="position-absolute start-0 top-0 w-100 h-100"
+               preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+               width="84" height="92" viewBox="0 0 84 92" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M41.3828 0.0129826C55.5202 -0.410183 67.474
+                  9.57304 75.7126 20.9401C83.3878 31.531 85.5334 44.6132 82.9678 57.3932C80.293 70.7184 74.4344
+                  84.5754 61.8454 90.0204C49.6096 95.312 36.2153 89.0111 24.4948 82.6812C13.7354 76.8709 3.88915
+                  68.9009 0.94914 57.1331C-2.04982 45.1292 2.39369 33.0501 9.56447 22.9202C17.4794 11.7389 27.5859
+                  0.425968 41.3828 0.0129826Z" th:fill="${isPositionNull} ? 'gray' : (${position.atcRatingSymbol eq 'S1' or position.atcRatingSymbol eq 'S2' or position.atcRatingSymbol eq 'S3'} ? 'green' : '#782BAA')" />
+          </svg>
+          <!--Icon-->
+          <!--<i class="icon-Idea-3 fs-3 text-white position-relative"></i>-->
+          <i class="icon-Sleeping fs-3 text-white position-relative" th:if="${isPositionNull}"></i>
+          <div th:if="${!isPositionNull}" th:remove="tag">
+            <i class="icon-Student-Hat fs-3 text-white position-relative" th:if="${position.atcRatingSymbol eq 'S1'}"></i>
+            <i class="icon-Administrator fs-3 text-white position-relative" th:if="${position.atcRatingSymbol eq 'S2'}"></i>
+            <i class="icon-Add-User fs-3 text-white position-relative" th:if="${position.atcRatingSymbol eq 'S3'}"></i>
+            <i class="icon-Tie fs-3 text-white position-relative" th:if="${position.atcRatingSymbol ne 'S1' and position.atcRatingSymbol ne 'S2' and position.atcRatingSymbol ne 'S3'}"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <!--Title-->
+          <div class="h5 mb-3">
+            <a href="#" th:href="@{/members/} + ${position.id}" target="_blank"
+               th:if="${!isPositionNull and position.fullName ne null}" th:text="${position.fullName} + ' (' + ${position.id} + ')'">ID</a>
+            <span th:if="${!isPositionNull and position.fullName eq null}" th:text="${position.id}">ID</span>
+            <span th:if="${isPositionNull}">-</span>
+          </div>
+          <!--Description-->
+          <div class="h6 mb-0"
+               th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</div>
+          <div class="mb-0"
+               th:utext="#{fragments.controllerstatus.controllerinfo((${!isPositionNull} ? (#{members.member.atc. + ${#strings.toLowerCase(position.atcRatingSymbol)}}) : '-'))}"></div>
+        </div>
+      </div>
+      <div id="positionOpened" th:if="${!isPositionNull}"></div>
+      <div id="positionClosed" th:if="${isPositionNull}"></div>
+    </div>
+
+    <div id="statusCardCenteredHorizontally" th:remove="tag" th:with="isPositionNull=${position eq null}">
+
+      <!--Card-->
       <div class="overflow-hidden card card-body rounded-4 hover-lift text-center d-block shadow-sm"
            th:classappend="${isPositionNull} ? 'border-light-subtle' : (${position.atcRatingSymbol eq 'S1' or position.atcRatingSymbol eq 'S2' or position.atcRatingSymbol eq 'S3'} ? 'border-success' : 'border-accent')">
         <!--Icon-->
@@ -45,60 +91,6 @@
 
       <div id="positionOpened" th:if="${!isPositionNull}"></div>
       <div id="positionClosed" th:if="${isPositionNull}"></div>
-    </div>
-
-
-    <div id="statusCard4" th:remove="tag" th:with="isPositionNull=${position eq null}">
-
-      <!--Card-->
-      <div class="overflow-hidden card card-body py-5 rounded-4 hover-lift
-           hover-shadow-lg flex-row align-items-stretch">
-        <!--Icon-->
-        <div class="me-4 flex-shrink-0 width-6x height-6x text-success flex-center position-relative">
-          <!--Icon bg shape-->
-          <svg class="position-absolute start-0 top-0 w-100 h-100" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="84" height="92" viewBox="0 0 84 92" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M41.3828 0.0129826C55.5202 -0.410183 67.474
-                  9.57304 75.7126 20.9401C83.3878 31.531 85.5334 44.6132 82.9678 57.3932C80.293 70.7184 74.4344
-                  84.5754 61.8454 90.0204C49.6096 95.312 36.2153 89.0111 24.4948 82.6812C13.7354 76.8709 3.88915
-                  68.9009 0.94914 57.1331C-2.04982 45.1292 2.39369 33.0501 9.56447 22.9202C17.4794 11.7389 27.5859
-                  0.425968 41.3828 0.0129826Z" fill="red"></path>
-          </svg>
-          <!--<i class="bi bi-house"></i>-->
-          <i class="bi bi-house fs-3 text-white position-relative"></i>
-          <!--Icon-->
-          <i class="icon-Idea-3 fs-3 text-white position-relative"></i>
-        </div>
-        <div class="flex-grow-1">
-          <!--Title-->
-          <div class="h5 mb-3">
-            <a href="#" th:href="@{/members/} + ${position.id}" style="text-decoration: none;"
-               th:if="${!isPositionNull}" th:text="${position.fullName} + ' (' + ${position.id} + ')'">ID</a>
-            <span th:if="${isPositionNull}">-</span>
-          </div>
-          <!--Description-->
-          <div class="mb-0"
-               th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</div>
-          <div class="mb-0"
-               th:text="#{fragments.controllerstatus.controllerinfo((${!isPositionNull} ? (#{members.member.atc. + ${#strings.toLowerCase(position.atcRatingSymbol)}}) : '-'))}"></div>
-        </div>
-      </div>
-
-
-    </div>
-
-    <div id="statusCard2" th:remove="tag" th:with="isPositionNull=${position eq null}">
-      <div class="card" th:classappend="${!isPositionNull} ? 'border-success' : 'border-light-subtle'">
-        <div class="card-body">
-          <div class="card-title h5">
-            <a href="#" th:href="@{/members/} + ${position.id}" style="text-decoration: none;"
-               th:if="${!isPositionNull}" th:text="${position.fullName} + ' (' + ${position.id} + ')'">ID</a>
-            <span th:if="${isPositionNull}">-</span>
-          </div>
-          <div class="card-subtitle mb-2 h6 text-body-secondary"
-               th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</div>
-          <div class='card-subtitel mb-0 text-body-secondary' th:text="#{fragments.controllerstatus.controllerinfo((${!isPositionNull} ? (#{members.member.atc. + ${#strings.toLowerCase(position.atcRatingSymbol)}}) : '-'))}"></div>
-        </div>
-      </div>
     </div>
   </body>
 </html>

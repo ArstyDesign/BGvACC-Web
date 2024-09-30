@@ -9,7 +9,7 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      <div class="mb-3" th:text="#{members.solo.message}">Solo validations aim to give the ATC candidates an opportunity to practice what they've learned throughout the training. The candidates could connect at the approved position and control without being directly supervised by a mentor.</div>
+      <div class="mb-4" th:text="#{members.solo.message}">Solo validations aim to give the ATC candidates an opportunity to practice what they've learned throughout the training. The candidates could connect at the approved position and control without being directly supervised by a mentor.</div>
 
       <div th:if="${soloValidations eq null or soloValidations.data eq null or soloValidations.data.size eq 0}" th:remove="tag">
         <h1 class="h4 mb-3 fst-italic" th:text="#{members.solo.notfound}">No solo validations found</h1>

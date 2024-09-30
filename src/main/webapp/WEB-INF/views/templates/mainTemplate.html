@@ -21,7 +21,7 @@
 
     <!--Bootstrap icons-->
     <link th:href="@{/resources/fonts/bootstrap-icons/bootstrap-icons.css}" href="../../resources/fonts/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"/>
-    
+
     <!--Iconsmind icons-->
     <link th:href="@{/resources/fonts/iconsmind/iconsmind.css}" href="../../resources/fonts/iconsmind/iconsmind.css" rel="stylesheet"/>
 
@@ -38,15 +38,15 @@
     <div th:replace="fragments/fragments :: #mainMenu"></div>
 
     <div class="container-fluid bg-primary bg-gradient p-0" th:if="${pageTitle ne null}">
-         <!--th:style="'background-image: url(\'' + @{/resources/img/bg.png} + '\'); background-repeat: no-repeat; background-size: cover;'">-->
-      <div class="px-2 py-5" style="background: rgba(0, 0, 0, 0.4);">
+      <!--th:style="'background-image: url(\'' + @{/resources/img/bg.png} + '\'); background-repeat: no-repeat; background-size: cover;'">-->
+      <div class="px-2 py-4" style="background: rgba(0, 0, 0, 0.4);">
         <div class="container px-0">
-          <h1 class="text-white" th:text="${pageTitle}">Title</h1>
+          <h1 class="text-white mb-0" th:text="${pageTitle}">Title</h1>
         </div>
       </div>
     </div>
 
-    <div class="container px-0 mt-3" th:if="${breadcrumbs ne null}">
+    <div class="container px-sm-0 mt-3" th:if="${breadcrumbs ne null}">
       <!--      <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item" th:each="b, iterStat : ${breadcrumbs}" th:classappend="${iterStat.last or b.url eq null} ? 'active'">
@@ -65,9 +65,9 @@
           <li th:each="b, iterStat : ${breadcrumbs}" class="breadcrumb-item" th:classappend="${iterStat.last or b.url eq null} ? 'active'">
             <a th:href="@{${b.url}}" th:if="${b.url ne null}">
               <i class="bi bi-house fs-5" th:if="${iterStat.first}"></i>
-              <span th:text="${b.label}" th:if="${!iterStat.first}">Item</span>
+              <span th:utext="${b.label}" th:if="${!iterStat.first}">Item</span>
             </a>
-            <span th:if="${b.url eq null}" th:text="${b.label}"></span>
+            <span th:if="${b.url eq null}" th:utext="${b.label}"></span>
           </li>
         </ol>
       </nav>
@@ -81,6 +81,7 @@
 
     <div th:replace="fragments/fragments :: #footer"></div>
 
+    <!--<script src="../../resources/theme/js/theme.bundle.js" th:src="@{/resource/theme/js/theme.bundle.js}"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 

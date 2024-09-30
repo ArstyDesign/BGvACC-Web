@@ -4,37 +4,78 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Vatsim events</title>
+    <title th:text="#{app.title(#{events.title})}">BGvACC</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
-      <div th:if="${#lists.isEmpty(bulgariaEvents.data)}" th:remove="tag">
-        <h1 class="h4 fst-italic">Events not found.</h1>
+      <div th:if="${#lists.isEmpty(events.data)}" th:remove="tag">
+        <h1 class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</h1>
       </div>
 
-      <div class="row" th:if="${!#lists.isEmpty(bulgariaEvents.data)}">
-        <div class="col-12 col-md-4 mb-3" th:each="e : ${bulgariaEvents.data}">
-          <div class="card">
-            <a href="#" th:href="@{/events/} + ${e.id}">
-              <img src="#" th:src="${e.banner}" class="card-img-top" alt="..."/>
-            </a>
-            <div class="card-body">
-              <h5 class="card-title" th:text="${e.name}">Card title</h5>
-              <p class="card-text" th:text="${e.shortDescription}">Description</p>
-              <div class="mb-3">
-                <span th:text="${e.timeFrame}">-</span>
-              </div>
-              <div class="mb-3">
-                <span class="fw-bold" th:text="${e.airports.size gt 1} ? 'Airports:' : 'Airport:'">Airports:</span>
-                <span th:each="a, iStat : ${e.airports}" th:text="${iStat.last} ? ${a.icao} : (${a.icao} + ', ')"></span>
-              </div>
+      <div class="row" th:if="${!#lists.isEmpty(events.data)}">
+        <div class="h5 mb-4" th:text="#{events.total(${events.data.size})}">Active events</div>
 
-              <a href="#" th:href="@{/events/} + ${e.id}" class="btn btn-primary">View event</a>
+        <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="e : ${events.data}">
+          <!--article-->
+          <article class="card-hover card shadow-sm hover-lift hover-shadow-lg overflow-hidden rounded-3">
+            <!--image-->
+            <a href="#" th:href="@{/events/} + ${e.id}" class="d-block overflow-hidden">
+              <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
+            </a>
+            <div class="position-relative d-block p-4">
+              <!--Date-->
+              <div class="mb-2">
+                <a href="#" th:href="@{/events/} + ${e.id}" class="text-reset mb-3">
+                  <h5 class="link-multiline" th:text="${e.name}">Title</h5>
+                </a>
+              </div>
+              <div class="row">
+                <div class="col-12 col-xl-6 mb-3">
+                  <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
+                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
+
+                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
+                </div>
+                <div class="col-12 col-xl-6 text-xl-end mb-3">
+                  <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.arrivalairports} : #{events.arrivalairport}">Arrival airports</div>
+                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
+                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
+                </div>
+              </div>
+              <div class="">
+                <div class="fw-bold" th:text="#{events.datetime}">Date &amp; time</div>
+                <div class="text-body-secondary" th:text="${e.timeFrame}">Mar 12, 2021</div>
+              </div>
             </div>
-          </div>
+          </article>
+          <!--/.article-->
         </div>
       </div>
+      <!--      <div class="row" th:if="${!#lists.isEmpty(bulgariaEvents.data)}">
+              <div class="col-12 col-md-4 mb-3" th:each="e : ${bulgariaEvents.data}">
+                <div class="card">
+                  <a href="#" th:href="@{/events/} + ${e.id}">
+                    <img src="#" th:src="${e.banner}" class="card-img-top" alt="..."/>
+                  </a>
+                  <div class="card-body">
+                    <h5 class="card-title" th:text="${e.name}">Card title</h5>
+                    <p class="card-text" th:text="${e.shortDescription}">Description</p>
+                    <div class="mb-3">
+                      <span th:text="${e.timeFrame}">-</span>
+                    </div>
+                    <div class="mb-3">
+                      <span class="fw-bold" th:text="${e.airports.size gt 1} ? 'Airports:' : 'Airport:'">Airports:</span>
+                      <span th:each="a, iStat : ${e.airports}" th:text="${iStat.last} ? ${a.icao} : (${a.icao} + ', ')"></span>
+                    </div>
+      
+                    <a href="#" th:href="@{/events/} + ${e.id}" class="btn btn-primary">View event</a>
+                  </div>
+                </div>
+              </div>
+            </div>-->
     </div>
   </body>
 </html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{members.controllers.title})}">BGvACC</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="h3" th:text="#{members.controllers.total(${controllers.totalControllers})}">0</div>
+        </div>
+      </div>
+
+      <div th:if="${!#lists.isEmpty(controllers.controllersI3)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersI3}, title='i3')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersI2)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersI2}, title='i2')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersI1)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersI1}, title='i1')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersC3)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersC3}, title='c3')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersC2)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersC2}, title='c2')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersC1)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersC1}, title='c1')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersS3)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersS3}, title='s3')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersS2)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersS2}, title='s2')"></div>
+      
+      <div th:if="${!#lists.isEmpty(controllers.controllersS1)}"
+           th:replace="fragments/fragments :: #controllerCardWrapper(controllers=${controllers.controllersS1}, title='s1')"></div>
+
+<!--      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersI3)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.i3.title} + ' - ' + ${#lists.size(controllers.controllersI3)}">I3 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersI3}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersI2)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.i2.title} + ' - ' + ${#lists.size(controllers.controllersI2)}">I2 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersI2}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersI1)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.i1.title} + ' - ' + ${#lists.size(controllers.controllersI1)}">I1 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersI1}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersC3)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.c3.title} + ' - ' + ${#lists.size(controllers.controllersC3)}">C3 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersC3}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersC2)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.c2.title} + ' - ' + ${#lists.size(controllers.controllersC2)}">C2 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersC2}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersC1)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.c1.title} + ' - ' + ${#lists.size(controllers.controllersC1)}">C1 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersC1}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersS3)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.s3.title} + ' - ' + ${#lists.size(controllers.controllersS3)}">S3 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersS3}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersS2)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.s2.title} + ' - ' + ${#lists.size(controllers.controllersS2)}">S2 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersS2}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>
+
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers.controllersS1)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers.s1.title} + ' - ' + ${#lists.size(controllers.controllersS1)}">S1 controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-lg-3 mb-3" th:each="c : ${controllers.controllersS1}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
+        </div>
+      </div>-->
+    </div>
+  </body>
+</html>

@@ -19,12 +19,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class VatsimEvents implements Serializable {
+public class VatsimEventAirport implements Serializable {
 
-  @JsonProperty("success")
-  private boolean success;
+  @JsonProperty("arrival")
+  private List<String> arrival;
 
-  @JsonProperty("data")
-  private List<VatsimEventData> data;
+  @JsonProperty("departure")
+  private List<String> departure;
 
 }

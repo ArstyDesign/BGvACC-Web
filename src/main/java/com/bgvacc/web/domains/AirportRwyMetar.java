@@ -1,6 +1,6 @@
-package com.bgvacc.web.vatsim.events;
+package com.bgvacc.web.domains;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.aarshinkov.domain.Metar;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +18,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class VatsimAirports implements Serializable {
-
-  @JsonProperty("icao")
-  private String icao;
+public class AirportRwyMetar implements Serializable {
+  
+  private Metar metar;
+  private Runway runway;
 
 }

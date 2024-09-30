@@ -83,8 +83,11 @@ public class VatsimCoreController {
       if (onlineBulgarianATC.getCallsign().equalsIgnoreCase(position)) {
 
         VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(onlineBulgarianATC.getId());
-        onlineBulgarianATC.setFirstName(memberDetails.getData().getFirstName());
-        onlineBulgarianATC.setLastName(memberDetails.getData().getLastName());
+
+        if (memberDetails != null) {
+          onlineBulgarianATC.setFirstName(memberDetails.getData().getFirstName());
+          onlineBulgarianATC.setLastName(memberDetails.getData().getLastName());
+        }
         return onlineBulgarianATC;
       }
     }

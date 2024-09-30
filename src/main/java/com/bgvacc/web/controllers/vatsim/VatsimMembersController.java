@@ -3,6 +3,9 @@ package com.bgvacc.web.controllers.vatsim;
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.domains.Controllers;
+import com.bgvacc.web.services.VatsimEudRosterService;
+import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.vatsim.members.VatsimMemberDetails;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
@@ -14,6 +17,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +38,9 @@ public class VatsimMembersController extends Base {
 
   @Autowired
   private VatEudCoreApi vatEudCoreApi;
+
+  @Autowired
+  private VatsimEudRosterService vatsimEudRosterService;
 
   @GetMapping("/members/{cid}")
   public String getMember(@PathVariable("cid") Long cid, Model model) {
@@ -67,29 +74,35 @@ public class VatsimMembersController extends Base {
       }
     }
 
-    List<VatEudRoster.VatEudRosterData.VatEudRosterController> controllers = new ArrayList<>();
-
-    // TODO uncomment
-//    for (Long controllerCid : vatEudRoster.getData().getControllersIds()) {
-//      VatEudUser md = vatEudCoreApi.getMemberDetails(controllerCid);
+//    List<VatEudRoster.VatEudRosterData.VatEudRosterController> controllers = new ArrayList<>();
 //
-//      if (md != null) {
-//
-//        VatEudRosterController controller = new VatEudRosterController();
-//        controller.setCid(controllerCid);
-//        controller.setFirstName(md.getData().getFirstName());
-//        controller.setLastName(md.getData().getLastName());
-//
-//        controllers.add(controller);
-//      }
-//    }
-    vatEudRoster.getData().setControllers(controllers);
-
+//    // TODO uncomment
+////    for (Long controllerCid : vatEudRoster.getData().getControllersIds()) {
+////      VatEudUser md = vatEudCoreApi.getMemberDetails(controllerCid);
+////
+////      if (md != null) {
+////
+////        VatEudRosterController controller = new VatEudRosterController();
+////        controller.setCid(controllerCid);
+////        controller.setFirstName(md.getData().getFirstName());
+////        controller.setLastName(md.getData().getLastName());
+////
+////        controllers.add(controller);
+////      }
+////    }
+//    vatEudRoster.getData().setControllers(controllers);
     model.addAttribute("roster", vatEudRoster);
 
     model.addAttribute("pageTitle", getMessage("#{members.staff.title}"));
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "staff");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff.staff", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "vatsim/members/staff";
   }
@@ -116,7 +129,35 @@ public class VatsimMembersController extends Base {
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "solo-validations");
 
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff.solos", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
     return "vatsim/members/solo-validations";
+  }
+
+  @GetMapping("/members/controllers")
+  public String getControllers(Model model) {
+
+    Controllers controllers = vatsimEudRosterService.getRosterControllers();;
+
+    model.addAttribute("controllers", controllers);
+
+    model.addAttribute("pageTitle", getMessage("#{members.controllers.title}"));
+    model.addAttribute("page", "members");
+    model.addAttribute("subpage", "controllers");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff.controllers", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
+    return "vatsim/members/controllers";
   }
 
   @GetMapping("/members/training-staff")
@@ -137,9 +178,16 @@ public class VatsimMembersController extends Base {
 //    for (VatsimMemberSoloValidation vmsv : trainingStaff.getData()) {
 //      VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(vmsv.getUserCid());
 //    }
-    model.addAttribute("pageTitle", "Training staff");
+    model.addAttribute("pageTitle", getMessage("members.trainingstaff.title"));
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "training-staff");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.membersstaff.trainingstaff", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "vatsim/members/training-staff";
   }

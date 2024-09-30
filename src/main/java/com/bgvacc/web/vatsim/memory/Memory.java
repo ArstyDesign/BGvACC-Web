@@ -1,6 +1,8 @@
 package com.bgvacc.web.vatsim.memory;
 
+import com.bgvacc.web.domains.Controllers;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
+import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +16,13 @@ public class Memory {
   private static Memory instance;
 
   private final List<VatsimATC> onlineATCList;
-  
+  private Controllers controllers;
+
   public boolean isAdded = false;
 
   private Memory() {
     this.onlineATCList = new ArrayList<>();
+//    this.controllers = new Controllers();
   }
 
   public static synchronized Memory getInstance() {
@@ -72,5 +76,91 @@ public class Memory {
 
   public int getSize() {
     return onlineATCList.size();
+  }
+
+  public Controllers getControllers() {
+
+    if (controllers == null) {
+      return new Controllers();
+    }
+
+    return controllers;
+  }
+
+  public boolean areControllersNull() {
+    return controllers == null;
+  }
+
+  public void addController(VatEudUser controller, Integer rating) {
+
+    if (controllers == null) {
+      controllers = new Controllers();
+    }
+
+    switch (rating) {
+//        case -1:
+//          // INA
+//          break;
+//        case 0:
+//          // SUS
+//          break;
+//        case 1:
+//          // OBS
+//          break;
+      case 2:
+        // S1
+        controllers.getControllersS1().add(controller);
+        break;
+      case 3:
+        // S2
+        controllers.getControllersS2().add(controller);
+        break;
+      case 4:
+        // S3
+        controllers.getControllersS3().add(controller);
+        break;
+      case 5:
+        // C1
+        controllers.getControllersC1().add(controller);
+        break;
+      case 6:
+        // C2
+        controllers.getControllersC2().add(controller);
+        break;
+      case 7:
+        // C3
+        controllers.getControllersC3().add(controller);
+        break;
+      case 8:
+        // I1
+        controllers.getControllersI1().add(controller);
+        break;
+      case 9:
+        // I2
+        controllers.getControllersI2().add(controller);
+        break;
+      case 10:
+        // I3
+        controllers.getControllersI3().add(controller);
+        break;
+//        case 11:
+//          // SUP
+//          break;
+//        case 12:
+//          // ADM
+//          break;
+      default:
+        // INA
+        break;
+    }
+  }
+
+  public void clearControllers() {
+
+    if (controllers == null) {
+      controllers = new Controllers();
+      return;
+    }
+    controllers.clearAllControllers();
   }
 }

@@ -24,6 +24,11 @@
       <name>DateTimeCalculator</name>
       <url>file://${project.basedir}/libs</url>
     </repository>
+    <repository>
+      <id>metar-decoder</id>
+      <name>MetarDecoder</name>
+      <url>file://${project.basedir}/libs</url>
+    </repository>
   </repositories>
   
   <dependencies>
@@ -31,6 +36,12 @@
     <dependency>
       <groupId>com.aarshinkov</groupId>
       <artifactId>date-time-calculator</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.aarshinkov</groupId>
+      <artifactId>metar-decoder</artifactId>
       <version>1.0.0</version>
     </dependency>
     

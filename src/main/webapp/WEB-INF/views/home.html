@@ -127,27 +127,27 @@
 
         <div class="col-12 col-md-4 mb-3">
           <div class="mb-3">
-            <div class="fw-bold">Sofia Airport Metar (LBSF)</div>
+            <div class="fw-bold mb-3" th:text="#{home.metar.lbsf}">Sofia Airport Metar (LBSF)</div>
             <div id="metarLBSF"></div>
           </div>
           <hr/>
           <div class="mb-3">
-            <div class="fw-bold">Burgas Airport Metar (LBBG)</div>
+            <div class="fw-bold mb-3" th:text="#{home.metar.lbbg}">Burgas Airport Metar (LBBG)</div>
             <div id="metarLBBG"></div>
           </div>
           <hr/>
           <div class="mb-3">
-            <div class="fw-bold">Varna Airport Metar (LBWN)</div>
+            <div class="fw-bold mb-3" th:text="#{home.metar.lbwn}">Varna Airport Metar (LBWN)</div>
             <div id="metarLBWN"></div>
           </div>
           <hr/>
           <div class="mb-3">
-            <div class="fw-bold">Plovdiv Airport Metar (LBPD)</div>
+            <div class="fw-bold mb-3" th:text="#{home.metar.lbpd}">Plovdiv Airport Metar (LBPD)</div>
             <div id="metarLBPD"></div>
           </div>
           <hr/>
           <div class="mb-3">
-            <div class="fw-bold">Gorna Airport Metar (LBGO)</div>
+            <div class="fw-bold mb-3" th:text="#{home.metar.lbgo}">Gorna Airport Metar (LBGO)</div>
             <div id="metarLBGO"></div>
           </div>
         </div>
@@ -155,7 +155,7 @@
 
       <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
-        let metarUrl = /*[[@{/metar}]]*/;
+        let metarUrl = /*[[@{/v2/metar}]]*/;
                 let lbsrCtrStatusUrl = /*[[@{/atc/status/lbsr-ctr}]]*/;
                 let lbsrVCtrStatusUrl = /*[[@{/atc/status/lbsr-v-ctr}]]*/;
                 let lbsfTwrStatusUrl = /*[[@{/atc/status/lbsf-twr}]]*/;
@@ -257,7 +257,7 @@
             type: 'get',
             success: function (data)
             {
-              $("#" + htmlTagId).empty().append(data[0].id + ' ' + data[0].metar);
+              $("#" + htmlTagId).empty().append(data);
             },
             error: function (xhr, status, error)
             {
@@ -267,7 +267,7 @@
           return false;
         }
 
-        let refreshIntervalSeconds = 10;
+        let refreshIntervalSeconds = 15;
         let atisRefreshIntervalSeconds = 600; // 10 minutes
 
         (function () {

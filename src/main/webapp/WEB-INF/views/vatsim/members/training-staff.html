@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr th:each="ts : ${trainingStaff.data}">
-            <td th:text="${ts.fullName}">Name</td>
+            <th th:text="${ts.fullName}">Name</th>
             <td scope="row">
               <a href="#" th:href="@{/members/} + ${ts.cid}" class="text-primary"
                  th:text="${ts.cid} ? ${ts.cid} : '-'">VATSIM CID</a>
