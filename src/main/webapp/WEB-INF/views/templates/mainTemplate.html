@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html th:lang="#{lang.curr}" lang="en" xmlns="http://www.w3.org/1999/xhtml"
+<html th:lang="#{language.current}" lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" style="height: 100%;">
   <head>
@@ -39,14 +39,14 @@
 
     <div class="container-fluid bg-primary bg-gradient p-0" th:if="${pageTitle ne null}">
       <!--th:style="'background-image: url(\'' + @{/resources/img/bg.png} + '\'); background-repeat: no-repeat; background-size: cover;'">-->
-      <div class="px-2 py-4" style="background: rgba(0, 0, 0, 0.4);">
+      <div class="px-4 px-lg-2 py-4" style="background: rgba(0, 0, 0, 0.4);">
         <div class="container px-0">
           <h1 class="text-white mb-0" th:text="${pageTitle}">Title</h1>
         </div>
       </div>
     </div>
 
-    <div class="container px-sm-0 mt-3" th:if="${breadcrumbs ne null}">
+    <div class="container px-0 mt-3" th:if="${breadcrumbs ne null}">
       <!--      <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item" th:each="b, iterStat : ${breadcrumbs}" th:classappend="${iterStat.last or b.url eq null} ? 'active'">
@@ -60,7 +60,7 @@
               </ol>
             </nav>-->
 
-      <nav aria-label="breadcrumb" class="">
+      <nav aria-label="breadcrumb" class="px-4 px-sm-0">
         <ol class="breadcrumb d-flex align-items-end">
           <li th:each="b, iterStat : ${breadcrumbs}" class="breadcrumb-item" th:classappend="${iterStat.last or b.url eq null} ? 'active'">
             <a th:href="@{${b.url}}" th:if="${b.url ne null}">

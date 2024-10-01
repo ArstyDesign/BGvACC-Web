@@ -55,6 +55,10 @@ public class VatsimCoreController {
         return new VatsimATCInfo(callsign, "Sofia Control", "134.700");
       case "LBSF_TWR":
         return new VatsimATCInfo(callsign, "Sofia Tower", "118.100");
+      case "LBSF_T_TWR":
+        return new VatsimATCInfo(callsign, "Sofia Tower", "118.100");
+      case "LBSF_T_APP":
+        return new VatsimATCInfo(callsign, "Sofia Approach", "123.700");
       case "LBSF_APP":
         return new VatsimATCInfo(callsign, "Sofia Approach", "123.700");
       case "LBBG_TWR":

@@ -3,37 +3,63 @@
       xmlns:th="http://www.thymeleaf.org">
   <body>
     <div id="mainMenu" th:remove="tag">
-      <div class="bg-danger">
+      <div class="bg-body-tertiary">
         <div class="container py-1">
           <div class="row align-items-center">
             <div class="col-5">
               <ul class="list-inline d-flex mb-0">
-                <li class="list-inline-item d-flex align-items-center me-0">
-                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-facebook">
-                    <i class="bi bi-facebook fs-6"></i>
-                    <i class="bi bi-facebook fs-6"></i>
+                <li class="nav-item dropdown">
+                  <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                    <span class="fi" th:classappend="'fi-' + #{flag.current}" style="border-radius: 2px;"></span>
+                    <small class="ms-1" th:text="#{language. + #{language.current}}">Language</small>
                   </a>
+                  <div class="dropdown-menu dropdown-menu-end" th:with="lang=#{language.current}">
+                    <a href="?lang=en" class="dropdown-item" th:classappend="${lang eq 'en'} ? 'active'">
+                      <i class="fi fi-gb me-1"></i>
+                      <span th:text="#{language.en}">English</span>
+                    </a>
+                    <a href="?lang=bg" class="dropdown-item" th:classappend="${lang eq 'bg'} ? 'active'">
+                      <i class="fi fi-bg me-1"></i>
+                      <span th:text="#{language.bg}">Bulgarian</span>
+                    </a>
+                  </div>
                 </li>
-                <li class="list-inline-item d-flex align-items-center me-0">
-                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-twitter">
-                    <i class="bi bi-twitter-x fs-6"></i>
-                    <i class="bi bi-twitter-x fs-6"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item d-flex align-items-center">
-                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-linkedin">
-                    <i class="bi bi-linkedin fs-6"></i>
-                    <i class="bi bi-linkedin fs-6"></i>
-                  </a>
-                </li>
+                <!--                <li class="list-inline-item d-flex align-items-center me-0">
+                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-facebook">
+                                    <i class="bi bi-facebook fs-6"></i>
+                                    <i class="bi bi-facebook fs-6"></i>
+                                  </a>
+                                </li>
+                                <li class="list-inline-item d-flex align-items-center me-0">
+                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-twitter">
+                                    <i class="bi bi-twitter-x fs-6"></i>
+                                    <i class="bi bi-twitter-x fs-6"></i>
+                                  </a>
+                                </li>
+                                <li class="list-inline-item d-flex align-items-center">
+                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-linkedin">
+                                    <i class="bi bi-linkedin fs-6"></i>
+                                    <i class="bi bi-linkedin fs-6"></i>
+                                  </a>
+                                </li>-->
               </ul>
             </div>
             <div class="col-7 text-end">
               <div class="d-flex align-items-center justify-content-end">
-                <span class="me-3 text-body-secondary small">
-                  <i class="bi bi-phone d-none d-sm-inline-block me-2 align-middle"></i><a href="tel:0123456789">+01 555 1234 789</a>
-                </span>
-                <a href="#" class="small"><i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>Login</a>
+                <a href="#" th:href="@{/login}" class="small" th:classappend="${page eq 'login'} ? 'text-primary'">
+                  <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
+                  <span th:text="#{topbar.login}">Login</span>
+                </a>
+                <a class="btn btn-discord ms-3" href="https://community.vatsim.net/" target="_blank"
+                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                  <i class="bi bi-discord me-1"></i>
+                  <span th:text="#{menu.discord}">Discord</span>
+                </a>
+                <a class="btn btn-primary ms-3" href="#" th:href="@{/atc/career-application}" target="_blank"
+                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                  <i class="bi bi-airplane me-1"></i>
+                  <span th:text="#{menu.becomeatc}">Become an ATC</span>
+                </a>
               </div>
             </div>
           </div>
@@ -42,7 +68,8 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container position-relative">
           <a class="navbar-brand" href="#" th:href="@{/}">
-            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="img-fluid"/>
+            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="" style="max-width: 140%; height: auto;"/>
+            <!--<img src="#" th:src="@{/resources/img/bgvacc_logo_color_no_icon_cropped.png}" alt="" class="img-fluid"/>-->
           </a>
 
           <div class="d-flex align-items-center navbar-no-collapse-items order-lg-last">
@@ -51,44 +78,22 @@
                 <i></i>
               </span>
             </button>
-            <!--            <div class="nav-item me-3 me-lg-0">
-                          <a class="btn btn-discord btn-sm" href="https://community.vatsim.net/" target="_blank">
-                            <i class="bi bi-discord me-1"></i>
-                            <span th:text="#{menu.discord}">Discord</span>
-                          </a>
-                                        <a class="btn btn-primary btn-sm" href="#" th:href="@{/atc/career-application}">
-                                          <img src="#" th:src="@{/resources/icons/svg/atc-tower-white.svg}" width="20" class="text-white me-1"/>
-                                          <span th:text="#{menu.becomeatc}">Become an ATC</span>
-                                        </a>
-                        </div>-->
+            <!--                        <div class="nav-item me-3 me-lg-0">
+                                      <a class="btn btn-discord btn-sm" href="https://community.vatsim.net/" target="_blank">
+                                        <i class="bi bi-discord me-1"></i>
+                                        <span th:text="#{menu.discord}">Discord</span>
+                                      </a>
+                                                    <a class="btn btn-primary btn-sm" href="#" th:href="@{/atc/career-application}">
+                                                      <img src="#" th:src="@{/resources/icons/svg/atc-tower-white.svg}" width="20" class="text-white me-1"/>
+                                                      <span th:text="#{menu.becomeatc}">Become an ATC</span>
+                                                    </a>
+                                    </div>-->
           </div>
           <div class="collapse navbar-collapse" id="navbar-demo-3">
             <ul class="navbar-nav ms-auto">
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/}" th:text="#{menu.home}"
                    th:classappend="${page eq 'home'} ? 'active'">Home</a>
-              </li>
-              <li class="nav-item dropdown me-lg-3">
-                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
-                   th:classappend="${page eq 'rules'} ? 'active'">
-                  <span th:text="#{menu.rules}">Rules</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end">
-                  <a href="#" class="dropdown-item" th:href="@{/rules/privacy-policy}"
-                     th:classappend="${page eq 'rules' and subpage eq 'privacy-policy'} ? 'active'" th:text="#{menu.rules.privacypolicy}">Privacy Policy for VATSIM Bulgaria</a>
-                  <a href="#" class="dropdown-item" th:href="@{/resources/rules/BGvACC_constitution.pdf}" target="_blank"
-                     th:text="#{menu.rules.constitution}">Constitution</a>
-                </div>
-              </li>
-              <li class="nav-item dropdown me-lg-3">
-                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
-                   th:classappend="${page eq 'partners'} ? 'active'">
-                  <span th:text="#{menu.partners}">Partners</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end">
-                  <a href="#" class="dropdown-item" th:href="@{/partners/virtual-airlines-partners}"
-                     th:classappend="${page eq 'partners' and subpage eq 'virtual-airlines'} ? 'active'" th:text="#{menu.partners.virtualairlines}">Virtual Airlines Partners</a>
-                </div>
               </li>
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/events}" th:text="#{menu.events}"
@@ -129,7 +134,7 @@
                      th:classappend="${page eq 'pilots' and subpage eq 'bulgarian-sceneries'} ? 'active'" th:text="#{menu.pilots.sceneries}">Sceneries</a>
                 </div>
               </li>
-              <li class="nav-item dropdown me-lg-3">
+              <li class="nav-item dropdown">
                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
                    th:classappend="${page eq 'members'} ? 'active'">
                   <span th:utext="#{menu.membersstaff}">Members &amp; staff</span>
@@ -147,22 +152,22 @@
                                        th:classappend="${page eq 'members' and subpage eq 'visiting-controllers'} ? 'active'" th:text="#{menu.membersstaff.visitingcontrollers}">Visiting controllers</a>-->
                 </div>
               </li>
-              <li class="nav-item dropdown me-lg-3">
-                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
-                  <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
-                  <!--<span th:text="#{language. + #{language.current}}">Language</span>-->
-                </a>
-                <div class="dropdown-menu dropdown-menu-end" th:with="lang=#{language.current}">
-                  <a href="?lang=en" class="dropdown-item" th:classappend="${lang eq 'en'} ? 'active'">
-                    <i class="fi fi-gb me-1"></i>
-                    <span th:text="#{language.en}">English</span>
-                  </a>
-                  <a href="?lang=bg" class="dropdown-item" th:classappend="${lang eq 'bg'} ? 'active'">
-                    <i class="fi fi-bg me-1"></i>
-                    <span th:text="#{language.bg}">Bulgarian</span>
-                  </a>
-                </div>
-              </li>
+              <!--              <li class="nav-item dropdown">
+                              <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                                <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
+                                <span th:text="#{language. + #{language.current}}">Language</span>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-end" th:with="lang=#{language.current}">
+                                <a href="?lang=en" class="dropdown-item" th:classappend="${lang eq 'en'} ? 'active'">
+                                  <i class="fi fi-gb me-1"></i>
+                                  <span th:text="#{language.en}">English</span>
+                                </a>
+                                <a href="?lang=bg" class="dropdown-item" th:classappend="${lang eq 'bg'} ? 'active'">
+                                  <i class="fi fi-bg me-1"></i>
+                                  <span th:text="#{language.bg}">Bulgarian</span>
+                                </a>
+                              </div>
+                            </li>-->
 
 
               <!--              <li class="nav-item dropdown">
@@ -194,9 +199,6 @@
     </div>
 
     <div id="footer" th:remove="tag">
-
-      <!--begin:Footer-->
-
       <footer id="footer" class="footer position-relative mt-10" data-bs-theme="dark">
         <!--:Svg Wave:-->
         <svg class="text-dark w-100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" width="1920" height="120"
@@ -206,7 +208,56 @@
         </svg>
         <div class="bg-dark text-body">
           <div class="container pt-5 pb-5">
-            <hr class="mb-7"/>
+            <div class="row">
+              <div class="col-12 col-xl-6 mb-5 mb-md-0 h-100 me-auto">
+                <div class="mb-3">
+                  <img src="#" th:src="@{/resources/img/bgvacc_logo_white_up_icon_cropped.png}" width="300" alt="#" th:alt="#{app.name}"/>
+                </div>
+                <!--<div class="display-6 text-white mb-0 position-relative">BGvACC</div>-->
+                <div class="pt-3 mb-6 text-muted" th:text="#{footer.subheader}">Bulgarian subdivision of VATEUD, part of VATSIM network</div>
+                <div class="pt-3 mb-6" th:text="#{footer.moto}">Fly high, Soar Higher!</div>
+              </div>
+              <div class="col-12 col-xl-3 mb-5 mb-md-0 ms-auto h-100">
+                <!--Title-->
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.rules}">Rules</h6>
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/rules/privacy-policy}"
+                       th:text="#{footer.rules.privacypolicy}">Privacy Policy</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}"
+                       th:text="#{footer.rules.constitution}">Constitution</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-12 col-xl-3 mb-5 mb-md-0 h-100">
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.resources}">Resources</h6>
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/pilots/charts}"
+                       th:text="#{footer.resources.charts}">Charts</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/pilots/bulgarian-sceneries}"
+                       th:text="#{footer.resources.sceneries}">Sceneries</a>
+                  </li>
+                </ul>
+
+                <hr class="mb-4"/>
+
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.partners}">Partners</h6>
+
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/partners/virtual-airlines-partners}"
+                       th:text="#{footer.partners.virtualairlines}">Virtual Airlines Partners</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <hr class="mb-5"/>
             <div class="row d-flex align-items-center">
               <div class="col-sm-5 mb-3 mb-sm-0">
                 <span class="d-block lh-sm small text-body-secondary">
@@ -225,7 +276,6 @@
           </div>
         </div>
       </footer>
-      <!--end:Footer-->
     </div>
 
     <!--article-->

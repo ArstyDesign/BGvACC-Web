@@ -20793,13 +20793,16 @@ header.header-transparent.sticky-fixed.is-fixed .navbar-dark .navbar-fixed-bg {
   }
   .navbar-expand-lg .nav-item > .nav-link,
   .navbar-expand-lg .navbar-no-collapse-items .nav-item {
-    height: 4.75rem;
+    height: 3.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .navbar-expand-lg .navbar-no-collapse-items .nav-item .nav-link {
     height: auto;
+  }
+  .navbar-expand-lg .nav-item .nav-link.active {
+    color: #00ACF1;
   }
   .navbar-expand-lg .nav-item:not(:first-child) {
     margin-left: 0.65rem;
@@ -20977,6 +20980,9 @@ header.header-transparent.sticky-fixed.is-fixed .navbar-dark .navbar-fixed-bg {
   .navbar-expand-lg.navbar.navbar-light .navbar-collapse {
     background-color: var(--bs-body-bg);
     box-shadow: 0 0.5rem 1rem rgba(var(--bs-body-color-rgb), 0.05);
+  }
+  .navbar-expand-lg.navbar .nav-item .nav-link.active {
+    color: #00ACF1;
   }
   .navbar-expand-lg.navbar.navbar-dark .navbar-collapse {
     background-color: #001000;

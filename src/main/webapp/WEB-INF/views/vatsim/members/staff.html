@@ -28,7 +28,11 @@
               <a href="#" th:href="@{/members/} + ${s.cid}" class="text-primary"
                  th:text="${s.cid} ? ${s.cid} : '-'">VATSIM CID</a>
             </td>
-            <td scope="row" th:text="${s.email} ? ${s.email} : '-'">Email</td>
+            <td scope="row">
+              <a th:if="${s.email ne null}" href="#" th:href="'mailto:' + ${s.email}" class="text-primary"
+                 th:text="${s.email}">Email</a>
+              <span th:if="${s.email eq null}">-</span>
+            </td>
           </tr>
         </tbody>
       </table>

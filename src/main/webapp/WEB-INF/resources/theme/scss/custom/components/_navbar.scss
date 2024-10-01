@@ -286,7 +286,7 @@ header.header-transparent.sticky-fixed {
 
         .nav-item>.nav-link,
         .navbar-no-collapse-items .nav-item {
-            height: 4.75rem;
+            height: 3.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -301,6 +301,11 @@ header.header-transparent.sticky-fixed {
         }
 
         .nav-item {
+			.nav-link {
+				&.active {
+					color: $primary;
+				}
+			}
             &:not(:first-child) {
                 margin-left: $spacer * .65;
             }
@@ -570,6 +575,14 @@ header.header-transparent.sticky-fixed {
                 background-color:var(--#{$prefix}body-bg);
                 box-shadow: $box-shadow;
             }
+        }
+		
+		.nav-item {
+			.nav-link {
+				&.active {
+					color: $primary;
+				}
+			}
         }
 
         &.navbar-dark {

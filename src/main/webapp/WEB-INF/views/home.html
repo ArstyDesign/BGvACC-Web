@@ -159,6 +159,7 @@
                 let lbsrCtrStatusUrl = /*[[@{/atc/status/lbsr-ctr}]]*/;
                 let lbsrVCtrStatusUrl = /*[[@{/atc/status/lbsr-v-ctr}]]*/;
                 let lbsfTwrStatusUrl = /*[[@{/atc/status/lbsf-twr}]]*/;
+                let lbsfTwrTStatusUrl = /*[[@{/atc/status/lbsf-t-twr}]]*/;
                 let lbsfAppStatusUrl = /*[[@{/atc/status/lbsf-app}]]*/;
                 let lbbgTwrStatusUrl = /*[[@{/atc/status/lbbg-twr}]]*/;
                 let lbbgAppStatusUrl = /*[[@{/atc/status/lbbg-app}]]*/;
@@ -222,6 +223,10 @@
         function reloadSofiaTowerCard() {
           reloadControllerCard(lbsfTwrStatusUrl, "lbsfTwrStatusDiv");
         }
+        
+//        function reloadSofiaTowerTCard() {
+//          reloadControllerCard(lbsfTwrTStatusUrl, "lbsfTwrStatusDiv");
+//        }
 
         function reloadSofiaApproachCard() {
           reloadControllerCard(lbsfAppStatusUrl, "lbsfAppStatusDiv");
@@ -274,6 +279,7 @@
           window.setInterval(reloadSofiaControlCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaVControlCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaTowerCard, refreshIntervalSeconds * 1000);
+//          window.setInterval(reloadSofiaTowerTCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaApproachCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadBurgasTowerCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadBurgasApproachCard, refreshIntervalSeconds * 1000);
@@ -285,6 +291,7 @@
           reloadSofiaControlCard();
           reloadSofiaVControlCard();
           reloadSofiaTowerCard();
+//          reloadSofiaTowerTCard();
           reloadSofiaApproachCard();
           reloadBurgasTowerCard();
           reloadBurgasApproachCard();
