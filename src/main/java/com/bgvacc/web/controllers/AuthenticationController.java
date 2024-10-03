@@ -50,4 +50,10 @@ public class AuthenticationController extends Base {
 
     return "redirect:/login";
   }
+  
+  @GetMapping("/vatsim/auth/callback")
+  public String vatsimAuthCallback(Model model) {
+    
+    return "authentication/vatsim/callback";
+  }
 }
