@@ -93,7 +93,7 @@ public class VatsimMembersController extends Base {
 //    vatEudRoster.getData().setControllers(controllers);
     model.addAttribute("roster", vatEudRoster);
 
-    model.addAttribute("pageTitle", getMessage("#{members.staff.title}"));
+    model.addAttribute("pageTitle", getMessage("members.staff.title"));
     model.addAttribute("page", "members");
     model.addAttribute("subpage", "staff");
 

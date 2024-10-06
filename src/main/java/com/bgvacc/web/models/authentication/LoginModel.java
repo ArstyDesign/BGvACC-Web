@@ -1,7 +1,6 @@
 package com.bgvacc.web.models.authentication;
 
 import java.io.Serializable;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +20,11 @@ import lombok.ToString;
 @ToString
 public class LoginModel implements Serializable {
 
+//  @NotBlank
+//  @Email
+//  private String email;
   @NotBlank
-  @Email
-  private String email;
+  private String cidEmail;
 
   @NotBlank
   private String password;

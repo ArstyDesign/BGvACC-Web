@@ -2,7 +2,9 @@ package com.bgvacc.web.vatsim.schedulers;
 
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.services.VatsimEudRosterService;
+import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.memory.Memory;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +30,14 @@ public class SyncScheduler {
   @Scheduled(fixedRate = 30000)
   public void syncLiveATCs() {
 
-    log.debug("Syncing live ATCs...");
+    log.info("Syncing live ATCs...");
 
     Memory memory = Memory.getInstance();
-    memory.clearAndAddATCs(coreApi.getAllOnlineControllers());
+    
+    List<VatsimATC> allOnlineControllers = coreApi.getAllOnlineControllers();
+    log.info("Online ATC: " + allOnlineControllers.size());
+    
+    memory.clearAndAddATCs(allOnlineControllers);
 
     // TODO testing
 //    if (memory.isAdded) {
@@ -45,7 +51,7 @@ public class SyncScheduler {
   @Scheduled(cron = "0 0 0 * * *", zone = "UTC")
   public void syncRosterControllers() {
 
-    log.debug("Syncing roster controllers...");
+    log.info("Syncing roster controllers...");
 
     vatsimEudRosterService.getRosterControllers();
   }

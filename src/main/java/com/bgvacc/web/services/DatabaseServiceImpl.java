@@ -8,7 +8,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @Autowired
   private final JdbcTemplate jdbcTemplate;
 
   @Override
@@ -31,7 +29,8 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     final String isDatabaseConnectedSql = "SELECT name, value FROM sys_params WHERE name = ?";
 
-    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection(); PreparedStatement isDatabaseConnectedPstmt = conn.prepareStatement(isDatabaseConnectedSql)) {
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement isDatabaseConnectedPstmt = conn.prepareStatement(isDatabaseConnectedSql)) {
 
       try {
 

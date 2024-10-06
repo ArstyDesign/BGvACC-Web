@@ -19,14 +19,14 @@
               <div class="position-relative">
                 <div>
                   <form class="needs-validation" th:action="@{/login}" method="post" th:object="${lm}">
-                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('email')} ? 'mb-3'">
+                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('cidEmail')} ? 'mb-3'">
                       <span class="input-icon">
                         <i class="bi bi-envelope"></i>
                       </span>
-                      <input type="email" class="form-control" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                             th:placeholder="#{login.email}" autofocus="autofocus"/>
+                      <input type="text" class="form-control" th:field="*{cidEmail}" th:classappend="${#fields.hasErrors('cidEmail')} ? 'is-invalid'"
+                             th:placeholder="#{login.cidemail}" autofocus="autofocus"/>
                     </div>
-                    <div class="invalid-feedback d-block mb-3" th:errors="*{email}">Error</div>
+                    <div class="invalid-feedback d-block mb-3" th:errors="*{cidEmail}">Error</div>
 
                     <div class="input-icon-group" th:classappend="${!#fields.hasErrors('password')} ? 'mb-3'">
                       <span class="input-icon">
@@ -40,7 +40,7 @@
                     <div class="mb-3 d-flex justify-content-end">
                       <div>
                         <label class="text-end d-block small mb-0">
-                          <a href="page-account-forget-password.html" class="link-decoration" th:text="#{login.forgotpassword}">Forgot password?</a>
+                          <a href="#" th:href="@{/forgot-password}" class="link-decoration" th:text="#{login.forgotpassword}">Forgot password?</a>
                         </label>
                       </div>
                     </div>

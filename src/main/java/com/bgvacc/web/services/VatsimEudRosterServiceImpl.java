@@ -6,9 +6,9 @@ import com.bgvacc.web.domains.Controllers;
 import com.bgvacc.web.vatsim.memory.Memory;
 import com.bgvacc.web.vatsim.roster.VatEudRoster;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,15 +17,14 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
+@RequiredArgsConstructor
 public class VatsimEudRosterServiceImpl implements VatsimEudRosterService {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @Autowired
-  private CoreApi coreApi;
+  private final CoreApi coreApi;
 
-  @Autowired
-  private VatEudCoreApi vatEudCoreApi;
+  private final VatEudCoreApi vatEudCoreApi;
 
   @Override
   public Controllers getRosterControllers() {

@@ -31,14 +31,14 @@
                 </a>
               </div>
               <div class="row">
-                <div class="col-12 col-xl-6 mb-3">
-                  <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
-                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
+                <div class="col-12 col-xl-6 mb-3" th:if="${e.airports.departure.size ge 1}">
+                  <div class="fw-bold" th:text="${e.airports.departure.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
+                  <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
                         data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
 
-                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
+                  <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
                 </div>
-                <div class="col-12 col-xl-6 text-xl-end mb-3">
+                <div class="col-12 col-xl-6 text-xl-end mb-3" th:if="${e.airports.arrival.size ge 1}">
                   <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.arrivalairports} : #{events.arrivalairport}">Arrival airports</div>
                   <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
                         data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
