@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(#{portal.events.calendar.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          
+          <div class="text-muted mb-4" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
+
+          <div class="card card-body">
+            <!--calendar-->
+            <div id="eventsCalendar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!--App calendar Plugin-->
+      <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let todayText = /*[[#{calendar.today}]]*/;
+                let monthText = /*[[#{calendar.month}]]*/;
+                let weekText = /*[[#{calendar.week}]]*/;
+                let dayText = /*[[#{calendar.day}]]*/;
+                let listText = /*[[#{calendar.list}]]*/;
+
+        let calendarEvents = /*[[${ces}]]*/;
+                let aux = /*[[@{/}]]*/;
+        /*]]>*/
+
+        var cBlue = "var(--bs-primary)";
+        var cYellow = "var(--bs-warning)";
+        var cCyan = "var(--bs-info)";
+        var cRed = "var(--bs-danger)";
+        var cGreen = "var(--bs-success)";
+        var cGray = "var(--bs-gray-500)";
+        var cDark = "var(--bs-gray-700)";
+        var cLight = "var(--bs-gray-100)";
+
+        // Initialize the calendar
+        const eventsCalendar = new FullCalendar.Calendar(document.getElementById('eventsCalendar'), {
+          events: calendarEvents,
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+          },
+          themeSystem: 'bootstrap',
+          bootstrapFontAwesome: false,
+          locale: 'bg',
+          firstDay: 1,
+          nowIndicator: true,
+          weekNumbers: true,
+          weekText: "",
+          buttonText: {
+            today: todayText,
+            month: monthText,
+            week: weekText,
+            day: dayText,
+            list: listText,
+            prev: '❮',
+            next: '❯'
+          },
+          dayMaxEvents: true, // allow "more" link when too many events
+          editable: true,
+          droppable: true,
+          eventClick: function (info) {
+            console.log(info.event);
+//            alert('Event: ' + info.event.title);
+//            alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+//            alert('View: ' + info.view.type);
+          }
+        }).render();
+      </script>
+    </div>
+  </body>
+</html>

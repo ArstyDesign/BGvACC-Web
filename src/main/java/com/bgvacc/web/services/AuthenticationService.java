@@ -19,8 +19,6 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public interface AuthenticationService {
 
-  AuthenticationResponse authenticate(String cidEmail, String password);
-
   AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException;
 
   List<RoleResponse> getBaseRoles(Collection<GrantedAuthority> authorities);

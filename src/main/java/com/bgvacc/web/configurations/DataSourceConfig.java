@@ -21,14 +21,6 @@ public class DataSourceConfig {
   @Autowired
   public AuthenticationProperties authProps;
 
-//  @Bean
-//  public void test() {
-//    log.debug("Testingggg");
-//
-//    log.debug("Schema: " + authProps.getDbSchema());
-//    log.debug("Username: " + authProps.getDbUsername());
-//    log.debug("Password: " + authProps.getDbPassword());
-//  }
   @Bean
   public DataSource getDataSource() {
     DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();

@@ -20,6 +20,7 @@ public class UserResponse implements Serializable {
   private String cid;
   private String email;
   private String emailVatsim;
+  private String password;
   private String firstName;
   private String lastName;
   private Boolean isActive;

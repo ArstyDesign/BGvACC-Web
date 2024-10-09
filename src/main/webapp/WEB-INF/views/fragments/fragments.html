@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
   <body>
     <div id="mainMenu" th:remove="tag">
       <div class="bg-body-tertiary">
@@ -24,38 +25,44 @@
                     </a>
                   </div>
                 </li>
-                <!--                <li class="list-inline-item d-flex align-items-center me-0">
-                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-facebook">
-                                    <i class="bi bi-facebook fs-6"></i>
-                                    <i class="bi bi-facebook fs-6"></i>
-                                  </a>
-                                </li>
-                                <li class="list-inline-item d-flex align-items-center me-0">
-                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-twitter">
-                                    <i class="bi bi-twitter-x fs-6"></i>
-                                    <i class="bi bi-twitter-x fs-6"></i>
-                                  </a>
-                                </li>
-                                <li class="list-inline-item d-flex align-items-center">
-                                  <a href="#!" class="d-inline-block text-reset si rounded-pill width-2x height-2x si-hover-linkedin">
-                                    <i class="bi bi-linkedin fs-6"></i>
-                                    <i class="bi bi-linkedin fs-6"></i>
-                                  </a>
-                                </li>-->
               </ul>
             </div>
             <div class="col-7 text-end">
               <div class="d-flex align-items-center justify-content-end">
-                <a href="#" th:href="@{/login}" class="small" th:classappend="${page eq 'login'} ? 'text-primary'">
+                <a href="#" th:href="@{/portal/dashboard}" class="small" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF')">
+                  <span>Admin board</span>
+                </a>
+                <ul class="list-inline d-flex mb-0 ms-3" sec:authorize="isAuthenticated()">
+                  <li class="nav-item dropdown">
+                    <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                      <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
+                      <small class="ms-1" th:text="${session.loggedUser.fullName}">John Doe</small>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                      <a href="#" th:href="@{/profile}" class="dropdown-item">
+                        <span>Profile</span>
+                      </a>
+                      <a href="#" th:href="@{/settings}" class="dropdown-item">
+                        <span>Settings</span>
+                      </a>
+                      <hr class="dropdown-divider"/>
+                      <a href="#" th:href="@{/logout}" class="dropdown-item text-danger">
+                        <span>Logout</span>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+                <a href="#" th:href="@{/login}" class="small" th:classappend="${page eq 'login'} ? 'text-primary'"
+                   sec:authorize="!isAuthenticated()">
                   <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
                   <span th:text="#{topbar.login}">Login</span>
                 </a>
-                <a class="btn btn-discord ms-3" href="https://community.vatsim.net/" target="_blank"
+                <a class="btn btn-discord d-none d-lg-block ms-3" href="https://community.vatsim.net/" target="_blank"
                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
                   <i class="bi bi-discord me-1"></i>
                   <span th:text="#{menu.discord}">Discord</span>
                 </a>
-                <a class="btn btn-primary ms-3" href="#" th:href="@{/atc/career-application}" target="_blank"
+                <a class="btn btn-primary d-none d-lg-block ms-3" href="#" th:href="@{/atc/career-application}" target="_blank"
                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
                   <i class="bi bi-airplane me-1"></i>
                   <span th:text="#{menu.becomeatc}">Become an ATC</span>

@@ -4,16 +4,16 @@ import com.bgvacc.web.exceptions.GeneralErrorException;
 import com.bgvacc.web.responses.authentication.AuthenticationResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import com.bgvacc.web.responses.users.UserResponse;
-import com.bgvacc.web.services.AuthenticationService;
+import com.bgvacc.web.services.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,7 +27,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  private final AuthenticationService authenticationService;
+  private final UserService userService;
+
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -38,18 +40,21 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     String password = authentication.getCredentials().toString();
 
     try {
-      AuthenticationResponse authenticated = authenticationService.authenticate(cidEmail, password);
+      UserResponse user = userService.getUser(cidEmail);
 
       List<GrantedAuthority> authorities = new ArrayList<>();
 
-      if (authenticated == null) {
+      if (user == null) {
         return null;
       }
-      for (RoleResponse role : authenticated.getUser().getRoles()) {
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+
+      if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new BadCredentialsException("Invalid password");
       }
 
-      UserResponse user = authenticated.getUser();
+      for (RoleResponse role : user.getRoles()) {
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+      }
 
       final LoggedUser loggedUser = new LoggedUser(user.getCid(), password,
               true, true, true, true,

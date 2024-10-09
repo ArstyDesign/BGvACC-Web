@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
+  <body>
+    <div id="footer" th:remove="tag">
+      <footer class="p-3 px-lg-6" style="box-shadow: var(--page-header-shadow); background-color: var(--bs-body-bg);">
+        <div class="container-fluid px-0">
+          <!--<span class="d-block lh-sm small text-body-secondary text-end">&copy;</span>-->
+          <div class="d-block lh-sm small text-body-secondary text-end">
+            <span>&copy;</span>
+            <span th:utext="#{app.name} + '. ' + #{footer.rights} + ', ' + ${#dates.year(#dates.createNow())} + '. ' + #{footer.developed} + ' ' + #{footer.author} + ', ' + ${@version.version}">BGvACC, All Rights Reserved, 2024. Developed by Atanas Arshinkov, v1.0.0</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

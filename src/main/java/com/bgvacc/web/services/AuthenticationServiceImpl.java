@@ -37,79 +37,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  private final JdbcTemplate jdbcTemplate;
-
   private final RequestCache requestCache = new HttpSessionRequestCache();
 
   private final SessionRegistry sessionRegistry;
-
-  @Override
-  public AuthenticationResponse authenticate(String cidEmail, String password) {
-
-    final String userSql = "SELECT * FROM users WHERE (cid = ? OR email = ? OR email_vatsim = ?) AND password = ?";
-    final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
-
-    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement userPstmt = conn.prepareStatement(userSql);
-            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
-
-      try {
-
-        conn.setAutoCommit(false);
-
-        userPstmt.setString(1, cidEmail);
-        userPstmt.setString(2, cidEmail);
-        userPstmt.setString(3, cidEmail);
-        userPstmt.setString(4, password);
-
-        ResultSet userRset = userPstmt.executeQuery();
-
-        if (userRset.next()) {
-
-          AuthenticationResponse response = new AuthenticationResponse();
-
-          UserResponse user = new UserResponse();
-
-          user.setCid(userRset.getString("cid"));
-          user.setEmail(userRset.getString("email"));
-          user.setEmailVatsim(userRset.getString("email_vatsim"));
-          user.setFirstName(userRset.getString("first_name"));
-          user.setLastName(userRset.getString("last_name"));
-          user.setIsActive(userRset.getBoolean("is_active"));
-          user.setLastLogin(userRset.getTimestamp("last_login"));
-          user.setCreatedOn(userRset.getTimestamp("created_on"));
-          user.setEditedOn(userRset.getTimestamp("edited_on"));
-
-          ResultSet userRolesRset = userRolesPstmt.executeQuery();
-
-          List<RoleResponse> roles = new ArrayList<>();
-
-          while (userRolesRset.next()) {
-            RoleResponse role = new RoleResponse(userRolesRset.getString("rolename"));
-            roles.add(role);
-          }
-
-          user.setRoles(roles);
-          response.setUser(user);
-
-          return response;
-
-        } else {
-          log.info("No user found.");
-        }
-
-      } catch (SQLException ex) {
-        log.error("Error authenticating user", ex);
-//        conn.rollback();
-      } finally {
-        conn.setAutoCommit(true);
-      }
-    } catch (Exception e) {
-      log.error("Error authenticating user", e);
-    }
-
-    return null;
-  }
 
   @Override
   public AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

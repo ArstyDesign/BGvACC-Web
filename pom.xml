@@ -88,6 +88,11 @@
     </dependency>
     
     <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>nz.net.ultraq.thymeleaf</groupId>
       <artifactId>thymeleaf-layout-dialect</artifactId>
     </dependency>
@@ -195,7 +200,7 @@
           <!-- ZA ROOT NA SURVER-A -->
           <!--<warName>ROOT##${project.version}</warName>-->
 
-<!--          <packagingExcludes>
+          <!--          <packagingExcludes>
             WEB-INF/classes/application-*.properties,
             WEB-INF/classes/env-*.properties,
             META-INF/context.xml,

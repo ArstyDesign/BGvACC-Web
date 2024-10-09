@@ -35,6 +35,7 @@ public class LoggedUser extends User {
                     String email, String emailVatsim, String firstName, String lastName, Boolean isActive, Timestamp lastLogin, Timestamp createdOn, Timestamp editedOn) {
     super(cid, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
+    this.cid = cid;
     this.email = email;
     this.emailVatsim = emailVatsim;
     this.firstName = firstName;
