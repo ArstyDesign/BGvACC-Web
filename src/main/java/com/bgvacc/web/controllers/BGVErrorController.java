@@ -23,6 +23,15 @@ public class BGVErrorController implements ErrorController {
   @GetMapping("/customError")
   public String handleError(HttpServletRequest request, Model model) {
 
+    Object originalUrl = request.getAttribute("javax.servlet.error.request_uri");
+
+    // Можеш да логваш или да извършиш друга логика тук
+    if (originalUrl != null) {
+      log.debug("Error accessing URL: " + originalUrl.toString());
+    } else {
+      log.debug("Original URL cannot be found.");
+    }
+
     Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
 //    log.debug("URI: " + request.getRequestURI());
@@ -63,7 +72,6 @@ public class BGVErrorController implements ErrorController {
 //    if (!isLoggedIn()) {
 //      return "errors/error_anon";
 //    }
-
     return "errors/error";
   }
 
@@ -78,7 +86,6 @@ public class BGVErrorController implements ErrorController {
 //    if (!isLoggedIn()) {
 //      return "errors/error_anon";
 //    }
-
     return "errors/error";
   }
 
@@ -93,7 +100,6 @@ public class BGVErrorController implements ErrorController {
 //    if (!isLoggedIn()) {
 //      return "errors/error_anon";
 //    }
-
     return "errors/error";
   }
 

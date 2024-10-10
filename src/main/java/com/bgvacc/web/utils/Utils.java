@@ -19,4 +19,11 @@ public class Utils {
 
     return hostName;
   }
+
+  public static String convertToHtml(String input) {
+    // Заместване на новите редове с <br>
+    return input.replace("\n", "<br>")
+            .replace("\r", "") // Игнорираме \r
+            .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+  }
 }

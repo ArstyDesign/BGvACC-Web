@@ -34,7 +34,7 @@
     <!--Calendar app style-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css"/>
 
-    <link th:href="@{/resources/theme/portal/css/style.css}" href="../../resources/theme/portal/css/style.css" rel="stylesheet"/>
+    <link th:href="@{/resources/theme/portal/css/theme.css}" href="../../resources/theme/portal/css/theme.css" rel="stylesheet"/>
 
     <link href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css" rel="stylesheet"/>
 
@@ -56,8 +56,6 @@
         <main class="page-content d-flex flex-column flex-row-fluid">
 
           <div th:replace="portal/fragments/topbar :: #topbar"></div>
-
-          <div th:replace="portal/fragments/topbar :: #profileOffcanvas"></div>
 
           <!--//Page Toolbar//-->
           <div class="toolbar px-3 px-lg-6 py-3">

@@ -17,6 +17,8 @@ INSERT INTO users VALUES ('1773453', 'kristiyan.hristov@gmail.com', 'kristiyan.h
 
 INSERT INTO users VALUES ('1008143', 'svetlin.nikolov@gmail.com', 'svetlin.nikolov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Svetlin', 'Nikolov', true, null, NOW(), null);
 
+INSERT INTO users VALUES ('1604267', 'andrei.tzenov@gmail.com', 'andrei.tzenov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Andrei', 'Tzenov', true, null, NOW(), null);
+
 CREATE TABLE roles(
 	rolename varchar(70) not null primary key,
 	description varchar(200)
@@ -38,10 +40,10 @@ INSERT INTO roles VALUES ('ATC_I3', 'ATC rating I3');
 
 CREATE TABLE user_roles(
 	user_role_id varchar(100) not null primary key default gen_random_uuid(),
-	cid varchar(30) not null references users(cid) ON DELETE CASCADE,
-	rolename varchar(50) not null references roles(rolename) ON DELETE CASCADE,
+	cid varchar(30) not null references users(cid) on delete cascade,
+	rolename varchar(50) not null references roles(rolename) on delete cascade,
 	created_on timestamp not null default NOW(),
-	UNIQUE (cid, rolename)
+	unique (cid, rolename)
 );
 
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'SYS_ADMIN');
@@ -57,6 +59,11 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_DIRECTOR');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_TRAINING');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC_C1');
 
 CREATE TABLE event_types (
     type varchar(10) primary key
@@ -75,4 +82,30 @@ CREATE TABLE events (
     end_at timestamptz not null,
     created_at timestamptz not null,
     updated_at timestamptz
+);
+
+CREATE TABLE sections (
+	id varchar(50) not null primary key,
+	name varchar(100) not null
+};
+
+CREATE TABLE tags (
+    name VARCHAR(100) not null primary key
+);
+
+CREATE TABLE blog_posts (
+	id varchar(100) not null primary key default gen_random_uuid(),
+	title varchar(100) not null,
+	content text not null,
+	is_visible boolean not null default false,
+	section_id varchar(50) references sections(id) on delete set null,
+	cid varchar(30) references users(cid) on delete set null,
+	created_at timestamptz not null default NOW(),
+	updated_at timestamptz
+);
+
+CREATE TABLE blog_post_tags (
+    blog_post_id varchar(100) references blog_posts(id) on delete cascade,
+    tag_name varchar(100) references tags(name) on delete cascade, 
+    primary key (blog_post_id, tag_name)
 );

@@ -298,7 +298,8 @@ $cyans: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       $indigo !default;
+$primary:       #00ACF1 !default;
+$accent:        #782BAA !default;
 $secondary:     $gray-600 !default;
 $success:       $green !default;
 $info:          $cyan !default;
@@ -312,6 +313,7 @@ $dark:          $gray-900 !default;
 // scss-docs-start theme-colors-map
 $theme-colors: (
   "primary":    $primary,
+  "accent":     $accent,
   "secondary":  $secondary,
   "success":    $success,
   "info":       $info,
@@ -1762,7 +1764,8 @@ $letter-spacing-base:0rem !default;
 $letter-spacing-headings:-.011rem !default;
 
 //buttons
-$btn-text-transform:         capitalize !default;
+/*$btn-text-transform:         capitalize !default;*/
+$btn-text-transform:         none !default;
 $btn-font-family:          null !default;
 $btn-font-weight:         $font-weight-medium !default;
 

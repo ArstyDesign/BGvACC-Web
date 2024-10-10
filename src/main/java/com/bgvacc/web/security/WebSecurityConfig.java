@@ -67,6 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/users/**").authenticated()
             .antMatchers("/events/**").permitAll()
             .antMatchers("/portal/dashboard").authenticated()
+            .antMatchers("/portal/trainings/**").hasAnyRole("SYS_ADMIN", "STAFF_TRAINING")
             .antMatchers("/portal/**").authenticated()
             .antMatchers("/profile").authenticated()
             .antMatchers("/atc/status/**").permitAll()

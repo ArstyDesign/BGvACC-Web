@@ -81,20 +81,31 @@
                     <span class="sidebar-text" th:text="#{portal.menu.events.calendar}">Calendar</span>
                   </a>
                 </li>
-                
-                <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
-                  <i class="bi bi-three-dots"></i>
-                  <span class="sidebar-text" th:text="#{portal.menu.trainings.title}">Trainings</span>
-                </li>
-                <li class="nav-item">
-                  <a href="#" th:href="@{/trainings/trainees}" class="nav-link d-flex align-items-center text-truncate"
-                     th:classappend="${page eq 'trainings' and subpage eq 'trainees'} ? 'active'">
-                    <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">menu_book</span>
-                    </span>
-                    <span class="sidebar-text" th:text="#{portal.menu.trainings.trainees}">Trainees</span>
-                  </a>
-                </li>
+
+                <div sec:authorize="hasRole('STAFF_TRAINING')" th:remove="tag">
+                  <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
+                    <i class="bi bi-three-dots"></i>
+                    <span class="sidebar-text" th:text="#{portal.menu.trainings.title}">Trainings</span>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" th:href="@{/portal/trainings/notes}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'trainings' and subpage eq 'notes'} ? 'active'">
+                      <span class="sidebar-icon">
+                        <span class="material-symbols-rounded">sticky_note_2</span>
+                      </span>
+                      <span class="sidebar-text" th:text="#{portal.menu.trainings.notes}">Notes</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" th:href="@{/portal/trainings/solo-validations}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'trainings' and subpage eq 'solo-validations'} ? 'active'">
+                      <span class="sidebar-icon">
+                        <span class="material-symbols-rounded">record_voice_over</span>
+                      </span>
+                      <span class="sidebar-text" th:text="#{portal.menu.trainings.solo}">Solo validations</span>
+                    </a>
+                  </li>
+                </div>
               </ul>
             </nav>
             <!--aside-info-box-->
