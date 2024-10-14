@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(#{portal.trainings.solo.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+      
+      <div class="row" th:if="${lbsrCtrSolos gt 0}">
+        <div class="col-12 mb-3">
+          <div class="h3" th:text="#{portal.trainings.solo.lbsrctr}">Sofia Control - LBSR_CTR position</div>
+          <hr class="mb-4"/>
+          <div class="row">
+            <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="sv : ${soloValidations.data}" th:if="${sv.position eq 'LBSF_APP'}">
+              <div th:replace="portal/trainings/fragments :: #soloValidationCard(sv=${sv})"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${lbsfAppSolos gt 0}">
+        <div class="col-12 mb-3">
+          <div class="h3" th:text="#{portal.trainings.solo.lbsfapp}">Sofia Approach - LBSF_APP position</div>
+          <hr class="mb-4"/>
+          <div class="row">
+            <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="sv : ${soloValidations.data}" th:if="${sv.position eq 'LBSF_APP'}">
+              <div th:replace="portal/trainings/fragments :: #soloValidationCard(sv=${sv})"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${lbsfTwrSolos gt 0}">
+        <div class="col-12 mb-3">
+          <div class="h3" th:text="#{portal.trainings.solo.lbsftwr}">Sofia Tower - LBSF_TWR position</div>
+          <hr class="mb-3"/>
+          
+          <div class="text-muted mb-3" th:text="${lbsfTwrSolos eq 1} ? #{portal.trainings.solo.total.1} : #{portal.trainings.solo.total.n(${lbsfTwrSolos})}"></div>
+          
+          <div class="row">
+            <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="sv : ${soloValidations.data}" th:if="${sv.position eq 'LBSF_TWR'}">
+              <div th:replace="portal/trainings/fragments :: #soloValidationCard(sv=${sv})"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

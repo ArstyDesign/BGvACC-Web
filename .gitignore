@@ -33,3 +33,5 @@ build/
 .vscode/
 nb-configuration.xml
 src/main/resources/authentication.properties
+package-lock.json
+node_modules/

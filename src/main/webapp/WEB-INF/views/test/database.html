@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 col-md-8 mb-3">
+          <div>Is database connected: <span th:text="${isDbConnected ne null and isDbConnected} ? 'Yes' : 'No'">Yes/No</span></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

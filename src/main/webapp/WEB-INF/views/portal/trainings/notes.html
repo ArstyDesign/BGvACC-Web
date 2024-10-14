@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(${pageTitle})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-header">
+              <h5 class="mb-0" th:text="#{portal.trainings.notes.viewnotes}">View notes</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3" th:text="#{portal.trainings.notes.viewnotes.message}">Enter the CID of the controller you would like to view notes for. You will only be able to view the notes for controllers that are either in your facility home vACC (BULG), or are visiting in your home vACC.</div>
+
+              <form th:action="@{/portal/trainings/notes}" method="post">
+                <label class="form-label" th:text="#{portal.trainings.notes.entercid}">Enter controller's CID</label>
+                <input class="form-control form-control-lg mb-0" type="text" name="cid" th:value="${cid ne null} ? ${cid}"/>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${error}">
+        <div class="col-12 mb-3">
+          <div class="alert alert-danger" th:text="${error}">Error</div>
+        </div>
+      </div>
+
+      <div th:if="${member ne null and member.data ne null and cid ne null}" th:remove="tag">
+        <!--        <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="card overflow-hidden">
+                      <div class="card-header">
+                        <div class="h5 mb-0" th:text="#{portal.trainings.notes.viewnotesfor(${member.data.fullName}, ${member.data.cid})}">Viewing Notes for John Doe - 9999999</div>
+                      </div>
+                      <div class="card-body">
+                        <div th:text="#{portal.trainings.notes.viewnotesfor.message}">Each section is a different training note, sorted newest to oldest. You can add a training note by using the button in the top right. Training notes should be considered confidential, and should not be shared with anyone who is not training staff.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>-->
+
+        <div class="row">
+          <div class="col-12 mb-3">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <!--                <div class="h5 mb-0 me-3" th:text="#{portal.trainings.notes.trainingnotes}">Training Notes</div>-->
+                <div class="h5 mb-0 me-3" th:text="#{portal.trainings.notes.viewnotesfor(${member.data.fullName}, ${member.data.cid})}">Viewing Notes for John Doe - 9999999</div>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#createNoteModal" class="btn btn-primary text-transform-normal btn-sm">
+                  <span class="material-symbols-rounded">post_add</span>
+                  <span th:text="#{portal.trainings.notes.createanote}">Create a note</span>
+                </a>
+              </div>
+              <div class="card-body">
+                <div class="mb-0" th:if="${#lists.isEmpty(notes.notes)}">
+                  <div th:text="#{portal.trainings.notes.notfound}">No notes found for this member.</div>
+                </div>
+                <ul class="step list-unstyled mb-0" th:if="${!#lists.isEmpty(notes.notes)}">
+                  <li class="step-item" th:each="n : ${notes.notes}">
+                    <div class="step-row">
+                      <span class="step-icon">
+                        <span class="avatar sm avatar-status status-online rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
+                          <b th:text="${#strings.substring(n.instructorName.firstName, 0, 1)}">J</b>
+                          <b th:if="${n.instructorName.lastName ne null and n.instructorName.lastName.length gt 1}" th:text="${#strings.substring(n.instructorName.lastName, 0, 1)}">D</b>
+                          <!--<b>R</b>-->
+                        </span>
+                      </span>
+
+                      <div class="step-content">
+                        <div class="d-flex align-items-center mb-2">
+                          <span class="h5 d-inline mb-0 me-2" th:text="${n.instructorName} + ' (' + ${n.instructorCid} + ')'">Instructor name and CID</span>
+                          <span class="badge bg-info-subtle text-info me-2" th:text="${n.positionTrained}">Position trained</span>
+                          <span class="badge bg-primary-subtle text-primary" th:if="${n.sessionType eq 0}" th:text="#{portal.trainings.notes.sweatbox}">Sweatbox</span>
+                          <span class="badge bg-warning-subtle text-warning" th:if="${n.sessionType eq 1}" th:text="#{portal.trainings.notes.training}">Training</span>
+                          <span class="badge bg-warning-subtle text-warning" th:if="${n.sessionType eq 2}" th:text="#{portal.trainings.notes.other}">Other</span>
+
+                          <div th:if="${n.sessionType eq 3}" th:remove="tag">
+                            <span class="badge bg-success-subtle text-success me-2" th:text="#{portal.trainings.notes.cpt}">CPT</span>
+                            <span class="badge bg-success-subtle text-success" th:if="${n.otsPass eq 1}" th:text="#{portal.trainings.notes.cpt.passed}">Passed</span>
+                            <span class="badge bg-danger-subtle text-danger" th:if="${n.otsPass eq 0}" th:text="#{portal.trainings.notes.cpt.failed}">Failed</span>
+                          </div>
+                        </div>
+                        <div class="lh-sm d-block mb-1" th:utext="${n.trainingNoteHtml}">Note</div>
+                        <div class="p-3 border rounded-3 mb-1 d-flex align-items-center" th:if="${n.sessionType eq 2 or (n.sessionType eq 3 and n.otsPass eq 1)}">
+                          <a href="#" th:href="@{n.markingSheet}">
+                            <img src="#" th:src="@{/resources/icons/svg/docs/pdf.svg}" class="height-40 me-3 flex-shrink-0 w-auto" alt=""/>
+                          </a>
+                          <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex align-items-center justify-content-between">
+                              <a href="#" th:href="${n.markingSheet}" target="_blank">CPT Log.pdf</a>
+                              <a href="#" th:href="${n.markingSheet}" target="_blank" class="text-body">
+                                <span class="material-symbols-rounded align-middle text-success">download</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <small class="d-block mb-0 mt-3 text-muted" th:text="${#dates.format(n.createdAt, 'dd.MM.yyyy, HH:mm')}">3h ago</small>
+                      </div>
+                    </div>
+
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="createNoteModalLabel" th:utext="#{portal.trainings.notes.create.title(${member.data.fullName}, '' + ${cid})}">Add Training Note for John Doe - 9999999</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form th:action="@{/portal/trainings/notes/} + ${cid}" method="post">
+                  <label class="form-label required" th:text="#{portal.trainings.notes.create.position}">Position</label>
+                  <select class="form-control mb-3">
+                    <option value="LBSF_TWR" th:text="#{portal.trainings.notes.create.position.lbsftwr}">LBSF_TWR - Sofia Tower</option>
+                    <option value="LBSF_APP" th:text="#{portal.trainings.notes.create.position.lbsfapp}">LBSF_APP - Sofia Approach</option>
+                    <option value="LBSR_CTR" th:text="#{portal.trainings.notes.create.position.lbsrctr}">LBSR_CTR - Sofia Control</option>
+                  </select>
+
+                  <label class="form-label required" th:text="#{portal.trainings.notes.create.sessiontype}">Session type</label>
+                  <select class="form-control mb-3">
+                    <option value="0" th:text="#{portal.trainings.notes.create.sessiontype.sweatbox}">Sweatbox</option>
+                    <option value="1" th:text="#{portal.trainings.notes.create.sessiontype.training}">Training session</option>
+                    <option value="2" th:text="#{portal.trainings.notes.create.sessiontype.other}">Other</option>
+                    <option value="3" th:text="#{portal.trainings.notes.create.sessiontype.cpt}">CPT</option>
+                  </select>
+
+                  <label class="form-label required" th:text="#{portal.trainings.notes.create.trainingnote}">Training note</label>
+                  <textarea class="form-control mb-3" name="trainingNote" rows="5" style="min-height: 150px;"></textarea>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
+                <button type="button" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

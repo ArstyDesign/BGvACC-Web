@@ -1,295 +1,405 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
   <body>
-    <div id="mainMenu">
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container ps-0">
-          <a class="navbar-brand" href="#" th:href="@{/}">
-            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cropped.png}" alt="Bootstrap" height="24"/>
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#" th:href="@{/}" th:text="#{menu.home}"
-                   th:classappend="${page eq 'home'} ? 'active'">Home</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                   th:classappend="${page eq 'rules'} ? 'active'">
-                  <span th:text="#{menu.rules}">Rules</span>
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;">
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/rules/privacy-policy}"
-                       th:classappend="${page eq 'rules' and subpage eq 'privacy-policy'} ? 'active'" th:text="#{menu.rules.privacypolicy}">Privacy Policy for VATSIM Bulgaria</a>
-                  </li>
-                  <!--                  <li>
-                                      <a class="dropdown-item" href="#">Terms and conditions</a>
-                                    </li>-->
-                  <!--<li><hr class="dropdown-divider"></li>-->
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}" target="_blank"
-                       th:text="#{menu.rules.constitution}">Constitution</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="https://community.vatsim.net/" target="_blank" th:text="#{menu.discord}">Discord</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span th:text="#{menu.partners}">Partners</span>
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;">
-                  <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.partners.virtualairlines}">Virtual Airlines Partners</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/events}"
-                   th:classappend="${page eq 'events'} ? 'active'" th:text="#{menu.events}">Events</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/feedback-report}"
-                   th:classappend="${page eq 'feedback-report'} ? 'active'" th:text="#{menu.feedbackreport}">Feedback report</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                   th:classappend="${page eq 'atc'} ? 'active'">
-                  <span th:text="#{menu.atc}">ATC</span>
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;">
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/atc/career-application}"
-                       th:classappend="${page eq 'atc' and subpage eq 'application'} ? 'active'" th:text="#{menu.atc.application}">Application</a>
-                  </li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.atc.information}">Information</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/atc/training-files}"
-                       th:classappend="${page eq 'atc' and subpage eq 'training-files'} ? 'active'" th:text="#{menu.atc.trainingfiles}">Training files</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.atc.loas}">Letter of Agreements</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/atc/stations}"
-                       th:classappend="${page eq 'atc' and subpage eq 'stations'} ? 'active'" th:text="#{menu.atc.stations}">Stations</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/atc/downloads}"
-                       th:classappend="${page eq 'atc' and subpage eq 'downloads'} ? 'active'" th:text="#{menu.atc.atcdownloads}">ATC Downloads</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                   th:classappend="${page eq 'pilots'} ? 'active'">
-                  <span th:text="#{menu.pilots}">Pilots</span>
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;">
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/pilots/airspace}"
-                       th:classappend="${page eq 'pilots' and subpage eq 'airspace'} ? 'active'" th:text="#{menu.pilots.airspace}">Airspace</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/pilots/charts}"
-                       th:classappend="${page eq 'pilots' and subpage eq 'charts'} ? 'active'" th:text="#{menu.pilots.charts}">Charts</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/pilots/bulgarian-sceneries}"
-                       th:classappend="${page eq 'pilots' and subpage eq 'bulgarian-sceneries'} ? 'active'" th:text="#{menu.pilots.sceneries}">Sceneries</a>
-                  </li>
-                  <!--                  <li>
-                                      <a class="dropdown-item" href="#">Info</a>
-                                    </li>-->
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                   th:classappend="${page eq 'members'} ? 'active'">
-                  <span th:utext="#{menu.membersstaff}">Members &amp; staff</span>
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;">
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/staff}"
-                       th:classappend="${page eq 'members' and subpage eq 'staff'} ? 'active'" th:text="#{menu.membersstaff.staff}">Staff team</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/solo-validations}"
-                       th:classappend="${page eq 'members' and subpage eq 'solo-validations'} ? 'active'" th:text="#{menu.membersstaff.solos}">Solo validations</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:href="@{/members/training-staff}"
-                       th:classappend="${page eq 'members' and subpage eq 'training-staff'} ? 'active'" th:text="#{menu.membersstaff.trainingstaff}">Training staff</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" th:text="#{menu.membersstaff.visitingcontrollers}">Visiting controllers</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
-                  <!--<span th:text="#{language. + #{language.current}}">Language</span>-->
-                </a>
-                <ul class="dropdown-menu" style="z-index: 1500 !important;" th:with="lang=#{language.current}">
-                  <li>
-                    <a class="dropdown-item" href="?lang=en"
-                       th:classappend="${lang eq 'en'} ? 'active'">
+    <div id="mainMenu" th:remove="tag">
+      <div class="bg-body-tertiary">
+        <div class="container py-1">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <ul class="list-inline d-flex mb-0">
+                <li class="nav-item dropdown">
+                  <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                    <span class="fi" th:classappend="'fi-' + #{flag.current}" style="border-radius: 2px;"></span>
+                    <small class="ms-1" th:text="#{language. + #{language.current}}">Language</small>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end" th:with="lang=#{language.current}">
+                    <a href="?lang=en" class="dropdown-item" th:classappend="${lang eq 'en'} ? 'active'">
                       <i class="fi fi-gb me-1"></i>
                       <span th:text="#{language.en}">English</span>
                     </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="?lang=bg"
-                       th:classappend="${lang eq 'bg'} ? 'active'">
+                    <a href="?lang=bg" class="dropdown-item" th:classappend="${lang eq 'bg'} ? 'active'">
                       <i class="fi fi-bg me-1"></i>
                       <span th:text="#{language.bg}">Bulgarian</span>
                     </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="col-7 text-end">
+              <div class="d-flex align-items-center justify-content-end">
+                <a href="#" th:href="@{/portal/dashboard}" class="small" sec:authorize="isAuthenticated()">
+                  <span th:text="#{topbar.portal}">Portal</span>
+                </a>
+                <ul class="list-inline d-flex mb-0 ms-3" sec:authorize="isAuthenticated()">
+                  <li class="nav-item dropdown">
+                    <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                      <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
+                      <small class="ms-1" th:text="${session.loggedUser.fullName}">John Doe</small>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                      <a href="#" th:href="@{/portal/profile/}" class="dropdown-item">
+                        <span th:text="#{topbar.profile.profile}">Profile</span>
+                      </a>
+                      <a href="#" th:href="@{/portal/profile/settings}" class="dropdown-item">
+                        <span th:text="#{topbar.profile.settings}">Settings</span>
+                      </a>
+                      <hr class="dropdown-divider"/>
+                      <a href="#" th:href="@{/logout}" class="dropdown-item text-danger">
+                        <span th:text="#{topbar.logout}">Logout</span>
+                      </a>
+                    </div>
                   </li>
                 </ul>
+                <a href="#" th:href="@{/login}" class="small" th:classappend="${page eq 'login'} ? 'text-primary'"
+                   sec:authorize="!isAuthenticated()">
+                  <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
+                  <span th:text="#{topbar.login}">Login</span>
+                </a>
+                <a class="btn btn-discord d-none d-lg-block ms-3" href="https://community.vatsim.net/" target="_blank"
+                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                  <i class="bi bi-discord me-1"></i>
+                  <span th:text="#{menu.discord}">Discord</span>
+                </a>
+                <a class="btn btn-primary d-none d-lg-block ms-3" href="#" th:href="@{/atc/career-application}"
+                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                  <i class="bi bi-airplane me-1"></i>
+                  <span th:text="#{menu.becomeatc}">Become an ATC</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container position-relative px-0">
+          <a class="navbar-brand" href="#" th:href="@{/}">
+            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="" style="max-width: 200%; height: auto;"/>
+            <!--<img src="#" th:src="@{/resources/img/bgvacc_logo_color_no_icon_cropped.png}" alt="" class="img-fluid"/>-->
+          </a>
+
+          <div class="d-flex align-items-center navbar-no-collapse-items order-lg-last">
+            <button class="navbar-toggler order-last" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-demo-3" aria-controls="navbar-demo-3" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon">
+                <i></i>
+              </span>
+            </button>
+            <!--                        <div class="nav-item me-3 me-lg-0">
+                                      <a class="btn btn-discord btn-sm" href="https://community.vatsim.net/" target="_blank">
+                                        <i class="bi bi-discord me-1"></i>
+                                        <span th:text="#{menu.discord}">Discord</span>
+                                      </a>
+                                                    <a class="btn btn-primary btn-sm" href="#" th:href="@{/atc/career-application}">
+                                                      <img src="#" th:src="@{/resources/icons/svg/atc-tower-white.svg}" width="20" class="text-white me-1"/>
+                                                      <span th:text="#{menu.becomeatc}">Become an ATC</span>
+                                                    </a>
+                                    </div>-->
+          </div>
+          <div class="collapse navbar-collapse" id="navbar-demo-3">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item me-lg-3">
+                <a class="nav-link" href="#" th:href="@{/}" th:text="#{menu.home}"
+                   th:classappend="${page eq 'home'} ? 'active'">Home</a>
               </li>
+              <li class="nav-item me-lg-3">
+                <a class="nav-link" href="#" th:href="@{/events}" th:text="#{menu.events}"
+                   th:classappend="${page eq 'events'} ? 'active'">Events</a>
+              </li>
+              <li class="nav-item dropdown me-lg-3">
+                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
+                   th:classappend="${page eq 'atc'} ? 'active'">
+                  <span th:text="#{menu.atc}">ATC</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                  <a href="#" class="dropdown-item" th:href="@{/atc/career-application}"
+                     th:classappend="${page eq 'atc' and subpage eq 'application'} ? 'active'" th:text="#{menu.atc.application}">Application</a>
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/career-application}"
+                     th:classappend="${page eq 'atc' and subpage eq 'information'} ? 'active'" th:text="#{menu.atc.information}">Information</a>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/training-files}"
+                     th:classappend="${page eq 'atc' and subpage eq 'training-files'} ? 'active'" th:text="#{menu.atc.trainingfiles}">Training files</a>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/loa}"
+                     th:classappend="${page eq 'atc' and subpage eq 'loa'} ? 'active'" th:text="#{menu.atc.loas}">Letter of Agreements</a>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/stations}"
+                     th:classappend="${page eq 'atc' and subpage eq 'stations'} ? 'active'" th:text="#{menu.atc.stations}">Stations</a>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/downloads}"
+                     th:classappend="${page eq 'atc' and subpage eq 'downloads'} ? 'active'" th:text="#{menu.atc.atcdownloads}">ATC Downloads</a>
+                </div>
+              </li>
+              <li class="nav-item dropdown me-lg-3">
+                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
+                   th:classappend="${page eq 'pilots'} ? 'active'">
+                  <span th:text="#{menu.pilots}">Pilots</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                  <a href="#" class="dropdown-item" th:href="@{/pilots/airspace}"
+                     th:classappend="${page eq 'pilots' and subpage eq 'airspace'} ? 'active'" th:text="#{menu.pilots.airspace}">Airspace</a>
+                  <a href="#" class="dropdown-item" th:href="@{/pilots/charts}"
+                     th:classappend="${page eq 'pilots' and subpage eq 'charts'} ? 'active'" th:text="#{menu.pilots.charts}">Charts</a>
+                  <a href="#" class="dropdown-item" th:href="@{/pilots/bulgarian-sceneries}"
+                     th:classappend="${page eq 'pilots' and subpage eq 'bulgarian-sceneries'} ? 'active'" th:text="#{menu.pilots.sceneries}">Sceneries</a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"
+                   th:classappend="${page eq 'members'} ? 'active'">
+                  <span th:utext="#{menu.membersstaff}">Members &amp; staff</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                  <a href="#" class="dropdown-item" th:href="@{/members/staff}"
+                     th:classappend="${page eq 'members' and subpage eq 'staff'} ? 'active'" th:text="#{menu.membersstaff.staff}">Staff team</a>
+                  <a href="#" class="dropdown-item" th:href="@{/members/solo-validations}"
+                     th:classappend="${page eq 'members' and subpage eq 'solo-validations'} ? 'active'" th:text="#{menu.membersstaff.solos}">Solo validations</a>
+                  <a href="#" class="dropdown-item" th:href="@{/members/controllers}"
+                     th:classappend="${page eq 'members' and subpage eq 'controllers'} ? 'active'" th:text="#{menu.membersstaff.controllers}">Controllers</a>
+                  <a href="#" class="dropdown-item" th:href="@{/members/training-staff}"
+                     th:classappend="${page eq 'members' and subpage eq 'training-staff'} ? 'active'" th:text="#{menu.membersstaff.trainingstaff}">Training staff</a>
+                  <!--                  <a href="#" class="dropdown-item" th:href="@{/members/visiting-controllers}"
+                                       th:classappend="${page eq 'members' and subpage eq 'visiting-controllers'} ? 'active'" th:text="#{menu.membersstaff.visitingcontrollers}">Visiting controllers</a>-->
+                </div>
+              </li>
+              <!--              <li class="nav-item dropdown">
+                              <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
+                                <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
+                                <span th:text="#{language. + #{language.current}}">Language</span>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-end" th:with="lang=#{language.current}">
+                                <a href="?lang=en" class="dropdown-item" th:classappend="${lang eq 'en'} ? 'active'">
+                                  <i class="fi fi-gb me-1"></i>
+                                  <span th:text="#{language.en}">English</span>
+                                </a>
+                                <a href="?lang=bg" class="dropdown-item" th:classappend="${lang eq 'bg'} ? 'active'">
+                                  <i class="fi fi-bg me-1"></i>
+                                  <span th:text="#{language.bg}">Bulgarian</span>
+                                </a>
+                              </div>
+                            </li>-->
+
+
+              <!--              <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fi" th:classappend="'fi-' + #{flag.current}"></span>
+                                <span th:text="#{language. + #{language.current}}">Language</span>
+                              </a>
+                              <ul class="dropdown-menu" style="z-index: 1500 !important;" th:with="lang=#{language.current}">
+                                <li>
+                                  <a class="dropdown-item" href="?lang=en"
+                                     th:classappend="${lang eq 'en'} ? 'active'">
+                                    <i class="fi fi-gb me-1"></i>
+                                    <span th:text="#{language.en}">English</span>
+                                  </a>
+                                </li>
+                                <li>
+                                  <a class="dropdown-item" href="?lang=bg"
+                                     th:classappend="${lang eq 'bg'} ? 'active'">
+                                    <i class="fi fi-bg me-1"></i>
+                                    <span th:text="#{language.bg}">Bulgarian</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </li>-->
             </ul>
           </div>
         </div>
       </nav>
     </div>
 
-    <div id="footer">
-      <div class="container-fluid shadow sticky-bottom">
-        <div class="container">
-          <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
-            <div class="col-md-8 d-flex align-items-center">
-              <a href="/" class="mb-3 me-4 mb-md-0 text-body-secondary text-decoration-none lh-1">
-                <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cropped.png}"/>
-              </a>
-              <div class="mb-3 mb-md-0 text-body-secondary">
-                <span>&copy;</span>
-                <span th:text="'2018-' + ${#dates.year(#dates.createNow())}">2024</span>
-                <span>BGvACC. All rights reserved.</span>
-              </div>
-            </div>
-
-            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-              <li class="ms-4">
-                <a class="text-body-secondary" href="https://instagram.com/vatsim.bulgaria" target="_blank">
-                  <i class="fa-brands fa-instagram fs-4"></i>
-                </a>
-              </li>
-              <li class="ms-4">
-                <a class="text-body-secondary" href="#">
-                  <i class="fa-brands fa-facebook-f fs-4"></i>
-                </a>
-              </li>
-              <li class="ms-4">
-                <a class="text-body-secondary" href="#">
-                  <i class="fa-brands fa-twitter fs-4"></i>
-                </a>
-              </li>
-            </ul>
-          </footer>
-        </div>
-      </div>
-    </div>
-
-    <div id="footer_other">
-      <div class="container-fluid shadow sticky-bottom">
-        <div class="container">
-          <footer class="py-5">
+    <div id="footer" th:remove="tag">
+      <footer id="footer" class="footer position-relative mt-10" data-bs-theme="dark">
+        <!--:Svg Wave:-->
+        <svg class="text-dark w-100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" width="1920" height="120"
+             viewBox="0 0 1920 200">
+          <path d="M1920 186 1066.66 71.45C1415 81 1650 58 1920 0" fill="var(--bs-primary)" />
+          <path d="M1920 200H0V11.31c873-5.64 873 73 1918.65 73h1.35Z" fill="currentColor" />
+        </svg>
+        <div class="bg-dark text-body">
+          <div class="container pt-5 pb-5">
             <div class="row">
-              <div class="col-6 col-md-2 mb-3">
-                <h5>Section</h5>
-                <ul class="nav flex-column">
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+              <div class="col-12 col-xl-6 mb-5 mb-md-0 h-100 me-auto">
+                <div class="mb-3">
+                  <img src="#" th:src="@{/resources/img/bgvacc_logo_white_up_icon_cropped.png}" width="300" alt="#" th:alt="#{app.name}"/>
+                </div>
+                <!--<div class="display-6 text-white mb-0 position-relative">BGvACC</div>-->
+                <div class="pt-3 mb-6 text-muted" th:text="#{footer.subheader}">Bulgarian subdivision of VATEUD, part of VATSIM network</div>
+                <div class="pt-3 mb-6" th:text="#{footer.moto}">Fly high, Soar Higher!</div>
+              </div>
+              <div class="col-12 col-xl-3 mb-5 mb-md-0 ms-auto h-100">
+                <!--Title-->
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.rules}">Rules</h6>
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/rules/privacy-policy}"
+                       th:text="#{footer.rules.privacypolicy}">Privacy Policy</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}"
+                       th:text="#{footer.rules.constitution}">Constitution</a>
+                  </li>
                 </ul>
               </div>
 
-              <div class="col-6 col-md-2 mb-3">
-                <h5>Section</h5>
-                <ul class="nav flex-column">
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+              <div class="col-12 col-xl-3 mb-5 mb-md-0 h-100">
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.resources}">Resources</h6>
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/pilots/charts}"
+                       th:text="#{footer.resources.charts}">Charts</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/pilots/bulgarian-sceneries}"
+                       th:text="#{footer.resources.sceneries}">Sceneries</a>
+                  </li>
                 </ul>
-              </div>
 
-              <div class="col-6 col-md-2 mb-3">
-                <h5>Section</h5>
-                <ul class="nav flex-column">
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-                  <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+                <hr class="mb-4"/>
+
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.partners}">Partners</h6>
+
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/partners/virtual-airlines-partners}"
+                       th:text="#{footer.partners.virtualairlines}">Virtual Airlines Partners</a>
+                  </li>
                 </ul>
-              </div>
-
-              <div class="col-md-5 offset-md-1 mb-3">
-                <form>
-                  <h5>Subscribe to our newsletter</h5>
-                  <p>Monthly digest of what's new and exciting from us.</p>
-                  <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-                    <label for="newsletter1" class="visually-hidden">Email address</label>
-                    <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
-                      <button class="btn btn-primary" type="button">Subscribe</button>
-                  </div>
-                </form>
               </div>
             </div>
-
-            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-              <p>
-                <span>&copy;</span>
-                <span th:text="'2018-' + ${#dates.year(#dates.createNow())}">2024</span>
-                <span>BGvACC, Inc. All rights reserved.</span>
-              </p>
-              <ul class="list-unstyled d-flex">
-                <li class="ms-3">
-                  <a class="link-body-emphasis" href="https://instagram.com/vatsim.bulgaria" target="_blank">
-                    <svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg>
-                  </a>
-                </li>
-                <li class="ms-3">
-                  <a class="link-body-emphasis" href="#" target="_blank">
-                    <svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg>
-                  </a>
-                </li>
-                <li class="ms-3">
-                  <a class="link-body-emphasis" href="#" target="_blank">
-                    <svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg>
-                  </a>
-                </li>
-              </ul>
+            <hr class="mb-5"/>
+            <div class="row d-flex align-items-center">
+              <div class="col-sm-5 mb-3 mb-sm-0">
+                <span class="d-block lh-sm small text-body-secondary">
+                  <span>&copy;</span>
+                  <span th:utext="#{app.name} + '. ' + #{footer.rights} + ', ' + ${#dates.year(#dates.createNow())} + '. ' + #{footer.developed} + ' ' + #{footer.author}">BGvACC, All Rights Reserved, 2024. Developed by Atanas Arshinkov</span>
+                </span>
+              </div>
+              <div class="col-sm-7">
+                <div class="nav justify-content-sm-end small text-body-secondary">
+                  <span th:text="${@version.version}">v1.0.0</span>
+                  <!--                  <a class="nav-link small px-0 me-3" href="#!"><small>Privacy Policy</small></a>
+                                    <a class="nav-link small px-0" href="#!"><small>Terms of Service</small></a>-->
+                </div>
+              </div>
             </div>
-          </footer>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!--article-->
+    <div id="chartCard" th:remove="tag">
+      <article class="card card-hover text-center hover-shadow-lg overflow-hidden border-1 rounded-3 shadow-md h-100">
+        <div class="overflow-hidden position-relative">
+          <img src="#" th:src="@{/resources/img/airports/} + ${image}" alt="" class="img-fluid img-zoom">
+            <svg class="position-absolute start-0 bottom-0 mb-n1" style="color: var(--bs-body-bg);"
+                 preserveAspectRatio="none" width="100%"
+                 height="48" viewBox="0 0 1460 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M122 22.8261L0 0V120H1460V0L1338 22.8261C1217 44.1304 973 88.2609 730 88.2609C487
+                88.2609 243 44.1304 122 22.8261Z" fill="currentColor"></path>
+            </svg>
+        </div>
+        <div class="card-body pb-3 position-relative">
+          <h5 class="py-3 mb-0" th:text="${airportName}">Airport name</h5>
+          <!--          <div class="">
+                      <a href="#" th:href="${link}" class="btn btn-primary btn-sm" th:text="#{pilots.charts.view}">View charts</a>
+                    </div>-->
+          <p class="mb-0 text-truncate px-lg-4" th:text="#{pilots.charts.view.airport(${airportName})}">View charts of airport</p>
+        </div>
+        <a href="#" th:href="${link}" class="stretched-link"></a>
+      </article>
+    </div>
+
+    <div id="metarCard" th:remove="tag">
+      <div class="">
+        <div class="row">
+          <div class="col-auto mb-4">
+            <div>
+              <img src="#" th:src="@{/resources/metar/runways/runway-} + ${arm.runway.lowerRwyNumberLeading} + '.svg'" width="200" alt="Runway" class="position-absolute" th:style="'transform: rotate(' + ${arm.runway.lowerRwyBearing} + 'deg);'"/>
+              <img th:if="${arm.metar.windFromDirection ne 'VRB'}"
+                   src="#" th:src="@{/resources/metar/compass-arrow.svg}" width="200" alt="Winds" class="position-absolute" th:style="'transform: rotate(' + ${arm.metar.windFromDirection} + 'deg);'"/>
+
+              <img src="#" th:src="@{/resources/metar/compass.svg}" width="200" alt="Winds" class=""/>
+            </div>
+          </div>
+          <div class="col mb-4">
+            <div class="row">
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.wind}">Wind</dt>
+                  <dd th:text="(${arm.metar.windFromDirection}) + (${arm.metar.windFromDirection ne 'VRB'} ? '&deg;' : '') + ' ' + (${arm.metar.windStrength ge 0 and arm.metar.windStrength lt 10} ? ('0' + ${arm.metar.windStrength}) : ${arm.metar.windStrength}) + 'KT'"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.visibility}">Visibility</dt>
+                  <dd th:if="${arm.metar.visibility eq 9999}" th:text="#{home.weatherinfo.visibility.tenkm}"></dd>
+                  <dd th:if="${arm.metar.visibility ne 9999}" th:text="#{home.weatherinfo.visibility.m(${arm.metar.visibility})}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:utext="#{home.weatherinfo.tanddp}">T&deg; &amp; DP</dt>
+                  <dd th:text="${arm.metar.temperature} + '/' + ${arm.metar.dewPoint}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.qnh}">QNH</dt>
+                  <dd th:text="${arm.metar.QNH}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.runwayinuse}">Runway in use</dt>
+                  <dd th:text="${arm.activeRunway}"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-secondary" th:text="${arm.metar.rawMetar}">Raw</div>
+      </div>
+    </div>
+
+    <div id="controllerCardWrapper" th:remove="tag">
+      <div class="row mb-3" th:if="${!#lists.isEmpty(controllers)}">
+        <div class="col-12">
+          <div class="h4" th:text="#{members.controllers. + ${title} + '.title'} + ' - ' + ${#lists.size(controllers)}">Controllers</div>
+          <hr/>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3" th:each="c : ${controllers}">
+          <div th:replace="fragments/fragments :: #controllerCard(c=${c.data})"></div>
         </div>
       </div>
     </div>
 
-    <div id="chartCard" th:remove="tag">
-      <div class="card h-100">
-        <a href="#" th:href="${link}">
-          <img src="#" th:src="@{/resources/img/airports/} + ${image}" class="card-img-top" alt="#" th:alt="${alt}"/>
-        </a>
-        <div class="card-body">
-          <h5 class="card-title" th:text="${airportName}">Airport name</h5>
-          <div class="card-text">
-            <a href="#" th:href="${link}" class="btn btn-success" th:text="#{pilots.charts.view}">View charts</a>
+    <div id="controllerCard" th:remove="tag">
+      <div class="overflow-hidden card card-body py-5 rounded-4 hover-lift
+           hover-shadow-lg flex-row align-items-stretch">
+        <div class="me-3 flex-shrink-0 width-6x height-6x text-success flex-center position-relative">
+          <svg class="position-absolute start-0 top-0 w-100 h-100"
+               preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+               width="84" height="92" viewBox="0 0 84 92" fill="none">
+            <!--'#00acf1' : '#782BAA'-->
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M41.3828 0.0129826C55.5202 -0.410183 67.474
+                  9.57304 75.7126 20.9401C83.3878 31.531 85.5334 44.6132 82.9678 57.3932C80.293 70.7184 74.4344
+                  84.5754 61.8454 90.0204C49.6096 95.312 36.2153 89.0111 24.4948 82.6812C13.7354 76.8709 3.88915
+                  68.9009 0.94914 57.1331C-2.04982 45.1292 2.39369 33.0501 9.56447 22.9202C17.4794 11.7389 27.5859
+                  0.425968 41.3828 0.0129826Z" th:fill="${c.atcRatingSymbol eq 'S1'} ? '#e6e200' : (${c.atcRatingSymbol eq 'S2' or c.atcRatingSymbol eq 'S3'} ? '#0090ff' : (${c.atcRatingSymbol eq 'C1' or c.atcRatingSymbol eq 'C3'} ? '#410037' : '#05d6ff'))" />
+          </svg>
+          <!--<i class="icon-Idea-3 fs-3 text-white position-relative"></i>-->
+          <i class="icon-Student-Hat fs-3 text-black position-relative" th:if="${c.atcRatingSymbol eq 'S1'}"></i>
+          <i class="icon-Boy fs-3 text-white position-relative" th:if="${c.atcRatingSymbol eq 'S2'}"></i>
+          <i class="icon-Add-User fs-3 text-white position-relative" th:if="${c.atcRatingSymbol eq 'S3'}"></i>
+          <i class="icon-Tie fs-3 text-white position-relative" th:if="${c.atcRatingSymbol ne 'S1' and c.atcRatingSymbol ne 'S2' and c.atcRatingSymbol ne 'S3'}"></i>
+        </div>
+        <div class="flex-grow-1">
+          <div class="h5 mb-3">
+            <div th:text="${c.fullName}">Full name</div>
+            <small class="fs-6 text-muted" th:text="${c.cid}">CID</small>
           </div>
+          <div class="mb-0" th:text="#{members.member.atc. + ${#strings.toLowerCase(c.atcRatingSymbol)}}">Rating</div>
         </div>
       </div>
     </div>

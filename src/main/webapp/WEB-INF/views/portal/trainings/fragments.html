@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity">
+  <body>
+    <div id="soloValidationCard" th:remove="tag">
+      <div class="card overflow-hidden">
+        <div class="card-header d-flex align-items-center">
+          <div class="h4 mb-0" th:text="${sv.fullName} + ' - ' + ${sv.userCid}">Name and CID</div>
+          <div class="dropdown ms-auto">
+            <a class="d-flex align-items-center justify-content-center size-30 rounded-circle btn p-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="material-symbols-rounded align-middle">more_vert
+              </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end mt-1">
+              <a class="dropdown-item" href="#">
+                <span th:text="#{portal.trainings.solo.extend}">Extend</span>
+              </a>
+              <hr class="dropdown-divider"/>
+              <a class="dropdown-item text-danger" href="#">
+                <span th:text="#{portal.trainings.solo.revoke}">Revoke</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.instructor}">Instructor</dt>
+                <dd class="mb-0" th:text="${sv.instructorFullName} + ' - ' + ${sv.instructorCid}">Instructor</dd>
+              </dl>
+            </div>
+            <div class="col-12 col-sm-6 text-sm-end">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.position}">Position</dt>
+                <dd class="mb-0" th:text="${sv.position}">Position</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.issuedon}">Issued on</dt>
+                <dd class="mb-0" th:text="${#dates.format(sv.createdAt, 'dd.MM.yyyy')}">Created at</dd>
+              </dl>
+            </div>
+            <div class="col-12 col-sm-6 text-sm-end">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.expireson}">Expires on</dt>
+                <dd class="mb-0" th:text="${#dates.format(sv.expiry, 'dd.MM.yyyy')}">Expiry</dd>
+              </dl>
+            </div>
+
+            <!--            <div class="col-12 col-sm-6 text-sm-end">
+                          <dl class="mb-3">
+                            <dt th:text="#{portal.trainings.solo.updatedat}">Updated at</dt>
+                            <dd class="mb-0" th:text="${#dates.format(sv.updatedAt, 'yyyy-MM-dd')}">Updated at</dd>
+                          </dl>
+                        </div>-->
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.totaldays}">Total days</dt>
+                <dd class="mb-0" th:text="${sv.soloTotalDays + 1}">Remaining days</dd>
+              </dl>
+            </div>
+            <div class="col-12 col-sm-6 text-sm-end">
+              <dl class="mb-3">
+                <dt th:text="#{portal.trainings.solo.remainingdays}">Remaining days</dt>
+                <dd class="mb-0" th:text="${sv.soloRemainingDays}">Remaining days</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="progress mb-0">
+                <div class="progress-bar progress-bar-animated" role="progressbar" th:style="'width: ' + ${sv.percentCompleted} + '%'"
+                     th:classappend="${sv.percentCompleted gt 89.5} ? 'bg-danger'"
+                     aria-valuemin="0" th:aria-valuenow="${sv.soloRemainingDays}" th:aria-valuemax="${sv.soloTotalDays}" th:text="${#numbers.formatDecimal(sv.percentCompleted, 1, 'WHITESPACE', 0, 'POINT')} + '%'">75%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

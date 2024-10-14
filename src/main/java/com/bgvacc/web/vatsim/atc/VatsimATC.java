@@ -4,9 +4,7 @@ import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -17,8 +15,6 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class VatsimATC implements Serializable {
 
@@ -42,6 +38,35 @@ public class VatsimATC implements Serializable {
   @JsonIgnore
   private String lastName;
 
+  @JsonIgnore
+  private String firstNameBg;
+
+  @JsonIgnore
+  private String lastNameBg;
+
+  public VatsimATC() {
+  }
+
+  public VatsimATC(Long id, String callsign, String server, Integer rating, String firstName, String lastName) {
+    this.id = id;
+    this.callsign = callsign;
+    this.server = server;
+    this.rating = rating;
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
+  public VatsimATC(Long id, String callsign, String server, Integer rating, String firstName, String lastName, String firstNameBg, String lastNameBg) {
+    this.id = id;
+    this.callsign = callsign;
+    this.server = server;
+    this.rating = rating;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.firstNameBg = firstNameBg;
+    this.lastNameBg = lastNameBg;
+  }
+
   public String getAtcRatingSymbol() {
     return VatsimRatingUtils.getATCRatingSymbol(this.rating);
   }
@@ -52,5 +77,9 @@ public class VatsimATC implements Serializable {
 
   public String getFullName() {
     return (lastName != null) ? firstName + ' ' + lastName : firstName;
+  }
+
+  public String getFullNameBg() {
+    return (lastNameBg != null) ? firstNameBg + ' ' + lastNameBg : firstNameBg;
   }
 }

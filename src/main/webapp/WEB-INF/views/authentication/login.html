@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{login.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 my-5">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-md-8 col-md-6 col-lg-5 col-xl-4 z-2">
+
+              <h1 class="h4 mb-1" th:text="#{login.welcome(#{app.name})}">Welcome back!</h1>
+              <p class="mb-4 text-body-secondary" th:text="#{login.welcome.subheader}">Please Sign in with details...</p>
+              <div class="position-relative">
+                <div>
+                  <form class="needs-validation" th:action="@{/login}" method="post" th:object="${lm}">
+                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('cidEmail')} ? 'mb-3'">
+                      <span class="input-icon">
+                        <i class="bi bi-envelope"></i>
+                      </span>
+                      <input type="text" class="form-control" th:field="*{cidEmail}" th:classappend="${#fields.hasErrors('cidEmail')} ? 'is-invalid'"
+                             th:placeholder="#{login.cidemail}" autofocus="autofocus"/>
+                    </div>
+                    <div class="invalid-feedback d-block mb-3" th:errors="*{cidEmail}">Error</div>
+
+                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('password')} ? 'mb-3'">
+                      <span class="input-icon">
+                        <i class="bi bi-unlock"></i>
+                      </span>
+                      <input type="password" class="form-control" th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                             th:placeholder="#{login.password}"/>
+                    </div>
+                    <div class="invalid-feedback d-block mb-3" th:errors="*{password}">Error</div>
+                    
+                    <div class="mb-3 d-flex justify-content-end">
+                      <div>
+                        <label class="text-end d-block small mb-0">
+                          <a href="#" th:href="@{/forgot-password}" class="link-decoration" th:text="#{login.forgotpassword}">Forgot password?</a>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="d-grid">
+                      <button class="btn btn-primary" type="submit">
+                        <span th:text="#{login.signin}">Sign in</span>
+                      </button>
+                    </div>
+                  </form>
+
+<!--                  <p class="pt-4 small text-body-secondary">
+                    Don’t have an account yet? <a href="page-account-signup.html" class="ms-2 fw-semibold link-underline">Sign Up</a>
+                  </p>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

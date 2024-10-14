@@ -1,0 +1,24 @@
+.theme-icon-active .material-symbols-rounded{
+  font-family: "Material Symbols Rounded";
+}
+[data-bs-theme=dark]{
+  .theme-icon-active{
+      .material-symbols-rounded::before{
+          content: "\e51c";
+      }
+  }
+}
+[data-bs-theme=auto]{
+  .theme-icon-active{
+      .material-symbols-rounded::before{
+          content: "\e891";
+      }
+  }
+}
+[data-bs-theme=light]{
+  .theme-icon-active{
+      .material-symbols-rounded::before{
+          content: "\e0f0";
+      }
+  }
+}

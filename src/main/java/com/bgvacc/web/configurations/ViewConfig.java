@@ -5,6 +5,7 @@ import nz.net.ultraq.thymeleaf.layoutdialect.*;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.dialect.*;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.*;
 import org.thymeleaf.spring5.templateresolver.*;
 import org.thymeleaf.spring5.view.*;
@@ -37,16 +38,17 @@ public class ViewConfig implements WebMvcConfigurer {
     return new LayoutDialect();
   }
 
-//  @Bean
-//  public SpringSecurityDialect ssd() {
-//    return new SpringSecurityDialect();
-//  }
+  @Bean
+  public SpringSecurityDialect ssd() {
+    return new SpringSecurityDialect();
+  }
+
   @Bean
   public Set<IDialect> additionalDialects() {
 
     Set<IDialect> additionalDialects = new HashSet<>();
     additionalDialects.add(layoutDialect());
-//    additionalDialects.add(ssd());
+    additionalDialects.add(ssd());
     return additionalDialects;
   }
 

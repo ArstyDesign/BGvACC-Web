@@ -1,5 +1,6 @@
 package com.bgvacc.web.vatsim.roster;
 
+import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -46,7 +47,7 @@ public class VatEudRoster implements Serializable {
     private List<Long> controllersIds;
 
     @JsonIgnore
-    private List<VatEudRosterController> controllers;
+    private List<VatEudUser> controllers;
 
     @Getter
     @Setter
@@ -93,25 +94,25 @@ public class VatEudRoster implements Serializable {
       }
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
-    public static class VatEudRosterController {
-
-      @JsonProperty("cid")
-      private Long cid;
-
-      @JsonIgnore
-      private String firstName;
-
-      @JsonIgnore
-      private String lastName;
-
-      public String getFullName() {
-        return (lastName != null) ? firstName + ' ' + lastName : firstName;
-      }
-    }
+//    @Getter
+//    @Setter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @ToString
+//    public static class VatEudRosterController {
+//
+//      @JsonProperty("cid")
+//      private Long cid;
+//
+//      @JsonIgnore
+//      private String firstName;
+//
+//      @JsonIgnore
+//      private String lastName;
+//
+//      public String getFullName() {
+//        return (lastName != null) ? firstName + ' ' + lastName : firstName;
+//      }
+//    }
   }
 }

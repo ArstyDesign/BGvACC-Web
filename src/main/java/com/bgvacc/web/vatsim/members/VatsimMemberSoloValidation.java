@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,6 +61,25 @@ public class VatsimMemberSoloValidation implements Serializable {
 
   @JsonIgnore
   private String instructorLastName;
+
+  public int getSoloTotalDays() {
+    long diff = expiry.getTime() - createdAt.getTime();
+    return (int) (diff / (1000 * 60 * 60 * 24));
+  }
+
+  public double getPercentRemaining() {
+    double percentage = ((double) getSoloRemainingDays() / getSoloTotalDays()) * 100;
+    return percentage;
+  }
+
+  public double getPercentCompleted() {
+    return 100 - getPercentRemaining();
+  }
+
+  public int getSoloRemainingDays() {
+    long diff = expiry.getTime() - new Date().getTime();
+    return (int) (diff / (1000 * 60 * 60 * 24)) + 1;
+  }
 
   public String getFullName() {
     return (lastName != null) ? firstName + ' ' + lastName : firstName;

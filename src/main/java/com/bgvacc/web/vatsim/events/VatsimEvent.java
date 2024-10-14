@@ -21,6 +21,6 @@ import lombok.ToString;
 public class VatsimEvent implements Serializable {
 
   @JsonProperty("data")
-  private VatsimData data;
+  private VatsimEventData data;
 
 }

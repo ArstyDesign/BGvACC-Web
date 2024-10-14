@@ -12,20 +12,27 @@
         <div class="col-12 mb-3">
 
           <p th:text="#{pilots.airspace.p1}">Bulgarian airspace is mainly divided into two parts.</p>
-          
-          <p th:text="#{pilots.airspace.sofiactr.p1}">The western part is Sofia Control (LBSR_CTR), which covers central and western Bulgaria with the three major airports - Sofia (LBSF), Plovdiv (LBPD), Gorna Oryahovitsa (LBGO). This sector controls traffic from FL105 to FL660.</p>
+
+          <p th:utext="#{pilots.airspace.sofiactr.p1}">The western part is Sofia Control (LBSR_CTR), which covers central and western Bulgaria with the three major airports - Sofia (LBSF), Plovdiv (LBPD), Gorna Oryahovitsa (LBGO). This sector controls traffic from FL105 to FL660.</p>
           <p th:text="#{pilots.airspace.sofiactr.p2}">The frequency of this sector is 131.225</p>
-          
-          <p th:text="#{pilots.airspace.varnactr.p1}">The eastern part is Varna Control (LBSR_V_CTR), which covers the eastern parts of Bulgaria, including the Black Sea coast as well as parts of the Black Sea. This includes the two major airports on the Black Sea - Varna (LBWN) and Burgas (LBBG). This sector controls traffic from FL105 to FL660.</p>
+
+          <p th:utext="#{pilots.airspace.varnactr.p1}">The eastern part is Varna Control (LBSR_V_CTR), which covers the eastern parts of Bulgaria, including the Black Sea coast as well as parts of the Black Sea. This includes the two major airports on the Black Sea - Varna (LBWN) and Burgas (LBBG). This sector controls traffic from FL105 to FL660.</p>
           <p th:text="#{pilots.airspace.varnactr.p2}">The frequency of this sector is 134.700</p>
 
-          <div>
-            <img src="#" th:src="@{/resources/img/bg_map_outline.png}"/>
-          </div>
+        </div>
+      </div>
+<!--      <div class="row">
+        <div class="col-12 mb-3">
+          <meter id="disk_c" value="8" min="0" max="10">2 out of 10</meter>
+        </div>
+      </div>-->
+      <div class="row">
+        <div class="col-12 col-lg-8 mb-3">
+          <img src="#" th:src="@{/resources/img/bg_map_outline.png}"/>
+        </div>
 
-          <div>
-            <img src="#" th:src="@{/resources/img/levels.png}"/>
-          </div>
+        <div class="col-12 col-lg-4 mb-3">
+          <img src="#" th:src="@{/resources/img/levels.png}"/>
         </div>
       </div>
     </div>
