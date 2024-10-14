@@ -7,9 +7,9 @@ import com.bgvacc.web.vatsim.events.VatsimEventData;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @since 1.0.0
  */
 @Controller
+@RequiredArgsConstructor
 public class VatsimEventsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @Autowired
-  private EventApi eventApi;
+  private final EventApi eventApi;
 
   @GetMapping("/events")
   public String getEventsInBulgaria(Model model) {

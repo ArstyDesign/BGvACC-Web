@@ -21,7 +21,7 @@
 
               <form th:action="@{/portal/trainings/notes}" method="post">
                 <label class="form-label" th:text="#{portal.trainings.notes.entercid}">Enter controller's CID</label>
-                <input class="form-control form-control-lg mb-2" type="text" name="cid" th:value="${cid ne null} ? ${cid}"/>
+                <input class="form-control form-control-lg mb-0" type="text" name="cid" th:value="${cid ne null} ? ${cid}"/>
               </form>
             </div>
           </div>

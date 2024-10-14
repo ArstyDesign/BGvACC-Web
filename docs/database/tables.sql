@@ -109,3 +109,13 @@ CREATE TABLE blog_post_tags (
     tag_name varchar(100) references tags(name) on delete cascade, 
     primary key (blog_post_id, tag_name)
 );
+
+CREATE TABLE controllers_online_log (
+	controller_online_log_id varchar(100) not null primary key default gen_random_uuid(),
+	cid varchar(30),
+	rating int not null,
+	server varchar(50),
+	position varchar(30) not null,
+	session_started timestamptz not null default NOW(),
+	session_ended timestamptz
+);

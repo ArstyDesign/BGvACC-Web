@@ -16060,7 +16060,8 @@ a:not(.nav-link):not(.btn):not(.dropdown-item):not(.badge).text-muted:hover {
 }
 
 hr {
-  --bs-hr-border-color:#f1f5f9;
+  /*  --bs-hr-border-color:#f1f5f9;*/
+  --bs-hr-border-color:#9f9f9f;
   border-top: var(--bs-border-width) solid var(--bs-hr-border-color);
   opacity: 0.25;
 }

@@ -62,7 +62,7 @@
                   <i class="bi bi-discord me-1"></i>
                   <span th:text="#{menu.discord}">Discord</span>
                 </a>
-                <a class="btn btn-primary d-none d-lg-block ms-3" href="#" th:href="@{/atc/career-application}" target="_blank"
+                <a class="btn btn-primary d-none d-lg-block ms-3" href="#" th:href="@{/atc/career-application}"
                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
                   <i class="bi bi-airplane me-1"></i>
                   <span th:text="#{menu.becomeatc}">Become an ATC</span>
@@ -75,7 +75,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container position-relative px-0">
           <a class="navbar-brand" href="#" th:href="@{/}">
-            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="" style="max-width: 140%; height: auto;"/>
+            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="" style="max-width: 200%; height: auto;"/>
             <!--<img src="#" th:src="@{/resources/img/bgvacc_logo_color_no_icon_cropped.png}" alt="" class="img-fluid"/>-->
           </a>
 
@@ -312,23 +312,49 @@
     <div id="metarCard" th:remove="tag">
       <div class="">
         <div class="row">
-          <div class="col col-md-12 col-lg mb-4">
+          <div class="col-auto mb-4">
             <div>
               <img src="#" th:src="@{/resources/metar/runways/runway-} + ${arm.runway.lowerRwyNumberLeading} + '.svg'" width="200" alt="Runway" class="position-absolute" th:style="'transform: rotate(' + ${arm.runway.lowerRwyBearing} + 'deg);'"/>
-              <img src="#" th:src="@{/resources/metar/compass-arrow.svg}" width="200" alt="Winds" class="position-absolute" th:style="'transform: rotate(' + ${arm.metar.windFromDirection} + 'deg);'"/>
+              <img th:if="${arm.metar.windFromDirection ne 'VRB'}"
+                   src="#" th:src="@{/resources/metar/compass-arrow.svg}" width="200" alt="Winds" class="position-absolute" th:style="'transform: rotate(' + ${arm.metar.windFromDirection} + 'deg);'"/>
 
               <img src="#" th:src="@{/resources/metar/compass.svg}" width="200" alt="Winds" class=""/>
             </div>
           </div>
-          <div class="col col-md-12 col-lg mb-4">
-            <dl>
-              <dt>Wind</dt>
-              <dd th:text="(${arm.metar.windFromDirection}) + '&deg; ' + (${arm.metar.windStrength ge 0 and arm.metar.windStrength lt 10} ? ('0' + ${arm.metar.windStrength}) : ${arm.metar.windStrength}) + 'KT'"></dd>
-              <dt>Temperature &amp; dew point</dt>
-              <dd th:text="${arm.metar.temperature} + '/' + ${arm.metar.dewPoint}"></dd>
-              <dt>QNH</dt>
-              <dd th:text="${arm.metar.QNH}"></dd>
-            </dl>
+          <div class="col mb-4">
+            <div class="row">
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.wind}">Wind</dt>
+                  <dd th:text="(${arm.metar.windFromDirection}) + (${arm.metar.windFromDirection ne 'VRB'} ? '&deg;' : '') + ' ' + (${arm.metar.windStrength ge 0 and arm.metar.windStrength lt 10} ? ('0' + ${arm.metar.windStrength}) : ${arm.metar.windStrength}) + 'KT'"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.visibility}">Visibility</dt>
+                  <dd th:if="${arm.metar.visibility eq 9999}" th:text="#{home.weatherinfo.visibility.tenkm}"></dd>
+                  <dd th:if="${arm.metar.visibility ne 9999}" th:text="#{home.weatherinfo.visibility.m(${arm.metar.visibility})}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:utext="#{home.weatherinfo.tanddp}">T&deg; &amp; DP</dt>
+                  <dd th:text="${arm.metar.temperature} + '/' + ${arm.metar.dewPoint}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.qnh}">QNH</dt>
+                  <dd th:text="${arm.metar.QNH}"></dd>
+                </dl>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <dl>
+                  <dt th:text="#{home.weatherinfo.runwayinuse}">Runway in use</dt>
+                  <dd th:text="${arm.activeRunway}"></dd>
+                </dl>
+              </div>
+            </div>
           </div>
         </div>
 

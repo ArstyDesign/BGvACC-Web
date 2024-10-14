@@ -3,8 +3,7 @@ package com.bgvacc.web.controllers.vatsim;
 import com.aarshinkov.MetarDecoder;
 import com.aarshinkov.domain.Metar;
 import com.bgvacc.web.api.MetarApi;
-import com.bgvacc.web.domains.AirportRwyMetar;
-import com.bgvacc.web.domains.Runway;
+import com.bgvacc.web.domains.*;
 import com.bgvacc.web.vatsim.metars.VatsimMetar;
 import java.util.List;
 import org.slf4j.Logger;
@@ -53,10 +52,37 @@ public class VatsimMetarsController {
 
     arm.setMetar(metar);
     arm.setRunway(lowerRunway);
+    arm.setAirportDefaults(getAirportDefaults(icao));
 
     model.addAttribute("arm", arm);
 
     return "fragments/fragments :: #metarCard";
+  }
+
+  private AirportDefaults getAirportDefaults(String icao) {
+
+    AirportDefaults airportDefaults = new AirportDefaults();
+
+    switch (icao.toUpperCase()) {
+      case "LBSF":
+//        airportDefaults.setWindStrengthMinimum(5);
+        airportDefaults.setDefaultRunway("27");
+        break;
+      case "LBWN":
+        airportDefaults.setDefaultRunway("09");
+        break;
+      case "LBBG":
+        airportDefaults.setDefaultRunway("04");
+        break;
+      case "LBPD":
+        airportDefaults.setDefaultRunway("30");
+        break;
+      case "LBGO":
+        airportDefaults.setDefaultRunway("");
+        break;
+    }
+
+    return airportDefaults;
   }
 
   private Runway getKnownRunway(String icao) {
@@ -68,13 +94,13 @@ public class VatsimMetarsController {
         rwy.setLowerRwyNumber(9);
         rwy.setLowerRwyBearing(89);
         return rwy;
-      case "LBBG":
-        rwy.setLowerRwyNumber(4);
-        rwy.setLowerRwyBearing(39);
-        return rwy;
       case "LBWN":
         rwy.setLowerRwyNumber(9);
         rwy.setLowerRwyBearing(91);
+        return rwy;
+      case "LBBG":
+        rwy.setLowerRwyNumber(4);
+        rwy.setLowerRwyBearing(39);
         return rwy;
       case "LBPD":
         rwy.setLowerRwyNumber(12);

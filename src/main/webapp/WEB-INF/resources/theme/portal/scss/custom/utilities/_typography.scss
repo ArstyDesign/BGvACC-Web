@@ -80,7 +80,8 @@ a:not(.nav-link):not(.btn):not(.dropdown-item):not(.badge){
 
 
 hr {
-  --#{$prefix}hr-border-color:#{$border-color};
+/*  --#{$prefix}hr-border-color:#{$border-color};*/
+  --#{$prefix}hr-border-color:#{#9f9f9f};
   border-top: $hr-border-width solid var(--#{$prefix}hr-border-color);
   opacity: $hr-opacity;
 }

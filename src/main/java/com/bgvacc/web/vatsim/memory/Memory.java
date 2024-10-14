@@ -1,6 +1,7 @@
 package com.bgvacc.web.vatsim.memory;
 
 import com.bgvacc.web.domains.Controllers;
+import static com.bgvacc.web.utils.AppConstants.BULGARIAN_PREFIX;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
@@ -16,12 +17,14 @@ public class Memory {
   private static Memory instance;
 
   private final List<VatsimATC> onlineATCList;
+  private final List<VatsimATC> onlineBGATCList;
   private Controllers controllers;
 
   public boolean isAdded = false;
 
   private Memory() {
     this.onlineATCList = new ArrayList<>();
+    this.onlineBGATCList = new ArrayList<>();
 //    this.controllers = new Controllers();
   }
 
@@ -34,6 +37,9 @@ public class Memory {
 
   public void addATC(VatsimATC atc) {
     onlineATCList.add(atc);
+    if (atc.getCallsign().startsWith(BULGARIAN_PREFIX)) {
+      this.onlineBGATCList.add(atc);
+    }
   }
 
   public void addATCs(List<VatsimATC> onlineATCList, boolean shouldClearFirst) {
@@ -45,39 +51,90 @@ public class Memory {
   }
 
   public void addATCs(List<VatsimATC> onlineATCList) {
+
     this.onlineATCList.addAll(onlineATCList);
+
+    for (VatsimATC vatsimATC : onlineATCList) {
+      if (vatsimATC.getCallsign().startsWith(BULGARIAN_PREFIX)) {
+        this.onlineBGATCList.add(vatsimATC);
+      }
+    }
   }
 
   public void clearAndAddATCs(List<VatsimATC> onlineATCList) {
     this.clearATCs();
+
+    for (VatsimATC vatsimATC : onlineATCList) {
+      if (vatsimATC.getCallsign().startsWith(BULGARIAN_PREFIX)) {
+        this.onlineBGATCList.add(vatsimATC);
+      }
+    }
     this.onlineATCList.addAll(onlineATCList);
   }
 
-  public VatsimATC getATC(int index) {
-    if (index >= 0 && index < onlineATCList.size()) {
-      return onlineATCList.get(index);
+  public VatsimATC getATC(int index, boolean isOnlyBulgarianATCs) {
+    if (isOnlyBulgarianATCs) {
+      if (index >= 0 && index < onlineBGATCList.size()) {
+        return onlineBGATCList.get(index);
+      }
+    } else {
+      if (index >= 0 && index < onlineATCList.size()) {
+        return onlineATCList.get(index);
+      }
     }
     return null;
   }
 
-  public void removeATC(int index) {
-    if (index >= 0 && index < onlineATCList.size()) {
-      onlineATCList.remove(index);
+  public VatsimATC getATC(int index) {
+    return getATC(index, false);
+  }
+
+  public void removeATC(int index, boolean isOnlyBulgarianATCs) {
+
+    if (isOnlyBulgarianATCs) {
+      if (index >= 0 && index < onlineBGATCList.size()) {
+        onlineBGATCList.remove(index);
+      }
+    } else {
+      if (index >= 0 && index < onlineATCList.size()) {
+        onlineATCList.remove(index);
+      }
     }
   }
 
-  public List<VatsimATC> getAllOnlineATCsList() {
+  public void removeATC(int index) {
+    removeATC(index, false);
+  }
+
+  public List<VatsimATC> getAllOnlineATCsList(boolean isOnlyBulgarianATCs) {
+
+    if (isOnlyBulgarianATCs) {
+      return new ArrayList<>(onlineBGATCList);
+    }
     return new ArrayList<>(onlineATCList);
+  }
+
+  public List<VatsimATC> getAllOnlineATCsList() {
+    return getAllOnlineATCsList(false);
   }
 
   public void clearATCs() {
     onlineATCList.clear();
+    onlineBGATCList.clear();
   }
 
-  public int getSize() {
+  public int getOnlineATCListSize() {
+    return getOnlineATCListSize(false);
+  }
+
+  public int getOnlineATCListSize(boolean isOnlyBulgarianATCs) {
+    if (isOnlyBulgarianATCs) {
+      return onlineBGATCList.size();
+    }
     return onlineATCList.size();
   }
 
+  // -----------------------------------------------------
   public Controllers getControllers() {
 
     if (controllers == null) {

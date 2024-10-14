@@ -10,7 +10,7 @@
     <div layout:fragment="contentDiv">
 
       <div class="row">
-        <div class="col-12 col-md-8 mb-3">
+        <div class="col-12 col-md-9 mb-3">
           <p th:utext="#{home.p1}">Welcome to the website of the Sofia FIR, a part of the BGvACC Regional Group on the <a href="https://vatsim.net">VATSIM</a> Network. Here you will find informations about how to become a controller within our vACC, and how to find and use all the necessary information about flying in the Bulgarian FIR.</p>
 
           <p th:utext="#{home.p2}">BGvACC is part of the <a href="http://vateud.net" target="_blank">VATSIM Europe Division</a>, which with <a href="https://www.vatsim-uk.co.uk" target="_blank">VATSIM UK</a> and <a href="http://www.vatrus.info" target="_blank">VATSIM Russia</a> form the <a href="http://www.vateur.org" target="_blank">VATSIM Europe Region</a>. This forms the European part of the global <a href="http://www.vatsim.net" target="_blank">VATSIM</a> network, which provides ATC services over the internet free of charge to pilots connected to this network using their flight simulator.</p>
@@ -19,136 +19,178 @@
 
           <hr/>
 
-          <div class="row">
-            <h2 class="h5 mb-3" th:text="#{home.controllers.sofiactrl.title}">Sofia Control (LBSR_CTR)</h2>
-            <div id="lbsrCtrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Control (LBSR_CTR) - 131.225</div>
-                </div>
-              </div>
-            </div>
+          <div class="h5 mb-4" th:text="#{home.upcomingevents.title}">Upcoming events</div>
 
-            <div id="lbsrVCtrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Control (LBSR_V_CTR) - 134.700</div>
+          <div th:if="${#lists.isEmpty(events.data)}" th:text="#{home.upcomingevents.notfound}">No upcoming events</div>
+
+          <div class="row">
+            <div class="col-12 col-xl-4 mb-3" th:each="e : ${events.data}">
+              <article class="card-hover card shadow-sm hover-lift hover-shadow-lg overflow-hidden rounded-3">
+                <a href="#" th:href="@{/events/} + ${e.id}" class="d-block overflow-hidden">
+                  <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
+                </a>
+                <div class="position-relative d-block p-4">
+                  <!--Date-->
+                  <div class="d-flex justify-content-start w-100 pb-3">
+                    <small class="text-body-secondary"th:text="${e.timeFrame}">Mar 12, 2021</small>
+                  </div>
+                  <div>
+                    <a href="#" th:href="@{/events/} + ${e.id}" class="text-reset">
+                      <div class="h5 link-multiline" th:text="${e.name}">Title</div>
+                    </a>
+                  </div>
                 </div>
-              </div>
+              </article>
             </div>
           </div>
 
-          <div class="row">
-            <h2 class="h5 mb-3" th:text="#{home.controllers.sofia.title}">Controllers in Sofia (LBSF)</h2>
-            <div id="lbsfTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Tower (LBSF_TWR) - 118.100</div>
+          <hr/>
+
+          <div class="h5 mb-4" th:text="#{home.weatherinfo.title}">Weather information</div>
+
+          <div>
+            <!-- Tabs -->
+            <nav class="mb-4">
+              <div class="nav nav-pills nav-fill rounded-pill px-2 py-1 bg-body border shadow-sm" role="tablist">
+                <a class="nav-link rounded-pill active" data-bs-toggle="tab" href="#metar-lbsf" role="tab" aria-selected="true" th:text="#{home.weatherinfo.lbsf}">LBSF - Sofia</a>
+                <a class="nav-link rounded-pill" data-bs-toggle="tab" href="#metar-lbwn" role="tab" aria-selected="false" tabindex="-1" th:text="#{home.weatherinfo.lbwn}">LBWN - Varna</a>
+                <a class="nav-link rounded-pill" data-bs-toggle="tab" href="#metar-lbbg" role="tab" aria-selected="false" tabindex="-1" th:text="#{home.weatherinfo.lbbg}">LBBG - Burgas</a>
+                <a class="nav-link rounded-pill" data-bs-toggle="tab" href="#metar-lbpd" role="tab" aria-selected="false" tabindex="-1" th:text="#{home.weatherinfo.lbpd}">LBPD - Plovdiv</a>
+                <a class="nav-link rounded-pill" data-bs-toggle="tab" href="#metar-lbgo" role="tab" aria-selected="false" tabindex="-1" th:text="#{home.weatherinfo.lbgo}">LBGO - Gorna</a>
+              </div>
+            </nav>
+            <div class="tab-content">
+              <div class="tab-pane fade active show" id="metar-lbsf" role="tabpanel">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="fw-bold mb-3" th:text="#{home.metar.lbsf}">Sofia Airport Metar (LBSF)</div>
+                    <div id="metarLBSF"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div id="lbsfAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Sofia Approach (LBSF_APP) - 123.700</div>
+              <div class="tab-pane fade" id="metar-lbwn" role="tabpanel">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="fw-bold mb-3" th:text="#{home.metar.lbwn}">Varna Airport Metar (LBWN)</div>
+                    <div id="metarLBWN"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <h2 class="h5 mb-3" th:text="#{home.controllers.burgas.title}">Controllers in Burgas (LBBG)</h2>
-            <div id="lbbgTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Burgas Tower (LBBG_TWR) - 118.000</div>
+              <div class="tab-pane fade" id="metar-lbbg" role="tabpanel">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="fw-bold mb-3" th:text="#{home.metar.lbbg}">Burgas Airport Metar (LBBG)</div>
+                    <div id="metarLBBG"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div id="lbbgAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Burgas Approach (LBBG_APP) - 125.100</div>
+              <div class="tab-pane fade" id="metar-lbpd" role="tabpanel">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="fw-bold mb-3" th:text="#{home.metar.lbpd}">Plovdiv Airport Metar (LBPD)</div>
+                    <div id="metarLBPD"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <h2 class="h5 mb-3" th:text="#{home.controllers.varna.title}">Controllers in Varna (LBWN)</h2>
-            <div id="lbwnTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Varna Tower (LBWN_TWR) - 119.500</div>
-                </div>
-              </div>
-            </div>
-
-            <div id="lbwnAppStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Varna Approach (LBWN_APP) - 124.600</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <h2 class="h5 mb-3" th:text="#{home.controllers.gornaplovdiv.title}">Controllers in Plovdiv (LBPD) and Gorna (LBGO)</h2>
-            <div id="lbpdTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Plovdiv Tower (LBPD_TWR) - 125.500</div>
-                </div>
-              </div>
-            </div>
-
-            <div id="lbgoTwrStatusDiv" class="col-12 col-xl-6 mb-3 mb-md-5">
-              <div class="card border-light-subtle">
-                <div class="card-body">
-                  <div class="card-title h5">-</div>
-                  <div class="card-subtitle mb-2 h6 text-body-secondary">Gorna Tower (LBGO_TWR) - 124.500</div>
+              <div class="tab-pane fade" id="metar-lbgo" role="tabpanel">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <div class="fw-bold mb-3" th:text="#{home.metar.lbgo}">Gorna Airport Metar (LBGO)</div>
+                    <div id="metarLBGO"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col-12 col-md-4 mb-3">
-          <div class="mb-3">
-            <div class="fw-bold mb-3" th:text="#{home.metar.lbsf}">Sofia Airport Metar (LBSF)</div>
-            <div id="metarLBSF"></div>
-          </div>
-          <hr/>
-          <div class="mb-3">
-            <div class="fw-bold mb-3" th:text="#{home.metar.lbbg}">Burgas Airport Metar (LBBG)</div>
-            <div id="metarLBBG"></div>
-          </div>
-          <hr/>
-          <div class="mb-3">
-            <div class="fw-bold mb-3" th:text="#{home.metar.lbwn}">Varna Airport Metar (LBWN)</div>
-            <div id="metarLBWN"></div>
-          </div>
-          <hr/>
-          <div class="mb-3">
-            <div class="fw-bold mb-3" th:text="#{home.metar.lbpd}">Plovdiv Airport Metar (LBPD)</div>
-            <div id="metarLBPD"></div>
-          </div>
-          <hr/>
-          <div class="mb-3">
-            <div class="fw-bold mb-3" th:text="#{home.metar.lbgo}">Gorna Airport Metar (LBGO)</div>
-            <div id="metarLBGO"></div>
+        <div class="col-12 col-md-3 mb-3">
+
+          <div>
+            <div class="h5">
+              <span th:text="#{home.onlineatc}">Online ATC</span>
+              <span id="onlineBGControllersCountDiv"></span>
+            </div>
+            <hr class="my-2"/>
+
+            <!--<div class="h6">Bulgarian FIR</div>-->
+            <div id="lbsrCtrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBSR_CTR - 131.225</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+            <div id="lbsrVCtrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBSR_V_CTR - 134.700</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+
+            <hr class="my-2"/>
+
+            <!--<div class="h6">Sofia Airport</div>-->
+
+            <div id="lbsfAppStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBSF_APP - 123.700</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+            <div id="lbsfTwrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBSF_TWR - 118.100</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+
+            <hr class="my-2"/>
+
+            <!--<div class="h6">Varna Airport</div>-->
+
+            <div id="lbwnAppStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBWN_APP - 124.600</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+            <dl id="lbwnTwrStatusDiv" class="mb-0">
+              <dt>LBWN_TWR - 119.500</dt>
+              <dd>-</dd>
+            </dl>
+
+            <hr class="my-2"/>
+
+            <!--<div class="h6">Burgas Airport</div>-->
+
+            <div id="lbbgAppStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBBG_APP - 125.100</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+            <div id="lbbgTwrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBBG_TWR - 118.000</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+
+            <hr class="my-2"/>
+
+            <!--<div class="h6">Other Airports</div>-->
+            <div id="lbpdTwrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBPD_TWR - 125.500</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
+            <div id="lbgoTwrStatusDiv" class="d-flex align-items-center">
+              <dl class="mb-0">
+                <dt>LBGO_TWR - 124.500</dt>
+                <dd>-</dd>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
@@ -156,6 +198,7 @@
       <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         let metarUrl = /*[[@{/v2/metar}]]*/;
+                let onlineBGControllersCountUrl = /*[[@{/atc/bg-online/count}]]*/;
                 let lbsrCtrStatusUrl = /*[[@{/atc/status/lbsr-ctr}]]*/;
                 let lbsrVCtrStatusUrl = /*[[@{/atc/status/lbsr-v-ctr}]]*/;
                 let lbsfTwrStatusUrl = /*[[@{/atc/status/lbsf-twr}]]*/;
@@ -178,6 +221,40 @@
           getMetarAtICAO("LBGO", "metarLBGO");
         }
 
+        function reloadContollerStatus(url, element) {
+          return reloadContollerStatus(url, element, false, null);
+        }
+
+        function reloadContollerStatus(url, element, shouldHideIfEmpty, affectedDiv) {
+          $.ajax({
+            url: url,
+            type: 'get',
+            success: function (data)
+            {
+              $("#" + element).empty().append(data);
+
+              if (shouldHideIfEmpty) {
+                //                console.log(data);
+                if ($("#positionClosed").length !== 0) {
+                  $("#" + element).addClass("d-none");
+                  $("#" + affectedDiv).removeClass("col-xl-6");
+                } else {
+                  $("#" + element).removeClass("d-none");
+                  $("#" + affectedDiv).addClass("col-xl-6");
+                }
+              }
+              //              if (shouldHideIfEmpty) {
+              //                if (dat)
+              //                $("#" + element).addClass("d-none");
+              //              }
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+        }
+
         function reloadControllerCard(url, element) {
           return reloadControllerCard(url, element, false, null);
         }
@@ -191,7 +268,7 @@
               $("#" + element).empty().append(data);
 
               if (shouldHideIfEmpty) {
-//                console.log(data);
+                //                console.log(data);
                 if ($("#positionClosed").length !== 0) {
                   $("#" + element).addClass("d-none");
                   $("#" + affectedDiv).removeClass("col-xl-6");
@@ -200,10 +277,30 @@
                   $("#" + affectedDiv).addClass("col-xl-6");
                 }
               }
-//              if (shouldHideIfEmpty) {
-//                if (dat)
-//                $("#" + element).addClass("d-none");
-//              }
+              //              if (shouldHideIfEmpty) {
+              //                if (dat)
+              //                $("#" + element).addClass("d-none");
+              //              }
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+        }
+
+        function reloadOnlineBGControllersCount() {
+          $.ajax({
+            url: onlineBGControllersCountUrl,
+            type: 'get',
+            success: function (data)
+            {
+              var result = "";
+              if (data > 0) {
+                result = " - " + data;
+              }
+
+              $("#onlineBGControllersCountDiv").empty().append(result);
             },
             error: function (xhr, status, error)
             {
@@ -213,47 +310,47 @@
         }
 
         function reloadSofiaControlCard() {
-          reloadControllerCard(lbsrCtrStatusUrl, "lbsrCtrStatusDiv");
+          reloadContollerStatus(lbsrCtrStatusUrl, "lbsrCtrStatusDiv");
         }
 
         function reloadSofiaVControlCard() {
-          reloadControllerCard(lbsrVCtrStatusUrl, "lbsrVCtrStatusDiv", true, 'lbsrCtrStatusDiv');
+          reloadContollerStatus(lbsrVCtrStatusUrl, "lbsrVCtrStatusDiv", true, 'lbsrCtrStatusDiv');
         }
 
         function reloadSofiaTowerCard() {
-          reloadControllerCard(lbsfTwrStatusUrl, "lbsfTwrStatusDiv");
+          reloadContollerStatus(lbsfTwrStatusUrl, "lbsfTwrStatusDiv");
         }
 
-//        function reloadSofiaTowerTCard() {
-//          reloadControllerCard(lbsfTwrTStatusUrl, "lbsfTwrStatusDiv");
-//        }
+        //        function reloadSofiaTowerTCard() {
+        //          reloadContollerStatus(lbsfTwrTStatusUrl, "lbsfTwrStatusDiv");
+        //        }
 
         function reloadSofiaApproachCard() {
-          reloadControllerCard(lbsfAppStatusUrl, "lbsfAppStatusDiv");
+          reloadContollerStatus(lbsfAppStatusUrl, "lbsfAppStatusDiv");
         }
 
         function reloadBurgasTowerCard() {
-          reloadControllerCard(lbbgTwrStatusUrl, "lbbgTwrStatusDiv");
+          reloadContollerStatus(lbbgTwrStatusUrl, "lbbgTwrStatusDiv");
         }
 
         function reloadBurgasApproachCard() {
-          reloadControllerCard(lbbgAppStatusUrl, "lbbgAppStatusDiv");
+          reloadContollerStatus(lbbgAppStatusUrl, "lbbgAppStatusDiv");
         }
 
         function reloadVarnaTowerCard() {
-          reloadControllerCard(lbwnTwrStatusUrl, "lbwnTwrStatusDiv");
+          reloadContollerStatus(lbwnTwrStatusUrl, "lbwnTwrStatusDiv");
         }
 
         function reloadVarnaApproachCard() {
-          reloadControllerCard(lbwnAppStatusUrl, "lbwnAppStatusDiv");
+          reloadContollerStatus(lbwnAppStatusUrl, "lbwnAppStatusDiv");
         }
 
         function reloadPlovdivTowerCard() {
-          reloadControllerCard(lbpdTwrStatusUrl, "lbpdTwrStatusDiv");
+          reloadContollerStatus(lbpdTwrStatusUrl, "lbpdTwrStatusDiv");
         }
 
         function reloadGornaTowerCard() {
-          reloadControllerCard(lbgoTwrStatusUrl, "lbgoTwrStatusDiv");
+          reloadContollerStatus(lbgoTwrStatusUrl, "lbgoTwrStatusDiv");
         }
 
         function getMetarAtICAO(icao, htmlTagId) {
@@ -273,13 +370,14 @@
         }
 
         let refreshIntervalSeconds = 15;
+        let refreshOnlinesControllersCountIntervalSeconds = refreshIntervalSeconds;
         let atisRefreshIntervalSeconds = 600; // 10 minutes
 
         (function () {
           window.setInterval(reloadSofiaControlCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaVControlCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaTowerCard, refreshIntervalSeconds * 1000);
-//          window.setInterval(reloadSofiaTowerTCard, refreshIntervalSeconds * 1000);
+          //          window.setInterval(reloadSofiaTowerTCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadSofiaApproachCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadBurgasTowerCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadBurgasApproachCard, refreshIntervalSeconds * 1000);
@@ -287,11 +385,12 @@
           window.setInterval(reloadVarnaApproachCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadPlovdivTowerCard, refreshIntervalSeconds * 1000);
           window.setInterval(reloadGornaTowerCard, refreshIntervalSeconds * 1000);
+          window.setInterval(reloadOnlineBGControllersCount, refreshOnlinesControllersCountIntervalSeconds * 1000);
           window.setInterval(getAllMetars, atisRefreshIntervalSeconds * 1000);
           reloadSofiaControlCard();
           reloadSofiaVControlCard();
           reloadSofiaTowerCard();
-//          reloadSofiaTowerTCard();
+          //          reloadSofiaTowerTCard();
           reloadSofiaApproachCard();
           reloadBurgasTowerCard();
           reloadBurgasApproachCard();
@@ -299,6 +398,7 @@
           reloadVarnaApproachCard();
           reloadPlovdivTowerCard();
           reloadGornaTowerCard();
+          reloadOnlineBGControllersCount();
           getAllMetars();
         })();
       </script>

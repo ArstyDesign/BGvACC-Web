@@ -9,6 +9,7 @@ import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
 import com.bgvacc.web.vatsim.vateud.ControllerNotes;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
+import java.sql.Timestamp;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -108,20 +109,50 @@ public class TrainingsController extends Base {
   @GetMapping("/portal/trainings/solo-validations")
   public String getSoloValidations(Model model) {
 
+    int sofiaControlSolos = 0;
+    int sofiaApproachSolos = 0;
+    int sofiaTowerSolos = 0;
+
     VatsimMemberSoloValidations memberSoloValidations = coreApi.getMemberSoloValidations();
 
+    Map<Long, VatEudUser> mentors = new HashMap<>();
+
     for (VatsimMemberSoloValidation vmsv : memberSoloValidations.getData()) {
+//      Calendar cal = Calendar.getInstance();
+//      cal.setTime(new Timestamp(System.currentTimeMillis()));
+//      cal.add(Calendar.DAY_OF_WEEK, 2);
+//      vmsv.setExpiry(new Timestamp(cal.getTime().getTime()));
       VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(vmsv.getUserCid());
-      VatEudUser mentorDetails = vatEudCoreApi.getMemberDetails(vmsv.getInstructorCid());
+      VatEudUser mentorDetails;
+
+      if (!mentors.containsKey(vmsv.getInstructorCid())) {
+        mentorDetails = vatEudCoreApi.getMemberDetails(vmsv.getInstructorCid());
+        mentors.put(vmsv.getInstructorCid(), mentorDetails);
+      } else {
+        mentorDetails = mentors.get(vmsv.getInstructorCid());
+      }
 
       vmsv.setFirstName(memberDetails.getData().getFirstName());
       vmsv.setLastName(memberDetails.getData().getLastName());
 
       vmsv.setInstructorFirstName(mentorDetails.getData().getFirstName());
       vmsv.setInstructorLastName(mentorDetails.getData().getLastName());
+
+      if (vmsv.getPosition().equalsIgnoreCase("LBSR_CTR")) {
+        sofiaControlSolos++;
+      } else if (vmsv.getPosition().equalsIgnoreCase("LBSF_APP")) {
+        sofiaApproachSolos++;
+      } else {
+        sofiaTowerSolos++;
+      }
     }
 
+    Collections.sort(memberSoloValidations.getData(), Comparator.comparing(VatsimMemberSoloValidation::getSoloRemainingDays).thenComparing(Comparator.comparing(VatsimMemberSoloValidation::getFullName)));
+
     model.addAttribute("soloValidations", memberSoloValidations);
+    model.addAttribute("lbsrCtrSolos", sofiaControlSolos);
+    model.addAttribute("lbsfAppSolos", sofiaApproachSolos);
+    model.addAttribute("lbsfTwrSolos", sofiaTowerSolos);
 
     model.addAttribute("pageTitle", getMessage("portal.trainings.solo.title"));
     model.addAttribute("page", "trainings");
