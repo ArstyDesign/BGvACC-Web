@@ -2,7 +2,6 @@ package com.bgvacc.web.schedulers;
 
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
-import com.bgvacc.web.responses.sessions.NotCompletedControllerSession;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
@@ -11,7 +10,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

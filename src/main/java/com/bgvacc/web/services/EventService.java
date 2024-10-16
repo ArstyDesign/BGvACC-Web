@@ -1,6 +1,6 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.events.Event;
+import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface EventService {
 
-  List<Event> getEvents();
+  List<EventResponse> getEvents();
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
 }

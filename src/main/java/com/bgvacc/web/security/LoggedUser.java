@@ -1,5 +1,6 @@
 package com.bgvacc.web.security;
 
+import com.bgvacc.web.utils.Names;
 import eu.bitwalker.useragentutils.UserAgent;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -20,8 +21,7 @@ public class LoggedUser extends User {
   private String cid;
   private String email;
   private String emailVatsim;
-  private String firstName;
-  private String lastName;
+  private Names names;
   private Boolean isActive;
   private Timestamp lastLogin;
   private Timestamp createdOn;
@@ -32,22 +32,17 @@ public class LoggedUser extends User {
 
   public LoggedUser(String cid, String password, boolean enabled, boolean accountNonExpired,
                     boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities,
-                    String email, String emailVatsim, String firstName, String lastName, Boolean isActive, Timestamp lastLogin, Timestamp createdOn, Timestamp editedOn) {
+                    String email, String emailVatsim, Names names, Boolean isActive, Timestamp lastLogin, Timestamp createdOn, Timestamp editedOn) {
     super(cid, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
     this.cid = cid;
     this.email = email;
     this.emailVatsim = emailVatsim;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.names = names;
     this.isActive = isActive;
     this.lastLogin = lastLogin;
     this.createdOn = createdOn;
     this.editedOn = editedOn;
-  }
-
-  public String getFullName() {
-    return (lastName != null) ? firstName + ' ' + lastName : firstName;
   }
 
   @Override

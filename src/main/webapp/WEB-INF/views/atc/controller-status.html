@@ -6,12 +6,13 @@
     <div id="atcStatus" th:remove="tag" th:with="isPositionNull=${position eq null}">
 
       <dl class="mb-0">
-        <dt th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</dt>
+        <dt th:text="#{home.onlineatc. + ${#strings.toLowerCase(#strings.replace(atcInfo.callsign, '_', ''))}}"></dt>
+        <!--<dt th:text="${atcInfo.name} + ' (' + ${atcInfo.callsign} + ') - ' + ${atcInfo.frequency}">Position info</dt>-->
         <dd>
           <a href="#" th:href="@{/members/} + ${position.id}" target="_blank" class="text-primary"
              th:if="${!isPositionNull and position.fullName ne null}" th:text="${position.fullName} + ' (' + ${position.id} + ') (' + ${position.atcRatingSymbol} + ')'">ID</a>
           <span th:if="${!isPositionNull and position.fullName eq null}" th:text="${position.id}">ID</span>
-          <span th:if="${isPositionNull}">-</span>
+          <small th:if="${isPositionNull}" class="fst-italic" th:text="#{home.onlineatc.nocontroller}">No controller</small>
         </dd>
       </dl>
       <div id="positionOpened" th:if="${!isPositionNull}"></div>

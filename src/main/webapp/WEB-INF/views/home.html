@@ -225,7 +225,7 @@
           return reloadContollerStatus(url, element, false, null);
         }
 
-        function reloadContollerStatus(url, element, shouldHideIfEmpty, affectedDiv) {
+        function reloadContollerStatus(url, element, shouldHideIfEmpty) {
           $.ajax({
             url: url,
             type: 'get',
@@ -237,10 +237,8 @@
                 //                console.log(data);
                 if ($("#positionClosed").length !== 0) {
                   $("#" + element).addClass("d-none");
-                  $("#" + affectedDiv).removeClass("col-xl-6");
                 } else {
                   $("#" + element).removeClass("d-none");
-                  $("#" + affectedDiv).addClass("col-xl-6");
                 }
               }
               //              if (shouldHideIfEmpty) {
@@ -314,7 +312,7 @@
         }
 
         function reloadSofiaVControlCard() {
-          reloadContollerStatus(lbsrVCtrStatusUrl, "lbsrVCtrStatusDiv", true, 'lbsrCtrStatusDiv');
+          reloadContollerStatus(lbsrVCtrStatusUrl, "lbsrVCtrStatusDiv", true);
         }
 
         function reloadSofiaTowerCard() {

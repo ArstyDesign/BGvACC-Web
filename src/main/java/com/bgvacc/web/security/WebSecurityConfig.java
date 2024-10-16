@@ -67,7 +67,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/users/**").authenticated()
             .antMatchers("/events/**").permitAll()
             .antMatchers("/portal/dashboard").authenticated()
-            .antMatchers("/portal/trainings/**").hasAnyRole("SYS_ADMIN", "STAFF_TRAINING")
+            .antMatchers("/portal/trainings/**").hasAnyRole("SYS_ADMIN", "STAFF", "STAFF_DIRECTOR", "STAFF_TRAINING")
+            .antMatchers("/portal/users/**").hasAnyRole("SYS_ADMIN", "STAFF", "STAFF_DIRECTOR", "STAFF_TRAINING")
             .antMatchers("/portal/**").authenticated()
             .antMatchers("/profile").authenticated()
             .antMatchers("/atc/status/**").permitAll()
@@ -85,6 +86,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .httpBasic()
             .authenticationEntryPoint(authenticationEntryPoint);
+
+    http.headers()
+            .frameOptions().sameOrigin();
 
     http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)

@@ -45,7 +45,7 @@
                     <span class="sidebar-icon">
                       <span class="material-symbols-rounded">person</span>
                     </span>
-                    <span class="sidebar-text" th:text="${session.loggedUser.fullName}">John Doe</span></span>
+                    <span class="sidebar-text" th:text="${session.loggedUser.names.fullName}">John Doe</span></span>
                   </a>
                   <ul id="profileMenu" class="sidebar-dropdown list-unstyled collapse">
                     <li class="sidebar-item">
@@ -103,6 +103,38 @@
                         <span class="material-symbols-rounded">record_voice_over</span>
                       </span>
                       <span class="sidebar-text" th:text="#{portal.menu.trainings.solo}">Solo validations</span>
+                    </a>
+                  </li>
+                </div>
+                
+                <div sec:authorize="hasRole('STAFF')" th:remove="tag">
+                  <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
+                    <i class="bi bi-three-dots"></i>
+                    <span class="sidebar-text" th:text="#{portal.menu.users.title}">Users</span>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" th:href="@{/portal/users}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'users' and subpage eq 'users'} ? 'active'">
+                      <span class="sidebar-icon">
+                        <span class="material-symbols-rounded">groups_2</span>
+                      </span>
+                      <span class="sidebar-text" th:text="#{portal.menu.users.users}">Users</span>
+                    </a>
+                  </li>
+                </div>
+                
+                <div sec:authorize="hasRole('STAFF_TRAINING')" th:remove="tag">
+                  <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
+                    <i class="bi bi-three-dots"></i>
+                    <span class="sidebar-text" th:text="#{portal.menu.blog.title}">Blog</span>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" th:href="@{/portal/blog/posts}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'blog' and subpage eq 'posts'} ? 'active'">
+                      <span class="sidebar-icon">
+                        <span class="material-symbols-rounded">article</span>
+                      </span>
+                      <span class="sidebar-text" th:text="#{portal.menu.blog.posts}">Posts</span>
                     </a>
                   </li>
                 </div>

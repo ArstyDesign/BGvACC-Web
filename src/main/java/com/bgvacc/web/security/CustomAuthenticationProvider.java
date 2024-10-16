@@ -1,7 +1,6 @@
 package com.bgvacc.web.security;
 
 import com.bgvacc.web.exceptions.GeneralErrorException;
-import com.bgvacc.web.responses.authentication.AuthenticationResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.services.UserService;
@@ -59,8 +58,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
       final LoggedUser loggedUser = new LoggedUser(user.getCid(), password,
               true, true, true, true,
               authorities, user.getEmail(), user.getEmailVatsim(),
-              user.getFirstName(), user.getLastName(),
-              user.getIsActive(), user.getLastLogin(),
+              user.getNames(), user.getIsActive(), user.getLastLogin(),
               user.getCreatedOn(), user.getEditedOn());
 
       return new UsernamePasswordAuthenticationToken(loggedUser, password, authorities);

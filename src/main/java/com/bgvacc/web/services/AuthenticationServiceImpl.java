@@ -1,11 +1,8 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.authentication.AuthenticationResponse;
 import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
-import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.security.LoggedUser;
-import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.utils.Utils;
 import eu.bitwalker.useragentutils.UserAgent;
 import java.io.IOException;
@@ -16,7 +13,6 @@ import javax.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -40,6 +36,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final RequestCache requestCache = new HttpSessionRequestCache();
 
   private final SessionRegistry sessionRegistry;
+
+  private final UserService userService;
 
   @Override
   public AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -71,9 +69,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       session.setAttribute("isFirstLogin", true);
     }
 
-    Names names = Names.builder().firstName(loggedUser.getFirstName()).lastName(loggedUser.getLastName()).build();
+    log.info("Updating last login for user with CID: '" + loggedUser.getCid());
+    userService.updateLastLogin(loggedUser.getCid());
 
-    session.setAttribute("user", names);
+    session.setAttribute("user", loggedUser.getNames());
     session.setAttribute("loggedUser", loggedUser);
 //    session.setAttribute(SESSION_AUTHORIZATION, loggedUser.getToken());
     session.setAttribute("authRoles", loggedUser.getAuthorities());

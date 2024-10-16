@@ -1,6 +1,6 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.events.Event;
+import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.sql.*;
 import java.time.*;
@@ -25,7 +25,7 @@ public class EventServiceImpl implements EventService {
   private final JdbcTemplate jdbcTemplate;
 
   @Override
-  public List<Event> getEvents() {
+  public List<EventResponse> getEvents() {
 
     final String getEventsSql = "SELECT * FROM events";
 
@@ -36,13 +36,13 @@ public class EventServiceImpl implements EventService {
 
         conn.setAutoCommit(false);
 
-        List<Event> events = new ArrayList<>();
+        List<EventResponse> events = new ArrayList<>();
 
         ResultSet getEventsRset = getEventsPstmt.executeQuery();
 
         while (getEventsRset.next()) {
 
-          Event ved = new Event();
+          EventResponse ved = new EventResponse();
           ved.setEventId(getEventsRset.getLong("event_id"));
           ved.setName(getEventsRset.getString("name"));
           ved.setType(getEventsRset.getString("type"));

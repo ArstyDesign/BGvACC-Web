@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 col-mg-6 col-xl-4 mb-3" th:each="p : ${posts}">
+          <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+              <h5 class="mb-0" th:text="${p.title}">Title</h5>
+              <!--dropdown-->
+              <div class="dropdown ms-auto">
+                <a class="d-flex align-items-center justify-content-center size-30 rounded-circle btn p-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="material-symbols-rounded align-middle">more_vert</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end mt-1">
+                  <a class="dropdown-item" href="#" th:href="@{/portal/blog/posts/} + ${p.id}"
+                     th:text="#{portal.blog.posts.view}">View</a>
+                  <a class="dropdown-item" href="#" th:href="@{/portal/blog/posts/} + ${p.id} + '/edit'"
+                     th:text="#{portal.blog.posts.edit}">Edit</a>
+                  <form th:action="@{/portal/blog/posts/} + ${p.id} + '/hide'" method="post" onsubmit="event.preventDefault();">
+                    <a class="dropdown-item" href="#" onclick="this.closest('form').submit(); return false;"
+                       th:if="${p.isVisible}" th:text="#{portal.blog.posts.hide}">Hide</a>
+                  </form>
+                  <form th:action="@{/portal/blog/posts/} + ${p.id} + '/show'" method="post" onsubmit="event.preventDefault();">
+                    <a class="dropdown-item" href="#" onclick="this.closest('form').submit(); return false;"
+                       th:if="${!p.isVisible}" th:text="#{portal.blog.posts.show}">Show</a>
+                  </form>
+                  <hr class="dropdown-divider"/>
+                  <a class="dropdown-item text-danger" href="#"
+                     th:text="#{portal.blog.posts.delete}">Delete</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body py-0">
+              <div th:if="${#strings.length(p.content) lt 200}" th:utext="${p.content}"></div>
+              <div th:if="${#strings.length(p.content) ge 200}" th:utext="${#strings.substring(p.content, 0, 200)} + '...'"></div>
+              <div class="badge mt-3" th:classappend="${p.isVisible} ? 'bg-success' : 'bg-danger'"
+                   th:text="${p.isVisible} ? #{portal.blog.posts.visible} : #{portal.blog.posts.invisible}">Visible/invisible</div>
+            </div>
+            <div class="card-footer d-flex">
+              <small class="text-muted" th:text="#{portal.blog.posts.author(${p.names.fullNameWithShortFirst})}">Author: J. Doe</small>
+              <small class="text-muted ms-auto" th:text="${#dates.format(p.createdAt, 'dd MMMM yyyy')}">13.10.2024</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

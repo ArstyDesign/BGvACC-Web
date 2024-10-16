@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <form class="row" th:action="@{/portal/blog/posts/} + ${pem.id} + '/edit'" method="post" th:object="${pem}">
+                <div class="col-12 mb-3">
+                  <label for="titleInput" class="form-label required"
+                         th:text="#{portal.blog.posts.edit.ptitle}">Title</label>
+                  <input type="text" class="form-control" id="titleInput" autofocus="autofocus"
+                         th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"/>
+                  <span class="invalid-feedback" th:errors="*{title}">Error</span>
+                </div>
+                <div class="col-12 mb-3">
+                  <label for="contentInput" class="form-label required" th:text="#{portal.blog.posts.edit.content}">Content</label>
+                  <textarea id="contentInput" class="form-control mb-3" th:field="*{content}" rows="5" style="min-height: 150px;"
+                            th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"></textarea>
+                  <span class="invalid-feedback" th:errors="*{content}">Error</span>
+                </div>
+
+                <div class="col-12">
+                  <input type="hidden" th:field="*{id}"/>
+                  <button type="submit" class="btn btn-primary">
+                    <span class="material-symbols-rounded">save</span>
+                    <span th:text="#{portal.blog.posts.edit.savechanges}">Save changes</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        tinymce.init({
+          selector: 'textarea',
+          plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+          toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+      </script>
+    </div>
+  </body>
+</html>

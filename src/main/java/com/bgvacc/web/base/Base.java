@@ -40,7 +40,7 @@ public class Base {
   }
 
   protected String getLoggedUserName(HttpServletRequest request) {
-    return getLoggedUser(request).getFullName();
+    return getLoggedUser(request).getNames().getFullName();
   }
 
   protected LoggedUser getLoggedUser(HttpServletRequest request) {

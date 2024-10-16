@@ -21,7 +21,7 @@ public class ProfileController extends Base {
   @GetMapping("/portal/profile")
   public String profile(HttpServletRequest request, Model model) {
 
-    model.addAttribute("pageTitle", getLoggedUser(request).getFullName());
+    model.addAttribute("pageTitle", getLoggedUser(request).getNames().getFullName());
     model.addAttribute("page", "profile");
     model.addAttribute("subpage", "profile");
 

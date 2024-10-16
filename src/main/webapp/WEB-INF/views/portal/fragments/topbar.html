@@ -245,10 +245,10 @@
 
                 <!--Avatar with status-->
                 <div class="avatar-status status-online me-2 avatar xs d-flex align-items-center fw-bolder justify-content-center text-white bg-success rounded-circle">
-                  <span th:text="${#strings.substring(session.loggedUser.firstName, 0, 1)}">J</span>
-                  <span th:if="${session.loggedUser.lastName ne null and session.loggedUser.lastName.length gt 1}" th:text="${#strings.substring(session.loggedUser.lastName, 0, 1)}">D</span>
+                  <span th:text="${#strings.substring(session.loggedUser.names.firstName, 0, 1)}">J</span>
+                  <span th:if="${session.loggedUser.names.lastName ne null and session.loggedUser.names.lastName.length gt 1}" th:text="${#strings.substring(session.loggedUser.names.lastName, 0, 1)}">D</span>
                 </div>
-                <span class="d-none d-md-inline-block" th:text="${session.loggedUser.fullName}">John Doe</span>
+                <span class="d-none d-md-inline-block" th:text="${session.loggedUser.names.fullName}">John Doe</span>
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" style="--bs-dropdown-min-width: 9rem;">
@@ -301,7 +301,7 @@
                   <img src="#" class="rounded-circle shadow width-60 d-block mx-auto img-fluid" alt="">
                 </div>
                 <div class="text-center pt-4">
-                  <h5 class="mb-1" th:text="${session.loggedUser.fullName}">John Doe</h5>
+                  <h5 class="mb-1" th:text="${session.loggedUser.names.fullName}">John Doe</h5>
                   <p class="text-body-tertiary mb-0 lh-1">Full stack developer</p>
                 </div>
               </div>

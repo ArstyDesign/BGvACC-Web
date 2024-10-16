@@ -55,6 +55,7 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'ATC_S3');
 INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC');
 INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC_S2');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF');
+INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC');
@@ -87,7 +88,7 @@ CREATE TABLE events (
 CREATE TABLE sections (
 	id varchar(50) not null primary key,
 	name varchar(100) not null
-};
+);
 
 CREATE TABLE tags (
     name VARCHAR(100) not null primary key
@@ -105,8 +106,8 @@ CREATE TABLE blog_posts (
 );
 
 CREATE TABLE blog_post_tags (
-    blog_post_id varchar(100) references blog_posts(id) on delete cascade,
-    tag_name varchar(100) references tags(name) on delete cascade, 
+    blog_post_id varchar(100) not null references blog_posts(id) on delete cascade,
+    tag_name varchar(100) not null references tags(name) on delete cascade, 
     primary key (blog_post_id, tag_name)
 );
 

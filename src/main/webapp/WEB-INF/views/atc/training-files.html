@@ -8,7 +8,7 @@
   </head>
   <body>
     <div layout:fragment="contentDiv">
-      
+
       <div class="row">
         <div class="col-12 mb-3">
           <div th:text="#{atc.trainingfiles.message}">Here you will find PDF documents, regarding the training for certain positions.</div>
@@ -41,6 +41,10 @@
           </div>
         </div>
       </div>
+
+<!--      <iframe src="#" th:src="@{/resources/training-files/C1_Position_Overview.pdf}" width="100%" height="1000px" allowfullscreen="allowfullscreen">
+        Вашият браузър не поддържа вградени PDF файлове. Моля, изтеглете файла <a href="#" th:href="@{/resources/training-files/C1_Position_Overview.pdf}">тук</a>.
+      </iframe>-->
     </div>
   </body>
 </html>

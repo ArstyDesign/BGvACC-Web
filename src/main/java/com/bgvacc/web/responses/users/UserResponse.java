@@ -1,5 +1,6 @@
 package com.bgvacc.web.responses.users;
 
+import com.bgvacc.web.utils.Names;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
@@ -21,8 +22,7 @@ public class UserResponse implements Serializable {
   private String email;
   private String emailVatsim;
   private String password;
-  private String firstName;
-  private String lastName;
+  private Names names;
   private Boolean isActive;
   private Timestamp lastLogin;
   private Timestamp createdOn;

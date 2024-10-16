@@ -36,7 +36,7 @@
                   <li class="nav-item dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
                       <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
-                      <small class="ms-1" th:text="${session.loggedUser.fullName}">John Doe</small>
+                      <small class="ms-1" th:text="${session.loggedUser.names.fullName}">John Doe</small>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                       <a href="#" th:href="@{/portal/profile/}" class="dropdown-item">
@@ -101,6 +101,10 @@
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/}" th:text="#{menu.home}"
                    th:classappend="${page eq 'home'} ? 'active'">Home</a>
+              </li>
+              <li class="nav-item me-lg-3">
+                <a class="nav-link" href="#" th:href="@{/blog/posts}" th:text="#{menu.blog}"
+                   th:classappend="${page eq 'blog'} ? 'active'">Blog</a>
               </li>
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/events}" th:text="#{menu.events}"
@@ -223,6 +227,22 @@
                 <!--<div class="display-6 text-white mb-0 position-relative">BGvACC</div>-->
                 <div class="pt-3 mb-6 text-muted" th:text="#{footer.subheader}">Bulgarian subdivision of VATEUD, part of VATSIM network</div>
                 <div class="pt-3 mb-6" th:text="#{footer.moto}">Fly high, Soar Higher!</div>
+
+                <!-- Social button -->
+                <!--                <a href="#" class="d-inline-block si rounded-pill si-border si-hover-facebook">
+                                  <i class="bi bi-facebook fs-5"></i>
+                                  <i class="bi bi-facebook fs-5"></i>
+                                </a>-->
+
+                <a href="https://instagram.com/vatsim.bulgaria" target="_blank" class="d-inline-block si rounded-pill si-border si-hover-instagram">
+                  <i class="bi bi-instagram fs-5"></i>
+                  <i class="bi bi-instagram fs-5"></i>
+                </a>
+
+                <a href="https://community.vatsim.net" target="_blank" class="d-inline-block si rounded-pill si-border si-hover-discord">
+                  <i class="bi bi-discord fs-5"></i>
+                  <i class="bi bi-discord fs-5"></i>
+                </a>
               </div>
               <div class="col-12 col-xl-3 mb-5 mb-md-0 ms-auto h-100">
                 <!--Title-->
@@ -235,6 +255,17 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}"
                        th:text="#{footer.rules.constitution}">Constitution</a>
+                  </li>
+                </ul>
+
+                <hr class="mb-4"/>
+
+                <h6 class="small mb-3 text-white-50" th:text="#{footer.blog}">Blog</h6>
+
+                <ul class="nav flex-column mb-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/blog/posts}"
+                       th:text="#{footer.blog.posts}">Posts</a>
                   </li>
                 </ul>
               </div>
@@ -332,8 +363,11 @@
               <div class="col-12 col-md-6 col-lg-4">
                 <dl>
                   <dt th:text="#{home.weatherinfo.visibility}">Visibility</dt>
-                  <dd th:if="${arm.metar.visibility eq 9999}" th:text="#{home.weatherinfo.visibility.tenkm}"></dd>
-                  <dd th:if="${arm.metar.visibility ne 9999}" th:text="#{home.weatherinfo.visibility.m(${arm.metar.visibility})}"></dd>
+                  <dd th:if="${arm.metar.visibility eq null}">-</dd>
+                  <div th:if="${arm.metar.visibility ne null}" th:remove="tag">
+                    <dd th:if="${arm.metar.visibility eq 9999}" th:text="#{home.weatherinfo.visibility.tenkm}"></dd>
+                    <dd th:if="${arm.metar.visibility ne 9999}" th:text="#{home.weatherinfo.visibility.m(${arm.metar.visibility})}"></dd>
+                  </div>
                 </dl>
               </div>
               <div class="col-12 col-md-6 col-lg-4">
@@ -348,7 +382,7 @@
                   <dd th:text="${arm.metar.QNH}"></dd>
                 </dl>
               </div>
-              <div class="col-12 col-md-6 col-lg-4">
+              <div class="col-12 col-md-6 col-lg-4" sec:authorize="isAuthenticated() and !hasRole('ATC_S1')">
                 <dl>
                   <dt th:text="#{home.weatherinfo.runwayinuse}">Runway in use</dt>
                   <dd th:text="${arm.activeRunway}"></dd>

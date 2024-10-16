@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card table-card table-nowrap">
+            <div class="table-responsive table-card table-nowrap">
+              <table class="table align-middle table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th th:text="#{portal.users.users.cid}">CID</th>
+                    <th th:utext="#{portal.users.users.userandroles}">User &amp; roles</th>
+                    <th th:text="#{portal.users.users.status}">Status</th>
+                    <th th:text="#{portal.users.users.lastlogin}">Last login</th>
+                    <th th:text="#{portal.users.users.createdat}">Created at</th>
+                    <th class="text-end" th:text="#{portal.users.users.actions}">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!--<div th:each="u : ${users}" th:remove="tag">-->
+
+                  <tr th:each="u : ${users}" th:with="isMe=${session.loggedUser.cid eq u.cid}">
+                    <td class="fw-bold" th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div th:text="${u.cid}">CID</div>
+                      <!--<div class="fw-bold">Roles</div>-->
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="me-2 avatar sm d-flex align-items-center fw-bolder justify-content-center text-white rounded-circle"
+                             th:classappend="${!u.roles.?[roleName == 'STAFF'].isEmpty()} ? 'bg-primary' : 'bg-success'">
+                          <span th:text="${#strings.substring(u.names.firstName, 0, 1)}">J</span>
+                          <span th:if="${u.names.lastName ne null and u.names.lastName.length gt 1}" th:text="${#strings.substring(u.names.lastName, 0, 1)}">D</span>
+                        </div>
+                        <div class="flex-grow-1">
+                          <h6 class="mb-0" th:text="${u.names.fullName}">John Doe</h6>
+                          <small class="text-muted" th:text="${u.email}">john.doe@gmail.com</small>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="badge bg-secondary" th:each="r, iterStat : ${u.roles}" th:text="${r}" th:classappend="${!iterStat.isLast} ? 'me-1'"></span>
+                      </div>
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <span class="badge fs-6" th:classappend="${u.isActive} ? 'bg-success' : 'bg-danger'"
+                            th:text="${u.isActive} ? #{portal.users.users.status.active} : #{portal.users.users.status.inactive}">Active/inactive</span>
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div th:if="${u.lastLogin ne null}" th:text="${#dates.format(u.lastLogin, 'dd.MM.yyyy, HH:mm')}">13.10.2024>-</div>
+                      <div th:if="${u.lastLogin eq null}">-</div>
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div th:text="${#dates.format(u.createdOn, 'dd.MM.yyyy')}">13.10.2024>-</div>
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div class="d-flex justify-content-end align-items-center">
+                        <a href="#" data-tippy-content="View user">
+                          <span class="material-symbols-rounded align-middle fs-5 text-body">visibility</span>
+                        </a>
+                        <!--Divider line-->
+                        <span class="border-start mx-2 d-block height-20"></span>
+                        <a href="#" data-tippy-content="Edit user">
+                          <span class="material-symbols-rounded align-middle fs-5 text-body">edit</span>
+                        </a>
+                        <!--Divider line-->
+                        <!--                        <span class="border-start mx-2 d-block height-20"></span>
+                                                <a href="#" data-tippy-content="Delete user">
+                                                  <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
+                                                </a>-->
+                      </div>
+                    </td>
+                  </tr>
+                  <!--                    <tr>
+                                        <td class="" style="border-top-style: hidden !important;">
+                                          <span class="fw-bold">Roles</span>
+                                        </td>
+                                        <td class="" colspan="5" style="border-top-style: hidden !important;">
+                                          <span class="badge bg-secondary" th:each="r, iterStat : ${u.roles}" th:text="${r}" th:classappend="${!iterStat.isLast} ? 'me-1'"></span>
+                                        </td>
+                                      </tr>-->
+                  <!--</div>-->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

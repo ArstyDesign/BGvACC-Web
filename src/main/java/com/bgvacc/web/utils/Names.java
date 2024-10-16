@@ -21,6 +21,21 @@ public class Names implements Serializable {
   public String getFullName() {
     return (lastName != null) ? firstName + ' ' + lastName : firstName;
   }
+  
+  /**
+   * Gets full name with short first name.
+   * 
+   * e.g. John Doe - J. Doe
+   * @return 
+   */
+  public String getFullNameWithShortFirst() {
+    
+    if (lastName != null) {
+      return firstName.charAt(0) + ". " + lastName;
+    }
+    
+    return firstName.charAt(0) + ".";
+  }
 
   @Override
   public String toString() {

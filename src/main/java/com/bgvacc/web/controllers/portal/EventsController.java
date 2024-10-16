@@ -3,7 +3,7 @@ package com.bgvacc.web.controllers.portal;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.CalendarEvent;
-import com.bgvacc.web.responses.events.Event;
+import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
@@ -56,7 +56,7 @@ public class EventsController extends Base {
   @GetMapping("/portal/events/calendar")
   public String getEventsCalendar(Model model) {
 
-    List<Event> events = eventService.getEvents();
+    List<EventResponse> events = eventService.getEvents();
 
     List<CalendarEvent> calendarEvents = convertEventsToCalendarEvents(events);
 
@@ -76,11 +76,11 @@ public class EventsController extends Base {
     return "portal/events/calendar";
   }
 
-  private List<CalendarEvent> convertEventsToCalendarEvents(List<Event> events) {
+  private List<CalendarEvent> convertEventsToCalendarEvents(List<EventResponse> events) {
 
     List<CalendarEvent> calendarEvents = new ArrayList<>();
 
-    for (Event e : events) {
+    for (EventResponse e : events) {
       CalendarEvent ce = new CalendarEvent();
 
       ce.setId(String.valueOf(e.getEventId()));
