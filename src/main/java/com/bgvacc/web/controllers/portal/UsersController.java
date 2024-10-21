@@ -161,7 +161,7 @@ public class UsersController extends Base {
     try {
       cid = Long.valueOf(search);
     } catch (NumberFormatException e) {
-      model.addAttribute("error", "The provided CID is not valid");
+      model.addAttribute("error", getMessage("portal.users.create.error.cidnotvalid"));
 
       model.addAttribute("pageTitle", getMessage("portal.users.create.title"));
       model.addAttribute("page", "users");
@@ -180,7 +180,7 @@ public class UsersController extends Base {
     VatEudUser member = vatEudCoreApi.getMemberDetails(cid);
 
     if (member == null) {
-      model.addAttribute("error", "User with CID '" + search + "' not found");
+      model.addAttribute("error", getMessage("portal.users.create.error.usernotfound", search));
     }
 
     model.addAttribute("member", member);
@@ -202,9 +202,32 @@ public class UsersController extends Base {
   @PostMapping("/portal/users/new")
   public String createUser(@RequestParam("cid") String cid, Model model) {
 
-    log.info("Creating user with CID '" + cid + "'");
+    boolean doUserExist = userService.doUserExist(cid);
 
     VatEudUser member = vatEudCoreApi.getMemberDetails(Long.valueOf(cid));
+
+    if (doUserExist) {
+
+      model.addAttribute("error", getMessage("portal.users.create.error.userexists"));
+
+      model.addAttribute("searchedCid", cid);
+      model.addAttribute("member", member);
+
+      model.addAttribute("pageTitle", getMessage("portal.users.create.title"));
+      model.addAttribute("page", "users");
+      model.addAttribute("subpage", "createUser");
+
+      List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.users.create.title", null, LocaleContextHolder.getLocale()), null));
+
+      model.addAttribute("breadcrumbs", breadcrumbs);
+
+      return "portal/users/createUser";
+    }
+
+    log.info("Creating user with CID '" + cid + "'");
 
     UserCreateModel ucm = new UserCreateModel();
     ucm.setCid(member.getData().getCid());

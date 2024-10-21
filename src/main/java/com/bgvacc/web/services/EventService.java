@@ -11,7 +11,13 @@ import java.util.List;
  */
 public interface EventService {
 
-  List<EventResponse> getEvents();
+  List<EventResponse> getAllEvents();
+
+  List<EventResponse> getPastEvents();
+
+  List<EventResponse> getUpcomingEvents();
+
+  List<EventResponse> getEvents(String sql);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
 }

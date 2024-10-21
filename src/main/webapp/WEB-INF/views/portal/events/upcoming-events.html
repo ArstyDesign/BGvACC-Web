@@ -10,24 +10,24 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      <div th:if="${#lists.isEmpty(events.data)}" th:remove="tag">
+      <div th:if="${#lists.isEmpty(upcomingEvents)}" th:remove="tag">
         <h1 class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</h1>
       </div>
 
-      <div class="row" th:if="${!#lists.isEmpty(events.data)}">
-        <div class="col-12 col-lg-3 mb-3" th:each="e : ${events.data}">
+      <div class="row" th:if="${!#lists.isEmpty(upcomingEvents)}">
+        <div class="col-12 col-lg-3 mb-3" th:each="e : ${upcomingEvents}">
 
           <div class="card overflow-hidden">
-            <a href="#" th:href="@{/portal/events/} + ${e.id}" class="text-reset mb-3">
+            <a href="#" th:href="@{/portal/events/} + ${e.eventId}" class="text-reset mb-3">
               <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
             </a>
             <div class="card-header d-flex align-items-center">
               <h5 class="mb-0">
-                <a href="#" th:href="@{/events/} + ${e.id}" class="text-reset mb-3" th:text="${e.name}">Title</a>
+                <a href="#" th:href="@{/events/} + ${e.eventId}" class="text-reset mb-3" th:text="${e.name}">Title</a>
               </h5>
             </div>
             <div class="card-body">
-              <div class="row">
+<!--              <div class="row">
                 <div class="col-12 col-xl-6 mb-3" th:if="${e.airports.departure.size ge 1}">
                   <div class="fw-bold" th:text="${e.airports.departure.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
                   <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
@@ -41,10 +41,14 @@
                         data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
                   <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
                 </div>
-              </div>
+              </div>-->
               <div class="">
                 <div class="fw-bold" th:text="#{events.datetime}">Date &amp; time</div>
-                <div class="text-body-secondary" th:text="${e.timeFrame}">Mar 12, 2021</div>
+                <div class="text-body-secondary">
+<!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
+                  <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
+                  <span th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')}">Mar 12, 2021</span>
+                </div>
               </div>
             </div>
           </div>

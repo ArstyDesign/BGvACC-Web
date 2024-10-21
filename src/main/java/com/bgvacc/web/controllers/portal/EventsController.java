@@ -29,34 +29,52 @@ public class EventsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  private final EventApi eventApi;
-
   private final EventService eventService;
 
-  @GetMapping("/portal/events")
-  public String getEvents(Model model) {
+  @GetMapping("/portal/events/upcoming")
+  public String getUpcomingEvents(Model model) {
 
-    VatsimEvents vatsimEvents = eventApi.getVatsimEvents();
+    List<EventResponse> upcomingEvents = eventService.getUpcomingEvents();
 
-    model.addAttribute("events", vatsimEvents);
+    model.addAttribute("upcomingEvents", upcomingEvents);
 
     model.addAttribute("pageTitle", getMessage("portal.events.events.title"));
     model.addAttribute("page", "events");
-    model.addAttribute("subpage", "events");
+    model.addAttribute("subpage", "upcoming-events");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
-    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.events", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.upcomingevents", null, LocaleContextHolder.getLocale()), null));
 
     model.addAttribute("breadcrumbs", breadcrumbs);
 
-    return "portal/events/events";
+    return "portal/events/upcoming-events";
+  }
+
+  @GetMapping("/portal/events/past")
+  public String getPastEvents(Model model) {
+
+    List<EventResponse> pastEvents = eventService.getPastEvents();
+
+    model.addAttribute("pastEvents", pastEvents);
+
+    model.addAttribute("pageTitle", getMessage("portal.events.events.title"));
+    model.addAttribute("page", "events");
+    model.addAttribute("subpage", "past-events");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.pastevents", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
+    return "portal/events/past-events";
   }
 
   @GetMapping("/portal/events/calendar")
   public String getEventsCalendar(Model model) {
 
-    List<EventResponse> events = eventService.getEvents();
+    List<EventResponse> events = eventService.getAllEvents();
 
     List<CalendarEvent> calendarEvents = convertEventsToCalendarEvents(events);
 
@@ -68,7 +86,7 @@ public class EventsController extends Base {
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
-    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.events", null, LocaleContextHolder.getLocale()), "/portal/events"));
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.upcomingevents", null, LocaleContextHolder.getLocale()), "/portal/events"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.calendar", null, LocaleContextHolder.getLocale()), null));
 
     model.addAttribute("breadcrumbs", breadcrumbs);

@@ -139,6 +139,43 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public boolean doUserExist(String cid) {
+
+    final String doUserExistSql = "SELECT EXISTS (SELECT 1 FROM users WHERE cid = ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        doUserExistPstmt.setString(1, cid);
+
+        ResultSet doUserExistRset = doUserExistPstmt.executeQuery();
+
+        if (doUserExistRset.next()) {
+          if (doUserExistRset.getBoolean(1)) {
+            return true;
+          }
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user with CID '" + cid + "' exists", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user with CID '" + cid + "' exists", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public boolean createUser(UserCreateModel ucm) {
 
     final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)";

@@ -25,12 +25,34 @@ public class EventServiceImpl implements EventService {
   private final JdbcTemplate jdbcTemplate;
 
   @Override
-  public List<EventResponse> getEvents() {
+  public List<EventResponse> getAllEvents() {
 
     final String getEventsSql = "SELECT * FROM events";
 
+    return getEvents(getEventsSql);
+  }
+
+  @Override
+  public List<EventResponse> getPastEvents() {
+
+    final String getEventsSql = "SELECT * FROM events WHERE end_at < NOW()";
+
+    return getEvents(getEventsSql);
+  }
+
+  @Override
+  public List<EventResponse> getUpcomingEvents() {
+
+    final String getEventsSql = "SELECT * FROM events WHERE start_at > NOW()";
+
+    return getEvents(getEventsSql);
+  }
+
+  @Override
+  public List<EventResponse> getEvents(String sql) {
+
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
 
       try {
 

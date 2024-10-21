@@ -15,6 +15,8 @@ public interface UserService {
   List<UserResponse> getUsers();
 
   UserResponse getUser(String cidEmail);
+  
+  boolean doUserExist(String cid);
 
   boolean createUser(UserCreateModel ucm);
 

@@ -64,21 +64,30 @@
                   <span class="sidebar-text" th:text="#{portal.menu.events.title}">Events</span>
                 </li>
                 <li class="nav-item">
-                  <a href="#" th:href="@{/portal/events}" class="nav-link d-flex align-items-center text-truncate"
-                     th:classappend="${page eq 'events' and subpage eq 'events'} ? 'active'">
-                    <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">event_upcoming</span>
-                    </span>
-                    <span class="sidebar-text" th:text="#{portal.menu.events.events}">Events</span>
-                  </a>
-                </li>
-                <li class="nav-item">
                   <a href="#" th:href="@{/portal/events/calendar}" class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'events' and subpage eq 'calendar'} ? 'active'">
                     <span class="sidebar-icon">
                       <span class="material-symbols-rounded">calendar_month</span>
                     </span>
                     <span class="sidebar-text" th:text="#{portal.menu.events.calendar}">Calendar</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" th:href="@{/portal/events/upcoming}" class="nav-link d-flex align-items-center text-truncate"
+                     th:classappend="${page eq 'events' and subpage eq 'upcoming-events'} ? 'active'">
+                    <span class="sidebar-icon">
+                      <span class="material-symbols-rounded">event_upcoming</span>
+                    </span>
+                    <span class="sidebar-text" th:text="#{portal.menu.events.upcomingevents}">Upcoming events</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" th:href="@{/portal/events/past}" class="nav-link d-flex align-items-center text-truncate"
+                     th:classappend="${page eq 'events' and subpage eq 'past-events'} ? 'active'">
+                    <span class="sidebar-icon">
+                      <span class="material-symbols-rounded">event_repeat</span>
+                    </span>
+                    <span class="sidebar-text" th:text="#{portal.menu.events.pastevents}">Events</span>
                   </a>
                 </li>
 
@@ -114,7 +123,7 @@
                   </li>
                   <li class="nav-item">
                     <a href="#" th:href="@{/portal/users}" class="nav-link d-flex align-items-center text-truncate"
-                       th:classappend="${page eq 'users' and subpage eq 'users'} ? 'active'">
+                       th:classappend="${page eq 'users'} ? 'active'">
                       <span class="sidebar-icon">
                         <span class="material-symbols-rounded">groups_2</span>
                       </span>

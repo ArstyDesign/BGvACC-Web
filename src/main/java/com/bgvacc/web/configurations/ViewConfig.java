@@ -5,6 +5,7 @@ import nz.net.ultraq.thymeleaf.layoutdialect.*;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.dialect.*;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.*;
 import org.thymeleaf.spring5.templateresolver.*;
@@ -44,10 +45,16 @@ public class ViewConfig implements WebMvcConfigurer {
   }
 
   @Bean
+  public Java8TimeDialect java8TimeDialect() {
+    return new Java8TimeDialect();
+  }
+
+  @Bean
   public Set<IDialect> additionalDialects() {
 
     Set<IDialect> additionalDialects = new HashSet<>();
     additionalDialects.add(layoutDialect());
+    additionalDialects.add(java8TimeDialect());
     additionalDialects.add(ssd());
     return additionalDialects;
   }
