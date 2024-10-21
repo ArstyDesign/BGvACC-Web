@@ -13,6 +13,13 @@
       <div class="row">
         <div class="col-12 mb-3">
           <div class="card table-card table-nowrap">
+            <div class="card-header d-flex align-items-center">
+              <div class="h5 mb-0" th:text="#{portal.users.users.header}">Users</div>
+              <a href="#" th:href="@{/portal/users/new}" class="btn btn-primary btn-sm ms-auto">
+                <i class="material-symbols-rounded">person_add</i>
+                <span th:text="#{portal.users.users.createuser}">Create user</span>
+              </a>
+            </div>
             <div class="table-responsive table-card table-nowrap">
               <table class="table align-middle table-hover mb-0">
                 <thead>
@@ -41,7 +48,7 @@
                           <span th:if="${u.names.lastName ne null and u.names.lastName.length gt 1}" th:text="${#strings.substring(u.names.lastName, 0, 1)}">D</span>
                         </div>
                         <div class="flex-grow-1">
-                          <h6 class="mb-0" th:text="${u.names.fullName}">John Doe</h6>
+                          <h6 class="mb-0" th:text="${isMe} ? (#{portal.users.users.me(${u.names.fullName})}) : ${u.names.fullName}">John Doe</h6>
                           <small class="text-muted" th:text="${u.email}">john.doe@gmail.com</small>
                         </div>
                       </div>
@@ -62,7 +69,7 @@
                     </td>
                     <td th:classappend="${isMe} ? 'bg-success-subtle'">
                       <div class="d-flex justify-content-end align-items-center">
-                        <a href="#" data-tippy-content="View user">
+                        <a href="#" th:href="@{/portal/users/} + ${u.cid}" data-tippy-content="View user">
                           <span class="material-symbols-rounded align-middle fs-5 text-body">visibility</span>
                         </a>
                         <!--Divider line-->

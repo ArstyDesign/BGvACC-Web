@@ -2,6 +2,7 @@ package com.bgvacc.web.schedulers;
 
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
+import com.bgvacc.web.responses.sessions.NotCompletedControllerSession;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
@@ -54,7 +55,7 @@ public class SyncScheduler {
 ////      memory.addATC(new VatsimATC(1773453L, "LBBG_TWR", "1", 3, "Kristian", "Hristov"));
 ////    }
 //  }
-  @Scheduled(fixedRate = 30000)
+  @Scheduled(cron = "15,45 * * * * *", zone = "UTC")
   public void syncLiveATCs() {
 
     log.info("Syncing live ATCs...");
@@ -63,10 +64,60 @@ public class SyncScheduler {
 
     List<VatsimATC> allOnlineControllers = coreApi.getAllOnlineControllers();
 
+    if (allOnlineControllers == null || allOnlineControllers.isEmpty()) {
+      log.info("ATC online list is empty. Skipping...");
+      return;
+    }
+
     memory.clearAndAddATCs(allOnlineControllers);
 
     log.info("Online ATC: " + memory.getOnlineATCListSize());
     log.info("Online Bulgarian ATC: " + memory.getOnlineATCListSize(true));
+
+    checkAndEndClosedSessions();
+    checkAndOpenNewSessions();
+  }
+
+  private void checkAndEndClosedSessions() {
+
+    log.info("Checking for closed sessions to end...");
+
+    Memory memory = Memory.getInstance();
+
+    List<NotCompletedControllerSession> notCompletedControllerSessions = controllerOnlineLogService.getNotCompletedControllerSessions();
+
+    if (!notCompletedControllerSessions.isEmpty()) {
+
+      List<VatsimATC> allBulgarianOnlineATCsList = memory.getAllOnlineATCsList(true);
+
+      for (NotCompletedControllerSession nccs : notCompletedControllerSessions) {
+
+        boolean isFinished = true;
+
+        for (VatsimATC vatsimATC : allBulgarianOnlineATCsList) {
+          if (nccs.getCid().equals(String.valueOf(vatsimATC.getId())) && nccs.getPosition().equalsIgnoreCase(vatsimATC.getCallsign())) {
+            isFinished = false;
+            break;
+          }
+        }
+
+        if (isFinished) {
+          controllerOnlineLogService.endControllerSessionWithId(nccs.getControllerOnlineId());
+        }
+      }
+    }
+  }
+
+  private void checkAndOpenNewSessions() {
+    log.info("Checking for new sessions to open...");
+
+    Memory memory = Memory.getInstance();
+
+    List<VatsimATC> allBulgarianOnlineATCsList = memory.getAllOnlineATCsList(true);
+
+    for (VatsimATC vatsimATC : allBulgarianOnlineATCsList) {
+      controllerOnlineLogService.openNewControllerSession(vatsimATC);
+    }
   }
 
   @Scheduled(cron = "0 0 0 * * *", zone = "UTC")

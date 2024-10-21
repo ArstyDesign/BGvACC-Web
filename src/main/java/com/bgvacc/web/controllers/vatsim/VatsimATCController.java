@@ -39,7 +39,7 @@ public class VatsimATCController extends Base {
 
   @PostMapping("/atc/career-application")
   public String sendATCCareerApplication(@ModelAttribute("aam") @Valid ATCApplicationModel aam,
-          BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
+                                         BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
 
     log.debug("TEsting");
 
@@ -56,6 +56,16 @@ public class VatsimATCController extends Base {
     return "redirect:/atc/career-application";
   }
 
+  @GetMapping("/atc/information")
+  public String getAtcInformation(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("atc.information.title"));
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "information");
+
+    return "atc/information";
+  }
+
   @GetMapping("/atc/training-files")
   public String getTrainingFiles(Model model) {
 
@@ -65,7 +75,7 @@ public class VatsimATCController extends Base {
 
     return "atc/training-files";
   }
-  
+
   @GetMapping("/atc/stations")
   public String getStations(Model model) {
 
@@ -75,7 +85,7 @@ public class VatsimATCController extends Base {
 
     return "atc/stations";
   }
-  
+
   @GetMapping("/atc/downloads")
   public String getDownloads(Model model) {
 

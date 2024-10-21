@@ -19,6 +19,10 @@ INSERT INTO users VALUES ('1008143', 'svetlin.nikolov@gmail.com', 'svetlin.nikol
 
 INSERT INTO users VALUES ('1604267', 'andrei.tzenov@gmail.com', 'andrei.tzenov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Andrei', 'Tzenov', true, null, NOW(), null);
 
+INSERT INTO users VALUES ('1672684', 'tsvetan.mitov@gmail.com', 'tsvetan.mitov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Tsvetan', 'Mitov', true, null, NOW(), null);
+
+INSERT INTO users VALUES ('1664545', 'emil.ivanov@gmail.com', 'emil.ivanov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Emil', 'Ivanov', true, null, NOW(), null);
+
 CREATE TABLE roles(
 	rolename varchar(70) not null primary key,
 	description varchar(200)
@@ -29,7 +33,6 @@ INSERT INTO roles VALUES ('STAFF', 'Staff role');
 INSERT INTO roles VALUES ('STAFF_DIRECTOR', 'Staff director'); 
 INSERT INTO roles VALUES ('STAFF_EVENTS', 'Staff events'); 
 INSERT INTO roles VALUES ('STAFF_TRAINING', 'Staff training');
-INSERT INTO roles VALUES ('ATC', 'ATC');
 INSERT INTO roles VALUES ('ATC_S1', 'ATC rating S1');
 INSERT INTO roles VALUES ('ATC_S2', 'ATC rating S2');
 INSERT INTO roles VALUES ('ATC_S3', 'ATC rating S3');
@@ -37,6 +40,7 @@ INSERT INTO roles VALUES ('ATC_C1', 'ATC rating C1');
 INSERT INTO roles VALUES ('ATC_C3', 'ATC rating C3');
 INSERT INTO roles VALUES ('ATC_I1', 'ATC rating I1');
 INSERT INTO roles VALUES ('ATC_I3', 'ATC rating I3');
+INSERT INTO roles VALUES ('USER', 'Regular user');
 
 CREATE TABLE user_roles(
 	user_role_id varchar(100) not null primary key default gen_random_uuid(),
@@ -46,25 +50,31 @@ CREATE TABLE user_roles(
 	unique (cid, rolename)
 );
 
+INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'SYS_ADMIN');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'ATC');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'ATC_S3');
-INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC');
+INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC_S2');
+INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'USER');
+INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'ATC_S2');
+INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'USER');
+INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF');
+INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF_TRAINING');
 
 CREATE TABLE event_types (
     type varchar(10) primary key
@@ -119,4 +129,10 @@ CREATE TABLE controllers_online_log (
 	position varchar(30) not null,
 	session_started timestamptz not null default NOW(),
 	session_ended timestamptz
+);
+
+CREATE TABLE user_events (
+	user_cid varchar(30) not null references users(cid) on delete cascade,
+	event_id int not null references events(event_id) on delete cascade,
+	position varchar(50) not null
 );

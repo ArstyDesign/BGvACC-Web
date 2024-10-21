@@ -5,6 +5,12 @@
       layout:decorate="~{templates/mainTemplate}">
   <head>
     <title th:text="#{app.title(${event.name})}">BGvACC</title>
+    
+    <style>
+      .eventDescription a {
+        color: var(--bs-primary) !important;
+      }
+    </style>
   </head>
   <body>
     <div layout:fragment="contentDiv">
@@ -17,7 +23,7 @@
             <!--Image-->
             <img src="#" th:src="${event.imageUrl}" alt="" class="img-fluid border rounded"/>
           </div>
-          <div class="card-body h-100 p-0 m-4 flex-grow-1">
+          <div class="card-body h-100 p-0 mt-0 m-4 flex-grow-1">
             <div class="mb-4">
               <h1 class="h4 mb-2" th:text="${event.name}">Title</h1>
               <div class="d-block lh-1 text-body-secondary" th:text="${event.timeFrame}">Date time</div>
@@ -25,9 +31,8 @@
             <div class="fs-5" th:text="${event.shortDescription}">Short description</div>
           </div>
         </div>
-        <div class="mx-4 mb-4 mt-0 mt-lg-4">
-          <div th:utext="${@uRLUtils.transformUrlToHtmlLinkInText(event.description, true)}">Here</div>
-          <!--<div th:text="${event.description}">Test</div>-->
+        <div class="eventDescription mx-4 mb-4 mt-0 mt-lg-4">
+          <div th:utext="${event.htmlDescription}">Test</div>
         </div>
       </div>
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(#{portal.users.create.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <form th:action="@{/portal/users/new}" method="get">
+            <label class="form-label" th:text="#{portal.users.create.search}">Search user via CID</label>
+            <input class="form-control form-control-lg mb-0" type="text" name="search" th:value="${searchedCid ne null} ? ${searchedCid}"/>
+          </form>
+        </div>
+      </div>
+
+      <div class="row" th:if="${error ne null}">
+        <div class="col-12 mb-3">
+          <div class="alert alert-danger" th:text="${error}">Test</div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${member ne null and error eq null}">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <div class="h4 mb-0" th:text="${member.data.firstName} + (${member.data.lastName ne null} ? (' ' + ${member.data.lastName}) + ' - ' + ${member.data.cid})">Member name</div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12 col-lg-4 mb-0">
+                  <dl>
+                    <dt th:text="#{portal.users.create.cid}">CID</dt>
+                    <dd th:text="${member.data.cid}">CID</dd>
+                  </dl>
+                </div>
+                <div class="col-12 col-lg-4 text-lg-center mb-0">
+                  <dl>
+                    <dt th:text="#{portal.users.create.email}">Email</dt>
+                    <dd th:text="${member.data.email}">Email</dd>
+                  </dl>
+                </div>
+                <div class="col-12 col-lg-4 text-lg-end mb-0">
+                  <dl th:with="ratingSymbol=${@vatsimRatingUtils.getATCRatingSymbol(member.data.rating)}">
+                    <dt th:text="#{portal.users.create.rating}">Rating</dt>
+                    <dd th:text="#{members.member.atc. + ${#strings.toLowerCase(ratingSymbol)}}">Rating</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 mb-0">
+                  <form th:action="@{/portal/users/new}" method="post">
+                    <input type="hidden" name="cid" th:value="${member.data.cid}"/>
+                    <button type="submit" class="btn btn-primary">Add user</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

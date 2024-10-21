@@ -12,6 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 /**
  *
@@ -114,4 +117,11 @@ public class VatsimEventData implements Serializable {
 //  public LocalDateTime getEndTimeInLocalDateTime() {
 //    return this.endTime.toLocalDateTime();
 //  }
+
+  public String getHtmlDescription() {
+    Parser parser = Parser.builder().build();
+    HtmlRenderer renderer = HtmlRenderer.builder().build();
+    Node document = parser.parse(this.description);
+    return renderer.render(document);
+  }
 }

@@ -47,7 +47,7 @@
     <dependency>
       <groupId>com.aarshinkov</groupId>
       <artifactId>date-time-calculator</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
     
     <dependency>
@@ -95,6 +95,12 @@
     <dependency>
       <groupId>nz.net.ultraq.thymeleaf</groupId>
       <artifactId>thymeleaf-layout-dialect</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+      <version>0.21.0</version>
     </dependency>
     
     <dependency>
@@ -171,7 +177,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-          <showDeprecation>false</showDeprecation>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
       <plugin>

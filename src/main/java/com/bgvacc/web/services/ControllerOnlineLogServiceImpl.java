@@ -1,6 +1,8 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.sessions.NotCompletedControllerSession;
+import com.bgvacc.web.vatsim.atc.VatsimATC;
 import java.sql.*;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,114 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final JdbcTemplate jdbcTemplate;
+
+  @Override
+  public List<ControllerOnlineLogResponse> getControllerLastOnlineSessions(String cid, int numberOfConnections, boolean shouldIncludeNonCompleted) {
+
+    String getControllerLastOnlineSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ?";
+
+    if (!shouldIncludeNonCompleted) {
+      getControllerLastOnlineSessionsSql += " AND session_ended IS NOT NULL";
+    }
+
+    getControllerLastOnlineSessionsSql += " ORDER BY session_started DESC";
+
+    if (numberOfConnections > 0) {
+      getControllerLastOnlineSessionsSql += " LIMIT " + numberOfConnections;
+    }
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllerLastOnlineSessionsPstmt = conn.prepareStatement(getControllerLastOnlineSessionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getControllerLastOnlineSessionsPstmt.setString(1, cid);
+
+        ResultSet getNotCompletedControllerSessionsRset = getControllerLastOnlineSessionsPstmt.executeQuery();
+
+        List<ControllerOnlineLogResponse> controllerLastOnlineSessions = new ArrayList<>();
+
+        while (getNotCompletedControllerSessionsRset.next()) {
+
+          ControllerOnlineLogResponse colr = new ControllerOnlineLogResponse();
+          colr.setControllerOnlineId(getNotCompletedControllerSessionsRset.getString("controller_online_log_id"));
+          colr.setCid(getNotCompletedControllerSessionsRset.getString("cid"));
+          colr.setRating(getNotCompletedControllerSessionsRset.getInt("rating"));
+          colr.setServer(getNotCompletedControllerSessionsRset.getString("server"));
+          colr.setPosition(getNotCompletedControllerSessionsRset.getString("position"));
+          colr.setSessionStarted(getNotCompletedControllerSessionsRset.getTimestamp("session_started"));
+          colr.setSessionEnded(getNotCompletedControllerSessionsRset.getTimestamp("session_ended"));
+
+          controllerLastOnlineSessions.add(colr);
+        }
+
+        return controllerLastOnlineSessions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting not completed controller sessions", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting not completed controller sessions", e);
+    }
+
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<ControllerOnlineLogResponse> getControllerOnlineSessions(String cid, int numberOfConnections) {
+
+    String getControllerLastOnlineSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NULL ORDER BY session_started DESC";
+
+    if (numberOfConnections > 0) {
+      getControllerLastOnlineSessionsSql += " LIMIT " + numberOfConnections;
+    }
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllerLastOnlineSessionsPstmt = conn.prepareStatement(getControllerLastOnlineSessionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getControllerLastOnlineSessionsPstmt.setString(1, cid);
+
+        ResultSet getNotCompletedControllerSessionsRset = getControllerLastOnlineSessionsPstmt.executeQuery();
+
+        List<ControllerOnlineLogResponse> controllerLastOnlineSessions = new ArrayList<>();
+
+        while (getNotCompletedControllerSessionsRset.next()) {
+
+          ControllerOnlineLogResponse colr = new ControllerOnlineLogResponse();
+          colr.setControllerOnlineId(getNotCompletedControllerSessionsRset.getString("controller_online_log_id"));
+          colr.setCid(getNotCompletedControllerSessionsRset.getString("cid"));
+          colr.setRating(getNotCompletedControllerSessionsRset.getInt("rating"));
+          colr.setServer(getNotCompletedControllerSessionsRset.getString("server"));
+          colr.setPosition(getNotCompletedControllerSessionsRset.getString("position"));
+          colr.setSessionStarted(getNotCompletedControllerSessionsRset.getTimestamp("session_started"));
+          colr.setSessionEnded(getNotCompletedControllerSessionsRset.getTimestamp("session_ended"));
+
+          controllerLastOnlineSessions.add(colr);
+        }
+
+        return controllerLastOnlineSessions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting controller online sessions", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting controller online sessions", e);
+    }
+
+    return new ArrayList<>();
+  }
 
   @Override
   public List<NotCompletedControllerSession> getNotCompletedControllerSessions() {
@@ -60,6 +170,57 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
     }
 
     return new ArrayList<>();
+  }
+
+  @Override
+  public boolean openNewControllerSession(VatsimATC onlineAtc) {
+
+    final String openNewControllerSessionSql = "INSERT INTO controllers_online_log (cid, rating, server, position) VALUES (?, ?, ?, ?)";
+    final String checkIfSessionIsActiveSql = "SELECT EXISTS (SELECT 1 FROM controllers_online_log WHERE session_ended IS NULL AND cid = ? AND position = ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement openNewControllerSessionPstmt = conn.prepareStatement(openNewControllerSessionSql);
+            PreparedStatement checkIfSessionIsActivePstmt = conn.prepareStatement(checkIfSessionIsActiveSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        checkIfSessionIsActivePstmt.setString(1, String.valueOf(onlineAtc.getId()));
+        checkIfSessionIsActivePstmt.setString(2, onlineAtc.getCallsign());
+
+        ResultSet checkIfSessionIsActiveRset = checkIfSessionIsActivePstmt.executeQuery();
+
+        if (checkIfSessionIsActiveRset.next()) {
+          if (!checkIfSessionIsActiveRset.getBoolean(1)) {
+            log.info("Session is not active. Opening a new session.");
+
+            openNewControllerSessionPstmt.setString(1, String.valueOf(onlineAtc.getId()));
+            openNewControllerSessionPstmt.setInt(2, onlineAtc.getRating());
+            openNewControllerSessionPstmt.setString(3, onlineAtc.getServer());
+            openNewControllerSessionPstmt.setString(4, onlineAtc.getCallsign());;
+
+            boolean result = openNewControllerSessionPstmt.executeUpdate() > 0;
+
+            conn.commit();
+
+            return result;
+          }
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error opening new controller session.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error opening new controller session.", e);
+    }
+
+    return false;
   }
 
   @Override

@@ -89,7 +89,7 @@
                           </div>
                         </div>
                         <div class="lh-sm d-block mb-1" th:utext="${n.trainingNoteHtml}">Note</div>
-                        <div class="p-3 border rounded-3 mb-1 d-flex align-items-center" th:if="${n.sessionType eq 2 or (n.sessionType eq 3 and n.otsPass eq 1)}">
+                        <div class="p-3 border rounded-3 mb-1 d-flex align-items-center" th:if="${(n.sessionType eq 2 or (n.sessionType eq 3 and n.otsPass eq 1)) and n.markingSheet ne null}">
                           <a href="#" th:href="@{n.markingSheet}">
                             <img src="#" th:src="@{/resources/icons/svg/docs/pdf.svg}" class="height-40 me-3 flex-shrink-0 w-auto" alt=""/>
                           </a>
@@ -105,7 +105,6 @@
                         <small class="d-block mb-0 mt-3 text-muted" th:text="${#dates.format(n.createdAt, 'dd.MM.yyyy, HH:mm')}">3h ago</small>
                       </div>
                     </div>
-
                   </li>
                 </ul>
               </div>

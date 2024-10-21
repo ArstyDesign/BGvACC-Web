@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <!--      <div class="row">
+              <div class="col-12 mb-3">
+                <div th:text="${user}"></div>
+              </div>
+            </div>-->
+
+      <div class="row" th:if="${controllerOnlineSessions ne null and !#lists.isEmpty(controllerOnlineSessions)}">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header d-flex align-items-center">
+              <div class="h5 mb-0" th:text="#{portal.users.user.activesession}">Active session</div>
+            </div>
+            <div class="card-body">
+              <div class="table-nowrap">
+                <div class="table-responsive table-card table-nowrap">
+                  <table class="table align-middle table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th th:text="#{portal.users.user.position}">Position</th>
+                        <th th:text="#{portal.users.user.rating}">Rating</th>
+                        <th th:text="#{portal.users.user.server}">Server</th>
+                        <th th:text="#{portal.users.user.sessionstarted}">Session started</th>
+                        <th th:text="#{portal.users.user.totaltime}">Total time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="s : ${controllerOnlineSessions}">
+                        <td th:text="${s.position}"></td>
+                        <td th:text="#{members.member.atc. + ${#strings.toLowerCase(s.atcRatingSymbol)}}"></td>
+                        <td th:text="${s.server}"></td>
+                        <td th:text="${#dates.format(s.sessionStarted, 'dd.MM.yyyy, HH:mm')}"></td>
+                        <td th:text="${s.calculatedTimeOnline}"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header d-flex align-items-center">
+              <div class="h5 mb-0" th:text="#{portal.users.user.lastconnections.1}" th:if="${lastNConnectionsCount eq 1}">Last 1 connection of the user</div>
+              <div class="h5 mb-0" th:text="#{portal.users.user.lastconnections.n(${lastNConnectionsCount})}" th:if="${lastNConnectionsCount gt 1}">Last 5 connections of the user</div>
+            </div>
+            <div class="card-body">
+              <div class="table-nowrap">
+                <div class="table-responsive table-card table-nowrap">
+                  <table class="table align-middle table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th th:text="#{portal.users.user.number}">Number</th>
+                        <th th:text="#{portal.users.user.position}">Position</th>
+                        <th th:text="#{portal.users.user.rating}">Rating</th>
+                        <th th:text="#{portal.users.user.server}">Server</th>
+                        <th th:text="#{portal.users.user.sessionstarted}">Session started</th>
+                        <th th:text="#{portal.users.user.sessionended}">Session ended</th>
+                        <th th:text="#{portal.users.user.totaltime}">Total time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="s, iterStat : ${completedSessions}" th:if="${s.sessionEnded ne null}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${s.position}"></td>
+                        <td th:text="#{members.member.atc. + ${#strings.toLowerCase(s.atcRatingSymbol)}}"></td>
+                        <td th:text="${s.server}"></td>
+                        <td th:text="${#dates.format(s.sessionStarted, 'dd.MM.yyyy, HH:mm')}"></td>
+                        <td th:text="${#dates.format(s.sessionEnded, 'dd.MM.yyyy, HH:mm')}"></td>
+                        <td th:text="${s.calculatedTimeOnline}"></td>
+                      </tr>
+                      <tr>
+                        <th colspan="6" class="text-end" th:text="#{portal.users.user.totaltime.total}">Total</th>
+                        <th th:text="${totalTime}"></th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header d-flex">
+              <div class="h5 mb-0" th:text="#{portal.users.user.roles}">Roles</div>
+              <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
+                <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
+                   class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.roles.add}">Add a user role</a>
+              </div>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#addUserRoleModal" th:if="${user.cid ne session.loggedUser.cid}"
+                 class="btn btn-primary btn-sm ms-auto" th:text="#{portal.users.user.roles.add}">Add a user role</a>
+            </div>
+            <div class="card-body">
+              <div class="table-nowrap">
+                <div class="table-responsive table-card table-nowrap">
+                  <table class="table align-middle table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th th:text="#{portal.users.user.roles.role}">Number</th>
+                        <th th:text="#{portal.users.user.roles.description}">Description</th>
+                        <th class="text-end" th:text="#{portal.users.user.roles.actions}">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="r, iterStat : ${user.roles}">
+                        <td>
+                          <span class="badge bg-secondary" th:text="${r}"></span>
+                        </td>
+                        <td th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(r)} + '.desc'}">Description</td>
+                        <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                          <div class="d-flex justify-content-end align-items-center">
+                            <div th:if="${r.roleName eq 'USER'}">-</div>
+                            <form th:action="@{/portal/users/} + ${cid} + '/roles/delete'" method="post" th:if="${r.roleName ne 'USER'}">
+                              <input type="hidden" name="role" th:value="${r}"/>
+                              <a href="#" th:data-tippy-content="#{portal.users.user.roles.deleterole}"
+                                 onclick="this.closest('form').submit(); return false;"
+                                 data-bs-toggle="modal" data-bs-target="#deleteUserRoleModal">
+                                <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
+                              </a>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="addUserRoleModal" tabindex="-1" aria-labelledby="addUserRoleModalLabel" style="display: none;" aria-hidden="true">
+        <form th:action="@{/portal/users/} + ${cid} + '/roles/add'" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addUserRoleModalLabel" th:text="#{portal.users.user.roles.add.title}">Add user role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label required" th:text="#{portal.users.user.roles.add.role}">Role</label>
+                <select class="form-control mb-3" name="role">
+                  <option th:each="ur : ${unassignedRoles}" th:value="${ur}" th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!--      <div class="modal fade" id="deleteUserRoleModal" tabindex="-1" aria-labelledby="deleteUserRoleModalLabel" style="display: none;" aria-hidden="true">
+              <form th:action="@{/portal/users/} + ${cid} + '/roles/delete'" method="post">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteUserRoleModalLabel" th:text="#{portal.users.user.roles.delete.title}">Delete user role</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div>Are you sure you want to remove this role?</div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
+                      <button type="submit" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>-->
+    </div>
+  </body>
+</html>

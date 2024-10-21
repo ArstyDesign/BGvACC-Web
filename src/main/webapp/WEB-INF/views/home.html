@@ -25,7 +25,7 @@
 
           <div class="row">
             <div class="col-12 col-xl-4 mb-3" th:each="e : ${events.data}">
-              <article class="card-hover card shadow-sm hover-lift hover-shadow-lg overflow-hidden rounded-3">
+              <article class="card-hover card shadow-sm hover-lift hover-shadow-lg overflow-hidden rounded-3 h-100">
                 <a href="#" th:href="@{/events/} + ${e.id}" class="d-block overflow-hidden">
                   <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
                 </a>

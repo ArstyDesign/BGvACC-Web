@@ -64,11 +64,13 @@ public class VatsimMemberSoloValidation implements Serializable {
 
   public int getSoloTotalDays() {
     long diff = expiry.getTime() - createdAt.getTime();
-    return (int) (diff / (1000 * 60 * 60 * 24));
+    return (int) (diff / (1000 * 60 * 60 * 24)) + 1;
   }
 
   public double getPercentRemaining() {
-    double percentage = ((double) getSoloRemainingDays() / getSoloTotalDays()) * 100;
+    double soloRemainingDays = getSoloRemainingDays();
+    double soloTotalDays = getSoloTotalDays();
+    double percentage = (soloRemainingDays / soloTotalDays) * 100;
     return percentage;
   }
 

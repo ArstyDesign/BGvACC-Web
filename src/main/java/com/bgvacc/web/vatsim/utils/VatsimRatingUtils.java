@@ -1,11 +1,54 @@
 package com.bgvacc.web.vatsim.utils;
 
+import org.springframework.stereotype.Component;
+
 /**
  *
  * @author Atanas Yordanov Arshinkov
  * @since 1.0.0
  */
+@Component
 public class VatsimRatingUtils {
+
+  public static String getRatingNumberToUserRole(Integer rating) {
+
+    if (rating == null) {
+      return null;
+    }
+
+    switch (rating) {
+//      case -1:
+//        return "INA";
+//      case 0:
+//        return "SUS";
+//      case 1:
+//        return "OBS";
+      case 2:
+        return "ATC_S1";
+      case 3:
+        return "ATC_S2";
+      case 4:
+        return "ATC_S3";
+      case 5:
+        return "ATC_C1";
+//      case 6:
+//        return "C2";
+      case 7:
+        return "ATC_C3";
+      case 8:
+        return "ATC_I1";
+//      case 9:
+//        return "I2";
+      case 10:
+        return "ATC_I3";
+//      case 11:
+//        return "SUP";
+//      case 12:
+//        return "ADM";
+      default:
+        return null;
+    }
+  }
 
   public static String getATCRatingSymbol(Integer rating) {
 
