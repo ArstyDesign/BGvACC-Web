@@ -1,13 +1,17 @@
 package com.bgvacc.web.controllers;
 
+import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.services.DatabaseService;
+import com.bgvacc.web.services.EventService;
+import com.bgvacc.web.vatsim.events.VatsimEvents;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -15,12 +19,16 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since 1.0.0
  */
 @Controller
+@RequiredArgsConstructor
 public class TestController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
-  
-  @Autowired
-  private DatabaseService databaseService;
+
+  private final DatabaseService databaseService;
+
+  private final EventApi eventApi;
+
+  private final EventService eventService;
 
   @GetMapping("/test/db")
   public String testDatabase(Model model) {
@@ -30,6 +38,19 @@ public class TestController extends Base {
     model.addAttribute("isDbConnected", result);
 
     return "test/database";
+  }
+
+  @GetMapping("/test/events-sync")
+  @ResponseBody
+  public String testEventsSync() {
+
+    log.info("Syncing events...");
+
+    VatsimEvents vatsimEvents = eventApi.getVatsimEvents();
+
+    eventService.synchroniseVatsimEventsToDatabase(vatsimEvents.getData());
+
+    return "Testing events sync";
   }
 
 //  @GetMapping("/test/addController")

@@ -89,8 +89,8 @@ CREATE TABLE events (
     description text,
     short_description text,
     image_url varchar(255),
-    start_at timestamptz not null,
-    end_at timestamptz not null,
+    start_at timestamp not null,
+    end_at timestamp not null,
     created_at timestamptz not null,
     updated_at timestamptz
 );

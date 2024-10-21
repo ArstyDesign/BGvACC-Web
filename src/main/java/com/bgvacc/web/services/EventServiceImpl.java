@@ -3,7 +3,9 @@ package com.bgvacc.web.services;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -120,6 +122,77 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public EventResponse getEvent(Long eventId) {
+
+    final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getEventPstmt.setLong(1, eventId);
+
+        ResultSet getEventsRset = getEventPstmt.executeQuery();
+
+        if (getEventsRset.next()) {
+
+          EventResponse event = new EventResponse();
+          event.setEventId(getEventsRset.getLong("event_id"));
+          event.setName(getEventsRset.getString("name"));
+          event.setType(getEventsRset.getString("type"));
+          event.setDescription(getEventsRset.getString("description"));
+          event.setShortDescription(getEventsRset.getString("short_description"));
+          event.setImageUrl(getEventsRset.getString("image_url"));
+
+          Timestamp startAtTimestamp = getEventsRset.getTimestamp("start_at");
+
+          if (startAtTimestamp != null) {
+            // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
+            ZonedDateTime startAtZonedDateTime = startAtTimestamp.toInstant()
+                    .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
+                    .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
+
+//            System.out.println("Event Start Time: " + zonedDateTime);
+            event.setStartAt(startAtZonedDateTime);
+          }
+
+          Timestamp endAtTimestamp = getEventsRset.getTimestamp("end_at");
+
+          if (endAtTimestamp != null) {
+            // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
+            ZonedDateTime endAtZonedDateTime = endAtTimestamp.toInstant()
+                    .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
+                    .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
+
+//            System.out.println("Event Start Time: " + zonedDateTime);
+            event.setEndAt(endAtZonedDateTime);
+          }
+
+//          ZonedDateTime zonedDateTime = getEventsRset.getObject("start_at", ZonedDateTime.class);
+//          ved.setEndAt(getEventsRset.getObject("end_at", ZonedDateTime.class));
+          event.setCreatedAt(getEventsRset.getTimestamp("created_at"));
+          event.setUpdatedAt(getEventsRset.getTimestamp("updated_at"));
+
+          return event;
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting event with ID '" + eventId + "'", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting event with ID '" + eventId + "'", e);
+    }
+
+    return null;
+  }
+
+  @Override
   public void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data) {
 
     final String checkIfEventExistsInDatabaseSql = "SELECT EXISTS (SELECT 1 FROM events WHERE event_id = ?)";
@@ -161,18 +234,17 @@ public class EventServiceImpl implements EventService {
               synchoniseVatsimEventPstmt.setString(5, ved.getShortDescription());
               synchoniseVatsimEventPstmt.setString(6, ved.getImageUrl());
 
-              ZoneId zoneId = ZoneId.of("Europe/Sofia");
+//              ZoneId zoneId = ZoneId.of("Europe/Sofia");
+              LocalDateTime startDateTime = ved.getFromDateTime();
+//              ZonedDateTime zonedStartAtDateTimeUTC = fromDateTime.atZone(ZoneId.of("UTC"));
+//              ZonedDateTime zonedStartAtDateTimeLocal = zonedStartAtDateTimeUTC.withZoneSameInstant(zoneId);
 
-              LocalDateTime fromDateTime = ved.getFromDateTime();
-              ZonedDateTime zonedStartAtDateTimeUTC = fromDateTime.atZone(ZoneId.of("UTC"));
-              ZonedDateTime zonedStartAtDateTimeLocal = zonedStartAtDateTimeUTC.withZoneSameInstant(zoneId);
+              LocalDateTime endDateTime = ved.getToDateTime();
+//              ZonedDateTime zonedEndAtDateTimeUTC = toDateTime.atZone(ZoneId.of("UTC"));
+//              ZonedDateTime zonedEndAtDateTimeLocal = zonedEndAtDateTimeUTC.withZoneSameInstant(zoneId);
 
-              LocalDateTime toDateTime = ved.getToDateTime();
-              ZonedDateTime zonedEndAtDateTimeUTC = toDateTime.atZone(ZoneId.of("UTC"));
-              ZonedDateTime zonedEndAtDateTimeLocal = zonedEndAtDateTimeUTC.withZoneSameInstant(zoneId);
-
-              synchoniseVatsimEventPstmt.setTimestamp(7, Timestamp.from(zonedStartAtDateTimeLocal.toInstant()));
-              synchoniseVatsimEventPstmt.setTimestamp(8, Timestamp.from(zonedEndAtDateTimeLocal.toInstant()));
+              synchoniseVatsimEventPstmt.setTimestamp(7, Timestamp.valueOf(startDateTime));
+              synchoniseVatsimEventPstmt.setTimestamp(8, Timestamp.valueOf(endDateTime));
               synchoniseVatsimEventPstmt.setTimestamp(9, ved.getCreatedAt());
 
               if (ved.getUpdatedAt() != null) {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(${pageTitle})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+
+    <style>
+      .eventDescription a {
+        color: var(--bs-primary) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12">
+          <!--Card-->
+          <div class="card shadow border-0">
+            <div class="d-flex flex-lg-row flex-column overflow-hidden ">
+              <div class="">
+                <!--Image-->
+                <img src="#" th:src="${event.imageUrl}" alt="" class="img-fluid border rounded"/>
+              </div>
+              <div class="card-body h-100 p-0 m-4 flex-grow-1">
+                <div class="mb-4">
+                  <h1 class="h4 mb-2" th:text="${event.name}">Title</h1>
+                  <div class="d-block lh-1 text-body-secondary" th:text="${#dates.format(event.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(event.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(event.endAtTimestamp, 'HH:mm')} + 'z'">Date time</div>
+                </div>
+                <div class="fs-5" th:text="${event.shortDescription}">Short description</div>
+              </div>
+            </div>
+            <div class="eventDescription mx-4 mb-4 mt-0 mt-lg-4">
+              <div th:utext="${event.htmlDescription}">Description</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

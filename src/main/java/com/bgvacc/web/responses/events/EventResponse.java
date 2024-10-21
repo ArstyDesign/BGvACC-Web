@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import lombok.*;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 /**
  *
@@ -36,11 +38,6 @@ public class EventResponse implements Serializable {
     this.startAt = startAt;
     ZonedDateTime utcDateTime = startAt.withZoneSameInstant(ZoneOffset.UTC);
     this.startAtTimestamp = Timestamp.from(utcDateTime.toInstant());
-
-    System.out.println("Original ZonedDateTime: " + startAt);  // Показва оригиналната дата и час с локална часова зона
-    System.out.println("UTC ZonedDateTime: " + utcDateTime);    // Показва преобразуваната стойност в UTC
-    System.out.println("Timestamp (UTC): " + this.startAtTimestamp);
-    System.out.println("Timestamp interpreted as UTC: " + this.startAtTimestamp.toInstant());
   }
 
   public void setEndAt(ZonedDateTime endAt) {
@@ -59,5 +56,12 @@ public class EventResponse implements Serializable {
 
   public boolean isVasops() {
     return type.equalsIgnoreCase("vasops");
+  }
+
+  public String getHtmlDescription() {
+    Parser parser = Parser.builder().build();
+    HtmlRenderer renderer = HtmlRenderer.builder().build();
+    Node document = parser.parse(this.description);
+    return renderer.render(document);
   }
 }

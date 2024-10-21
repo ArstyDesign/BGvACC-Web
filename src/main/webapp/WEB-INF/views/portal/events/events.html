@@ -5,17 +5,20 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/portalTemplate}">
   <head>
-    <title th:text="#{app.title(#{app.portal.title(#{portal.events.events.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{app.portal.title(${pageTitle})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
-      <div th:if="${#lists.isEmpty(upcomingEvents)}" th:remove="tag">
+      <div th:if="${#lists.isEmpty(events)}" th:remove="tag">
         <h1 class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</h1>
       </div>
 
-      <div class="row" th:if="${!#lists.isEmpty(upcomingEvents)}">
-        <div class="col-12 col-lg-3 mb-3" th:each="e : ${upcomingEvents}">
+      <div class="row" th:if="${!#lists.isEmpty(events)}">
+        
+        <div class="text-muted mb-4" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
+        
+        <div class="col-12 col-lg-3 mb-3" th:each="e : ${events}">
 
           <div class="card overflow-hidden">
             <a href="#" th:href="@{/portal/events/} + ${e.eventId}" class="text-reset mb-3">
@@ -47,7 +50,7 @@
                 <div class="text-body-secondary">
 <!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
                   <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
-                  <span th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')}">Mar 12, 2021</span>
+                  <span th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')} + 'z'">Mar 12, 2021</span>
                 </div>
               </div>
             </div>

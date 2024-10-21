@@ -6,13 +6,22 @@
       layout:decorate="~{templates/portalTemplate}">
   <head>
     <title th:text="#{app.title(#{app.portal.title(#{portal.events.calendar.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+
+    <style>
+      .fc-daygrid-day-events a {
+        color: inherit !important;
+      }
+      .fc-day-today {
+        background-color: rgba(255, 220, 40, .15) !important;
+      }
+    </style>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div class="row">
         <div class="col-12 mb-3">
-          
+
           <div class="text-muted mb-4" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
 
           <div class="card card-body">
@@ -48,6 +57,7 @@
         // Initialize the calendar
         const eventsCalendar = new FullCalendar.Calendar(document.getElementById('eventsCalendar'), {
           events: calendarEvents,
+          timeZone: 'UTC',
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',

@@ -19,5 +19,7 @@ public interface EventService {
 
   List<EventResponse> getEvents(String sql);
 
+  EventResponse getEvent(Long eventId);
+
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
 }
