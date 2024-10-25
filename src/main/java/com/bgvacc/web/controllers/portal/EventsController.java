@@ -1,12 +1,11 @@
 package com.bgvacc.web.controllers.portal;
 
-import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.CalendarEvent;
+import com.bgvacc.web.responses.events.EventPositionsResponse;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
-import com.bgvacc.web.vatsim.events.VatsimEvents;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -100,6 +99,9 @@ public class EventsController extends Base {
 
     EventResponse event = eventService.getEvent(eventId);
     model.addAttribute("event", event);
+
+    List<EventPositionsResponse> eventPositions = eventService.getEventPositions(eventId);
+    model.addAttribute("eventPositions", eventPositions);
 
     model.addAttribute("pageTitle", event.getName());
     model.addAttribute("page", "events");

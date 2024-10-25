@@ -1,11 +1,10 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.responses.events.*;
+import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -190,6 +189,134 @@ public class EventServiceImpl implements EventService {
     }
 
     return null;
+  }
+  
+  public List<String> getEventRoster(Long eventId) {
+    
+    return null;
+  }
+
+  @Override
+  public List<EventPositionsResponse> getEventPositions(Long eventId) {
+
+    final String getEventPositionsSql = "SELECT ep.event_position_id, ep.event_id, ep.position_id, p.name AS position_name, p.order_priority, ep.minimum_rating, ep.is_approved FROM event_positions ep JOIN positions p ON ep.position_id = p.position_id WHERE ep.event_id = ? ORDER BY p.order_priority";
+    final String getEventPositionSlotsSql = "SELECT s.slot_id, s.start_time, s.end_time, s.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, s.is_approved FROM slots s LEFT JOIN users u ON s.user_cid = u.cid WHERE s.event_position_id = ?";
+    final String getUserEventApplicationsSql = "SELECT uea.application_id, uea.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, u.highest_controller_rating, uea.slot_id, uea.status, uea.applied_at FROM user_event_applications uea JOIN users u ON uea.user_cid = u.cid WHERE uea.slot_id = ? ORDER BY uea.applied_at";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
+            PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
+            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getEventPositionsPstmt.setLong(1, eventId);
+
+        List<EventPositionsResponse> eventPositions = new ArrayList<>();
+
+        ResultSet getEventPositionsRset = getEventPositionsPstmt.executeQuery();
+
+        while (getEventPositionsRset.next()) {
+
+          EventPositionsResponse epr = new EventPositionsResponse();
+          epr.setEventPositionId(getEventPositionsRset.getString("event_position_id"));
+          epr.setEventId(getEventPositionsRset.getLong("event_id"));
+          epr.setPositionId(getEventPositionsRset.getString("position_id"));
+          epr.setPositionName(getEventPositionsRset.getString("position_name"));
+          epr.setMinimumRating(getEventPositionsRset.getInt("minimum_rating"));
+          epr.setIsApproved(getEventPositionsRset.getBoolean("is_approved"));
+
+          getEventPositionSlotsPstmt.setString(1, epr.getEventPositionId());
+
+          List<EventSlotResponse> eventSlots = new ArrayList<>();
+
+          ResultSet getEventPositionSlotsRset = getEventPositionSlotsPstmt.executeQuery();
+
+          while (getEventPositionSlotsRset.next()) {
+
+            EventSlotResponse eventSlot = new EventSlotResponse();
+            eventSlot.setSlotId(getEventPositionSlotsRset.getString("slot_id"));
+            eventSlot.setStartTime(getEventPositionSlotsRset.getTimestamp("start_time"));
+            eventSlot.setEndTime(getEventPositionSlotsRset.getTimestamp("end_time"));
+
+            String userCid = getEventPositionSlotsRset.getString("user_cid");
+
+            if (userCid != null) {
+
+              EventUserResponse eventUser = new EventUserResponse();
+              eventUser.setCid(userCid);
+              Names names = Names.builder()
+                      .firstName(getEventPositionSlotsRset.getString("user_first_name"))
+                      .lastName(getEventPositionSlotsRset.getString("user_last_name"))
+                      .build();
+              eventUser.setNames(names);
+
+              eventSlot.setUser(eventUser);
+            }
+
+            eventSlot.setIsApproved(getEventPositionSlotsRset.getBoolean("is_approved"));
+
+            getUserEventApplicationsPstmt.setString(1, eventSlot.getSlotId());
+
+            List<EventUserApplicationResponse> userEventApplications = new ArrayList<>();
+
+            ResultSet getUserEventApplicationsRset = getUserEventApplicationsPstmt.executeQuery();
+
+            while (getUserEventApplicationsRset.next()) {
+
+              EventUserApplicationResponse euar = new EventUserApplicationResponse();
+              euar.setApplicationId(getUserEventApplicationsRset.getString("application_id"));
+
+              EventUserResponse eventApplicationUser = new EventUserResponse();
+              eventApplicationUser.setCid(getUserEventApplicationsRset.getString("user_cid"));
+
+              Names names = Names.builder()
+                      .firstName(getUserEventApplicationsRset.getString("user_first_name"))
+                      .lastName(getUserEventApplicationsRset.getString("user_last_name"))
+                      .build();
+
+              eventApplicationUser.setHighestControllerRating(getUserEventApplicationsRset.getInt("highest_controller_rating"));
+
+              eventApplicationUser.setNames(names);
+              euar.setUser(eventApplicationUser);
+              euar.setSlotId(getUserEventApplicationsRset.getString("slot_id"));
+
+              euar.setStatus(getUserEventApplicationsRset.getBoolean("status"));
+
+              if (getUserEventApplicationsRset.wasNull()) {
+                euar.setStatus(null);
+              }
+
+              euar.setAppliedAt(getUserEventApplicationsRset.getTimestamp("applied_at"));
+
+              userEventApplications.add(euar);
+            }
+
+            eventSlot.setUserEventApplications(userEventApplications);
+
+            eventSlots.add(eventSlot);
+          }
+
+          epr.setSlots(eventSlots);
+
+          eventPositions.add(epr);
+        }
+
+        return eventPositions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting event positions for event with ID '" + eventId + "'", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting event positions for event with ID '" + eventId + "'", e);
+    }
+
+    return new ArrayList<>();
   }
 
   @Override

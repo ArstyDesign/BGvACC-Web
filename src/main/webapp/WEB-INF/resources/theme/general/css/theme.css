@@ -20277,7 +20277,7 @@ img.bg-image.bg-center {
 }
 
 .btn {
-  text-transform: capitalize;
+  text-transform: none;
   letter-spacing: -0.011rem;
   font-weight: 500;
   --bs-btn-focus-box-shadow: 0 6px 30px -3px rgba(var(--bs-btn-focus-shadow-rgb), .325);

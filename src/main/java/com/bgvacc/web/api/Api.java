@@ -122,6 +122,7 @@ public abstract class Api {
     } catch (HttpClientErrorException e) {
       String responseBody = e.getResponseBodyAsString();
       Gson g = new Gson();
+      log.error("Error", e);
 //      throw new FCException();
 //      throw g.fromJson(responseBody, FieldValidationException.class);
     }

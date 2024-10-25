@@ -8,7 +8,8 @@ CREATE TABLE users(
     is_active boolean not null default false,
 	last_login timestamp,
 	created_on timestamp not null default NOW(),
-	edited_on timestamp
+	edited_on timestamp,
+	highest_controller_rating int not null default 1
 );
 
 INSERT INTO users VALUES ('1720051', 'aarshinkov9705@gmail.com', 'aarshinkov9705@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Atanas', 'Arshinkov', true, null, NOW(), null);
@@ -29,7 +30,6 @@ CREATE TABLE roles(
 );
 
 INSERT INTO roles VALUES ('SYS_ADMIN', 'System administrator');
-INSERT INTO roles VALUES ('STAFF', 'Staff role');
 INSERT INTO roles VALUES ('STAFF_DIRECTOR', 'Staff director'); 
 INSERT INTO roles VALUES ('STAFF_EVENTS', 'Staff events'); 
 INSERT INTO roles VALUES ('STAFF_TRAINING', 'Staff training');
@@ -40,6 +40,7 @@ INSERT INTO roles VALUES ('ATC_C1', 'ATC rating C1');
 INSERT INTO roles VALUES ('ATC_C3', 'ATC rating C3');
 INSERT INTO roles VALUES ('ATC_I1', 'ATC rating I1');
 INSERT INTO roles VALUES ('ATC_I3', 'ATC rating I3');
+INSERT INTO roles VALUES ('ATC_TRAINING', 'ATC training');
 INSERT INTO roles VALUES ('USER', 'Regular user');
 
 CREATE TABLE user_roles(
@@ -52,20 +53,17 @@ CREATE TABLE user_roles(
 
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'SYS_ADMIN');
-INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'ATC_S3');
 INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC_S2');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC_C1');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC_C1');
@@ -73,7 +71,6 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'ATC_S2');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'ATC_C1');
-INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF_TRAINING');
 
 CREATE TABLE event_types (
@@ -135,4 +132,48 @@ CREATE TABLE user_events (
 	user_cid varchar(30) not null references users(cid) on delete cascade,
 	event_id int not null references events(event_id) on delete cascade,
 	position varchar(50) not null
+);
+
+CREATE TABLE positions (
+    position_id varchar(30) not null primary key,
+    name VARCHAR(100) not null,
+	order_priority int not null
+);
+
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBSR_CTR', 'Sofia Control', 1);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBSF_APP', 'Sofia Approach', 3);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBSF_TWR', 'Sofia Tower', 4);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBWN_APP', 'Varna Approach', 5);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBWN_TWR', 'Varna Tower', 6);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBBG_APP', 'Burgas Approach', 7);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBBG_TWR', 'Burgas Tower', 8);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBPD_TWR', 'Plovdiv Tower', 9);
+INSERT INTO positions (position_id, name, order_priority) VALUES ('LBGO_TWR', 'Gorna Tower', 10);
+
+CREATE TABLE event_positions (
+    event_position_id varchar(100) not null primary key default gen_random_uuid(),
+    event_id int not null references events(event_id),
+    position_id varchar(30) not null references positions(position_id),
+	minimum_rating int,
+    is_approved boolean default false,
+    unique (event_id, position_id)
+);
+
+CREATE TABLE slots (
+    slot_id varchar(100) not null primary key default gen_random_uuid(),
+    event_position_id varchar(100) references event_positions(event_position_id) on delete cascade,
+    start_time timestamp not null,
+    end_time timestamp not null,
+    user_cid varchar(30) references users(cid) on delete set null,
+    is_approved boolean default false,
+    unique (event_position_id, start_time, end_time)
+);
+
+CREATE TABLE user_event_applications (
+    application_id varchar(100) not null primary key default gen_random_uuid(),
+    user_cid varchar(30) not null references users(cid) on delete cascade,
+	slot_id varchar(100) not null references slots(slot_id) on delete cascade,
+    status boolean,
+	applied_at timestamp not null default NOW(),
+	unique (user_cid, slot_id)
 );

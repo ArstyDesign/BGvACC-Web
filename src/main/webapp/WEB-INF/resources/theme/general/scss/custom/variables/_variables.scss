@@ -1792,7 +1792,8 @@ $border-radius-blob: 30% 70% 70% 30%/30% 30% 70% 70%!default;
 //Buttons
 $btn-font-family: $font-family-base !default;
 $btn-font-size: $input-btn-font-size !default;
-$btn-text-transform: capitalize !default;
+// $btn-text-transform: capitalize !default;
+$btn-text-transform: none !default;
 $btn-letter-spacing: -.011rem !default;
 
 //Navbar

@@ -116,7 +116,7 @@
                   </li>
                 </div>
                 
-                <div sec:authorize="hasRole('STAFF')" th:remove="tag">
+                <div sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR')" th:remove="tag">
                   <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
                     <i class="bi bi-three-dots"></i>
                     <span class="sidebar-text" th:text="#{portal.menu.users.title}">Users</span>

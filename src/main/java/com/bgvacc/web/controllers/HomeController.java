@@ -2,6 +2,8 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
 import java.util.ArrayList;
@@ -26,38 +28,32 @@ public class HomeController extends Base {
 
   private final EventApi eventApi;
 
+  private final EventService eventService;
+
   @GetMapping(value = "/")
   public String home(Model model) {
 
-    VatsimEvents vatsimEvents = eventApi.getVatsimEvents();
-    VatsimEvents vatsimEventsPart = new VatsimEvents();
+    List<EventResponse> upcomingEvents = eventService.getUpcomingEvents();
+    List<EventResponse> upcomingEventsPart = new ArrayList<>();
 
-    if (vatsimEvents != null) {
-
-      vatsimEventsPart.setSuccess(vatsimEvents.isSuccess());
-
-      List<VatsimEventData> data = new ArrayList<>();
+    if (upcomingEvents != null) {
 
       final int MAX_EVENTS_TO_SHOW = 3;
-      int eventsToShow = 0;
+      int eventsToShow;
 
-      if (vatsimEvents.getData() != null) {
-        if (vatsimEvents.getData().size() > MAX_EVENTS_TO_SHOW) {
-          eventsToShow = MAX_EVENTS_TO_SHOW;
-        } else {
-          eventsToShow = vatsimEvents.getData().size();
-        }
+      if (upcomingEvents.size() > MAX_EVENTS_TO_SHOW) {
+        eventsToShow = MAX_EVENTS_TO_SHOW;
+      } else {
+        eventsToShow = upcomingEvents.size();
       }
 
       for (int i = 0; i < eventsToShow; i++) {
-        VatsimEventData ved = vatsimEvents.getData().get(i);
-        data.add(ved);
+        EventResponse ved = upcomingEvents.get(i);
+        upcomingEventsPart.add(ved);
       }
-
-      vatsimEventsPart.setData(data);
     }
 
-    model.addAttribute("events", vatsimEventsPart);
+    model.addAttribute("upcomingEvents", upcomingEventsPart);
 
     model.addAttribute("pageTitle", getMessage("home.title"));
     model.addAttribute("page", "home");

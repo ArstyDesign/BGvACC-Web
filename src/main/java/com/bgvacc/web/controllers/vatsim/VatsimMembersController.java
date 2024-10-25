@@ -142,7 +142,7 @@ public class VatsimMembersController extends Base {
   @GetMapping("/members/controllers")
   public String getControllers(Model model) {
 
-    Controllers controllers = vatsimEudRosterService.getRosterControllers();;
+    Controllers controllers = vatsimEudRosterService.getRosterControllers();
 
     model.addAttribute("controllers", controllers);
 

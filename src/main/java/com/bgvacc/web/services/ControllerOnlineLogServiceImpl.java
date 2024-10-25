@@ -1,9 +1,12 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
-import com.bgvacc.web.responses.sessions.NotCompletedControllerSession;
+import com.bgvacc.web.responses.sessions.*;
+import static com.bgvacc.web.utils.ControllerPositionUtils.getPositionFrequency;
+import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
+import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -173,9 +176,9 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   }
 
   @Override
-  public boolean openNewControllerSession(VatsimATC onlineAtc) {
+  public NewlyOpenedControllerSession openNewControllerSession(VatsimATC onlineAtc) {
 
-    final String openNewControllerSessionSql = "INSERT INTO controllers_online_log (cid, rating, server, position) VALUES (?, ?, ?, ?)";
+    final String openNewControllerSessionSql = "INSERT INTO controllers_online_log (cid, rating, server, position, session_started) VALUES (?, ?, ?, ?, ?)";
     final String checkIfSessionIsActiveSql = "SELECT EXISTS (SELECT 1 FROM controllers_online_log WHERE session_ended IS NULL AND cid = ? AND position = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
@@ -198,17 +201,39 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
             openNewControllerSessionPstmt.setString(1, String.valueOf(onlineAtc.getId()));
             openNewControllerSessionPstmt.setInt(2, onlineAtc.getRating());
             openNewControllerSessionPstmt.setString(3, onlineAtc.getServer());
-            openNewControllerSessionPstmt.setString(4, onlineAtc.getCallsign());;
+            openNewControllerSessionPstmt.setString(4, onlineAtc.getCallsign());
+
+            Instant nowUtc = Instant.now();
+            LocalDateTime localDateTimeUtc = LocalDateTime.ofInstant(nowUtc, ZoneOffset.UTC);
+            Timestamp loggedAt = Timestamp.valueOf(localDateTimeUtc);
+
+            openNewControllerSessionPstmt.setTimestamp(5, loggedAt);
 
             boolean result = openNewControllerSessionPstmt.executeUpdate() > 0;
 
-            conn.commit();
+            if (result) {
 
-            return result;
+              conn.commit();
+              
+              NewlyOpenedControllerSession nocs = new NewlyOpenedControllerSession();
+
+              nocs.setCid(onlineAtc.getId());
+
+              VatsimATCInfo positionInfo = getPositionFrequency(onlineAtc.getCallsign());
+
+              nocs.setPositionCallsign(positionInfo.getCallsign());
+              nocs.setPositionName(positionInfo.getName());
+              nocs.setFrequency(positionInfo.getFrequency());
+              nocs.setLoggedAt(loggedAt);
+
+              return nocs;
+            } else {
+              conn.rollback();
+            }
           }
         }
 
-        return false;
+        return null;
 
       } catch (SQLException ex) {
         log.error("Error opening new controller session.", ex);
@@ -220,13 +245,13 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
       log.error("Error opening new controller session.", e);
     }
 
-    return false;
+    return null;
   }
 
   @Override
-  public boolean endControllerSessionWithId(String controllerOnlineLogId) {
+  public ClosedControllerSession endControllerSessionWithId(String controllerOnlineLogId, String callsign) {
 
-    final String endControllerSessionWithIdSql = "UPDATE controllers_online_log SET session_ended = NOW() WHERE controller_online_log_id = ?";
+    final String endControllerSessionWithIdSql = "UPDATE controllers_online_log SET session_ended = ? WHERE controller_online_log_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
             PreparedStatement endControllerSessionWithIdPstmt = conn.prepareStatement(endControllerSessionWithIdSql)) {
@@ -235,13 +260,32 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
 
         conn.setAutoCommit(false);
 
-        endControllerSessionWithIdPstmt.setString(1, controllerOnlineLogId);
+        Instant nowUtc = Instant.now();
+        LocalDateTime localDateTimeUtc = LocalDateTime.ofInstant(nowUtc, ZoneOffset.UTC);
+        Timestamp loggedOffAt = Timestamp.valueOf(localDateTimeUtc);
+
+        endControllerSessionWithIdPstmt.setTimestamp(1, loggedOffAt);
+        endControllerSessionWithIdPstmt.setString(2, controllerOnlineLogId);
 
         boolean result = endControllerSessionWithIdPstmt.executeUpdate() > 0;
 
-        conn.commit();
+        if (result) {
 
-        return result;
+          conn.commit();
+
+          ClosedControllerSession ccs = new ClosedControllerSession();
+
+          VatsimATCInfo positionInfo = getPositionFrequency(callsign);
+
+          ccs.setPositionCallsign(positionInfo.getCallsign());
+          ccs.setPositionName(positionInfo.getName());
+          ccs.setFrequency(positionInfo.getFrequency());
+          ccs.setLoggedOffAt(loggedOffAt);
+
+          return ccs;
+        } else {
+          conn.rollback();
+        }
 
       } catch (SQLException ex) {
         log.error("Error ending controller session with ID: '" + controllerOnlineLogId + "'.", ex);
@@ -253,6 +297,6 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
       log.error("Error ending controller session with ID: '" + controllerOnlineLogId + "'.", e);
     }
 
-    return false;
+    return null;
   }
 }

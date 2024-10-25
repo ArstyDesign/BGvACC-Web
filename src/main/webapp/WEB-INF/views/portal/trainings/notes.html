@@ -64,7 +64,7 @@
                   <div th:text="#{portal.trainings.notes.notfound}">No notes found for this member.</div>
                 </div>
                 <ul class="step list-unstyled mb-0" th:if="${!#lists.isEmpty(notes.notes)}">
-                  <li class="step-item" th:each="n : ${notes.notes}">
+                  <li class="step-item" th:each="n, iterStat : ${notes.notes}">
                     <div class="step-row">
                       <span class="step-icon">
                         <span class="avatar sm avatar-status status-online rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
@@ -76,7 +76,7 @@
 
                       <div class="step-content">
                         <div class="d-flex align-items-center mb-2">
-                          <span class="h5 d-inline mb-0 me-2" th:text="${n.instructorName} + ' (' + ${n.instructorCid} + ')'">Instructor name and CID</span>
+                          <span class="h5 d-inline mb-0 me-2" th:text="${iterStat.size - iterStat.index} + '. ' + ${n.instructorName} + ' (' + ${n.instructorCid} + ')'">Instructor name and CID</span>
                           <span class="badge bg-info-subtle text-info me-2" th:text="${n.positionTrained}">Position trained</span>
                           <span class="badge bg-primary-subtle text-primary" th:if="${n.sessionType eq 0}" th:text="#{portal.trainings.notes.sweatbox}">Sweatbox</span>
                           <span class="badge bg-warning-subtle text-warning" th:if="${n.sessionType eq 1}" th:text="#{portal.trainings.notes.training}">Training</span>

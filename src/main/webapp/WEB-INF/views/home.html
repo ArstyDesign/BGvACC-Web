@@ -21,21 +21,21 @@
 
           <div class="h5 mb-4" th:text="#{home.upcomingevents.title}">Upcoming events</div>
 
-          <div th:if="${#lists.isEmpty(events.data)}" th:text="#{home.upcomingevents.notfound}">No upcoming events</div>
+          <div th:if="${#lists.isEmpty(upcomingEvents)}" th:text="#{home.upcomingevents.notfound}">No upcoming events</div>
 
           <div class="row">
-            <div class="col-12 col-xl-4 mb-3" th:each="e : ${events.data}">
-              <article class="card-hover card shadow-sm hover-lift hover-shadow-lg overflow-hidden rounded-3 h-100">
-                <a href="#" th:href="@{/events/} + ${e.id}" class="d-block overflow-hidden">
+            <div class="col-12 col-xl-4 mb-3" th:each="e : ${upcomingEvents}">
+              <article class="card shadow-sm hover-lift hover-shadow-lg rounded-3 h-100">
+                <a href="#" th:href="@{/events/} + ${e.eventId}" class="d-block overflow-hidden">
                   <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
                 </a>
                 <div class="position-relative d-block p-4">
                   <!--Date-->
                   <div class="d-flex justify-content-start w-100 pb-3">
-                    <small class="text-body-secondary"th:text="${e.timeFrame}">Mar 12, 2021</small>
+                    <small class="text-body-secondary" th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')} + 'z'">Mar 12, 2021</small>
                   </div>
                   <div>
-                    <a href="#" th:href="@{/events/} + ${e.id}" class="text-reset">
+                    <a href="#" th:href="@{/events/} + ${e.eventId}" class="text-reset">
                       <div class="h5 link-multiline" th:text="${e.name}">Title</div>
                     </a>
                   </div>

@@ -3,6 +3,7 @@ package com.bgvacc.web;
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
+import com.bgvacc.web.api.discord.DiscordNotifyApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.beans.Version;
 import com.bgvacc.web.utils.*;
@@ -66,6 +67,11 @@ public class BGvACCApplication {
   @Bean
   public VatEudCoreApi vatEudCoreApi() {
     return new VatEudCoreApi();
+  }
+
+  @Bean
+  public DiscordNotifyApi discordNotifyApi() {
+    return new DiscordNotifyApi();
   }
 
   @Bean

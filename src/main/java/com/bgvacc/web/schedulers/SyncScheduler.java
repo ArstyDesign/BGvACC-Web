@@ -2,11 +2,16 @@ package com.bgvacc.web.schedulers;
 
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
-import com.bgvacc.web.responses.sessions.NotCompletedControllerSession;
+import com.bgvacc.web.api.discord.DiscordNotifyApi;
+import com.bgvacc.web.api.vateud.VatEudCoreApi;
+import com.bgvacc.web.responses.sessions.*;
 import com.bgvacc.web.services.*;
+import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
+import com.bgvacc.web.vatsim.members.VatsimMemberDetails;
 import com.bgvacc.web.vatsim.memory.Memory;
+import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -34,6 +39,10 @@ public class SyncScheduler {
   private final EventService eventService;
 
   private final ControllerOnlineLogService controllerOnlineLogService;
+
+  private final VatEudCoreApi vatEudCoreApi;
+
+  private final DiscordNotifyApi discordNotifyApi;
 
 //  @Scheduled(fixedRate = 30000)
 //  public void syncLiveATCs() {
@@ -102,7 +111,11 @@ public class SyncScheduler {
         }
 
         if (isFinished) {
-          controllerOnlineLogService.endControllerSessionWithId(nccs.getControllerOnlineId());
+          ClosedControllerSession ccs = controllerOnlineLogService.endControllerSessionWithId(nccs.getControllerOnlineId(), nccs.getPosition());
+
+          if (ccs != null) {
+            discordNotifyApi.notifyDiscordForClosedOnlineController(ccs);
+          }
         }
       }
     }
@@ -116,7 +129,17 @@ public class SyncScheduler {
     List<VatsimATC> allBulgarianOnlineATCsList = memory.getAllOnlineATCsList(true);
 
     for (VatsimATC vatsimATC : allBulgarianOnlineATCsList) {
-      controllerOnlineLogService.openNewControllerSession(vatsimATC);
+      NewlyOpenedControllerSession openNewControllerSession = controllerOnlineLogService.openNewControllerSession(vatsimATC);
+//      log.debug("New session: " + openNewControllerSession);
+
+      if (openNewControllerSession != null) {
+
+        VatEudUser member = vatEudCoreApi.getMemberDetails(openNewControllerSession.getCid());
+        Names names = Names.builder().firstName(member.getData().getFirstName()).lastName(member.getData().getLastName()).build();
+        openNewControllerSession.setControllerNames(names);
+
+        discordNotifyApi.notifyDiscordForNewOnlineController(openNewControllerSession);
+      }
     }
   }
 
