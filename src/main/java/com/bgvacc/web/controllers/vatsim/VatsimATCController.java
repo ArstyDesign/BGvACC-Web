@@ -2,8 +2,11 @@ package com.bgvacc.web.controllers.vatsim;
 
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.ATCApplicationModel;
+import com.bgvacc.web.requests.atc.ATCApplicationRequest;
+import com.bgvacc.web.services.MailService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,9 +23,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @since 1.0.0
  */
 @Controller
+@RequiredArgsConstructor
 public class VatsimATCController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
+
+  private final MailService mailService;
 
   @GetMapping("/atc/career-application")
   public String prepareATCCareerApplication(Model model) {
@@ -41,7 +47,7 @@ public class VatsimATCController extends Base {
   public String sendATCCareerApplication(@ModelAttribute("aam") @Valid ATCApplicationModel aam,
                                          BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
 
-    log.debug("TEsting");
+    log.debug("Sending new ATC training application");
 
     if (bindingResult.hasErrors()) {
 
@@ -52,6 +58,16 @@ public class VatsimATCController extends Base {
 
       return "atc/career-application";
     }
+
+    ATCApplicationRequest aar = new ATCApplicationRequest();
+    aar.setFirstName(aam.getFirstName());
+    aar.setLastName(aam.getLastName());
+    aar.setCid(aam.getCid());
+    aar.setEmail(aam.getEmail());
+    aar.setCurrentRating(aam.getCurrentRating());
+    aar.setReason(aam.getReason());
+
+    boolean isSent = mailService.sendNewATCTrainingApplicationMail(aar);
 
     return "redirect:/atc/career-application";
   }

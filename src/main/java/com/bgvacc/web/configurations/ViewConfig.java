@@ -21,6 +21,19 @@ import org.thymeleaf.templateresolver.*;
 public class ViewConfig implements WebMvcConfigurer {
 
   @Bean
+  public ClassLoaderTemplateResolver cltr() {
+    ClassLoaderTemplateResolver cltr = new ClassLoaderTemplateResolver();
+    cltr.setCheckExistence(true);
+    cltr.setCacheable(false);
+    cltr.setPrefix("/mail/");
+    cltr.setTemplateMode("HTML");
+    cltr.setCharacterEncoding("UTF-8");
+    cltr.setOrder(1);
+
+    return cltr;
+  }
+
+  @Bean
   public SpringResourceTemplateResolver srtr() {
 
     SpringResourceTemplateResolver srtr = new SpringResourceTemplateResolver();
@@ -63,7 +76,7 @@ public class ViewConfig implements WebMvcConfigurer {
   public Set<ITemplateResolver> templateResolvers() {
 
     Set<ITemplateResolver> templateResolvers = new HashSet<>();
-//    templateResolvers.add(cltr());
+    templateResolvers.add(cltr());
     templateResolvers.add(srtr());
 
     return templateResolvers;

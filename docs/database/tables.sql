@@ -73,6 +73,17 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'ATC_C1');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF_TRAINING');
 
+CREATE TABLE mailbox(
+	mail_id varchar(100) not null primary key default gen_random_uuid(),
+	sender varchar(250) not null,
+	receivers varchar(2000) not null,
+	subject varchar(300) not null,
+	content text not null,
+	is_sent boolean not null default false,
+	created_on timestamp not null default NOW(),
+	sent_on timestamp
+);
+
 CREATE TABLE event_types (
     type varchar(10) primary key
 );

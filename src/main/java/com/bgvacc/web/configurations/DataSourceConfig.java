@@ -1,5 +1,6 @@
 package com.bgvacc.web.configurations;
 
+import com.bgvacc.web.configurations.properties.AuthenticationProperties;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

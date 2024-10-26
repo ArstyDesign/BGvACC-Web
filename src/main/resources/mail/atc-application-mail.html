@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>ATC Application</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #dddddd; /* Border added for the card */
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background-color: #00ACF1;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+        padding-bottom: 0px;
+        color: #333333;
+      }
+      .content h2 {
+        color: #00ACF1;
+      }
+      .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      .info-table th, .info-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #f4f4f4;
+      }
+      .info-table th {
+        color: #666666;
+        font-weight: normal;
+      }
+      .footer {
+        padding: 10px;
+        background-color: #f4f4f4;
+        color: #666666;
+        text-align: center;
+        font-size: 12px;
+      }
+      .note {
+        font-size: 10px;
+        color: #999999;
+        margin: 15px 0; /* Add margin above and below the note */
+        padding: 0; /* Remove padding */
+        text-align: left; /* Align text to the left */
+        margin-left: 20px; /* Align with the rest of the text */
+      }
+      @media only screen and (max-width: 600px) {
+        .content {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        ATC Training Application
+      </div>
+      <div class="content">
+        <h2>New ATC Training Application</h2>
+        <p>The following candidate has applied for ATC training. Please review their details below:</p>
+
+        <table class="info-table">
+          <tr>
+            <th><strong>First name</strong></th>
+            <td th:text="${atcApplication.firstName}">First name</td>
+          </tr>
+          <tr>
+            <th><strong>Last name</strong></th>
+            <td th:text="${atcApplication.lastName}">Last name</td>
+          </tr>
+          <tr>
+            <th><strong>CID</strong></th>
+            <td>
+              <a href="#" th:href="'https://stats.vatsim.net/stats/' + ${atcApplication.cid}" target="_blank" th:text="${atcApplication.cid}">CID</a>
+            </td>
+          </tr>
+          <tr>
+            <th><strong>Email</strong></th>
+            <td th:text="${atcApplication.email}">Email</td>
+          </tr>
+          <tr>
+            <th><strong>Current rating</strong></th>
+            <td th:text="${atcApplication.currentRating}">Current rating</td>
+          </tr>
+          <tr>
+            <th colspan="2"><strong>Reason for application</strong></th>
+          </tr>
+          <tr>
+            <td colspan="2" th:text="${atcApplication.reason}">Reason</td>
+          </tr>
+        </table>
+
+        <p>Please take the necessary actions regarding this application.</p>
+        <p><span th:text="#{app.name}">App name</span></p>
+      </div>
+      <div class="note">
+        Please do not reply to this email as it is a system-generated message.
+      </div>
+      <div class="footer">
+        <span>&copy;</span>
+        <span th:text="${#dates.year(#dates.createNow())}">2024</span>
+        <span>ATC Training Program</span>
+        <span>|</span>
+        <span th:text="#{app.name}">App name</span>
+      </div>
+    </div>
+  </body>
+</html>

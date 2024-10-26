@@ -1,4 +1,4 @@
-package com.bgvacc.web.configurations;
+package com.bgvacc.web.configurations.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

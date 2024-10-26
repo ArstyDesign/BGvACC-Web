@@ -9,7 +9,6 @@ import com.bgvacc.web.services.*;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
-import com.bgvacc.web.vatsim.members.VatsimMemberDetails;
 import com.bgvacc.web.vatsim.memory.Memory;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.List;

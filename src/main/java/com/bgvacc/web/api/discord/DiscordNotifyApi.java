@@ -1,7 +1,7 @@
 package com.bgvacc.web.api.discord;
 
 import com.bgvacc.web.api.Api;
-import com.bgvacc.web.configurations.DiscordProperties;
+import com.bgvacc.web.configurations.properties.DiscordProperties;
 import com.bgvacc.web.enums.Methods;
 import com.bgvacc.web.requests.discord.*;
 import com.bgvacc.web.responses.sessions.ClosedControllerSession;
@@ -45,7 +45,7 @@ public class DiscordNotifyApi extends Api {
     der.setFields(fields);
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-    DiscordEmbedsFooterRequest footer = new DiscordEmbedsFooterRequest("Logged on at: " + (nocs.getLoggedAt().toLocalDateTime().format(dtf)));
+    DiscordEmbedsFooterRequest footer = new DiscordEmbedsFooterRequest("Logged on at: " + (nocs.getLoggedAt().toLocalDateTime().format(dtf)) + "z");
 
     der.setFooter(footer);
 
@@ -75,7 +75,7 @@ public class DiscordNotifyApi extends Api {
     der.setFields(fields);
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-    DiscordEmbedsFooterRequest footer = new DiscordEmbedsFooterRequest("Logged off at: " + (ccs.getLoggedOffAt().toLocalDateTime().format(dtf)));
+    DiscordEmbedsFooterRequest footer = new DiscordEmbedsFooterRequest("Logged off at: " + (ccs.getLoggedOffAt().toLocalDateTime().format(dtf)) + "z");
 
     der.setFooter(footer);
 

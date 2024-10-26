@@ -2,7 +2,7 @@ package com.bgvacc.web.api.vateud;
 
 import static com.bgvacc.web.api.APIConstants.VATEUD_API_KEY_HEADER_KEY;
 import com.bgvacc.web.api.Api;
-import com.bgvacc.web.configurations.AuthenticationProperties;
+import com.bgvacc.web.configurations.properties.AuthenticationProperties;
 import com.bgvacc.web.enums.Methods;
 import com.bgvacc.web.vatsim.members.VatsimMemberTrainingStaff;
 import com.bgvacc.web.vatsim.vateud.ControllerNotes;
