@@ -4,11 +4,15 @@ import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.ATCApplicationModel;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
 import com.bgvacc.web.services.MailService;
+import com.bgvacc.web.utils.Breadcrumb;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,6 +44,13 @@ public class VatsimATCController extends Base {
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "application");
 
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.application", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
     return "atc/career-application";
   }
 
@@ -55,6 +66,13 @@ public class VatsimATCController extends Base {
 
       model.addAttribute("page", "atc");
       model.addAttribute("subpage", "application");
+
+      List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.application", null, LocaleContextHolder.getLocale()), null));
+
+      model.addAttribute("breadcrumbs", breadcrumbs);
 
       return "atc/career-application";
     }
@@ -79,6 +97,13 @@ public class VatsimATCController extends Base {
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "information");
 
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.information", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
     return "atc/information";
   }
 
@@ -89,7 +114,31 @@ public class VatsimATCController extends Base {
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "training-files");
 
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.trainingfiles", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
     return "atc/training-files";
+  }
+
+  @GetMapping("/atc/letter-of-agreements")
+  public String getLetterOfAgreements(Model model) {
+
+    model.addAttribute("pageTitle", getMessage("atc.letterofagreements.title"));
+    model.addAttribute("page", "atc");
+    model.addAttribute("subpage", "letter-of-agreements");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.letterofagreements", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
+
+    return "atc/letter-of-agreements";
   }
 
   @GetMapping("/atc/stations")
@@ -98,6 +147,13 @@ public class VatsimATCController extends Base {
     model.addAttribute("pageTitle", getMessage("atc.stations.title"));
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "stations");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.stations", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "atc/stations";
   }
@@ -108,6 +164,13 @@ public class VatsimATCController extends Base {
     model.addAttribute("pageTitle", getMessage("atc.downloads.title"));
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "downloads");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc", null, LocaleContextHolder.getLocale()), null));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atc.atcdownloads", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "atc/downloads";
   }

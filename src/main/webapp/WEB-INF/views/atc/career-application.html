@@ -60,7 +60,7 @@
             <div class="col-12 mb-3">
               <label for="reasonToStartInput" class="form-label required"\
                      th:text="#{atc.application.form.reason}">Reason to start ATC training</label>
-              <textarea class="form-control" id="reasonToStartInput" rows="5"
+              <textarea class="form-control" id="reasonToStartInput" rows="5" th:placeholder="#{atc.application.form.reason.desc}"
                         th:field="*{reason}" th:classappend="${#fields.hasErrors('reason')} ? 'is-invalid'"></textarea>
               <span class="invalid-feedback" th:errors="*{reason}">Error</span>
             </div>

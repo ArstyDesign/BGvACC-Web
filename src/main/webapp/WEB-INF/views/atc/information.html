@@ -11,7 +11,43 @@
 
       <div class="row">
         <div class="col-12 mb-3">
-          <div>Information</div>
+          <div class="mb-4" th:utext="#{atc.information.p1}">Information</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-auto mb-3">
+          <div class="p-3 border rounded-3 mb-1 d-flex align-items-center shadow">
+            <a href="#">
+              <img src="#" th:src="@{/resources/icons/svg/docs/pdf.svg}" class="height-40 me-3 flex-shrink-0 w-auto" alt=""/>
+            </a>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <a href="#" th:href="@{/resources/atc-downloads/Training_Requirements_BGvACC.pdf}" target="_blank" class="text-primary fw-bold me-5" th:text="#{atc.information.atccareer}">ATC Career Procedure</a>
+                  <div class="text-muted">
+                    <small>
+                      <i class="bi bi-files"></i>
+                      <span th:text="#{atc.information.atccareer.onefile}">1 file</span>
+                    </small>
+                  </div>
+                </div>
+                <a href="#" th:href="@{/resources/atc-downloads/Training_Requirements_BGvACC.pdf}" download="Training_Requirements_BGvACC.pdf" class="btn btn-primary btn-sm">
+                  <span class="material-symbols-rounded align-middle" th:text="#{atc.information.atccareer.download}">Download</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="text-muted mb-3" th:text="#{atc.information.startatccareer}">To start the ATC career click on the button below</div>
+          <a class="btn btn-primary" href="#" th:href="@{/atc/career-application}">
+            <i class="bi bi-airplane me-1"></i>
+            <span th:text="#{menu.becomeatc}">Become an ATC</span>
+          </a>
         </div>
       </div>
     </div>

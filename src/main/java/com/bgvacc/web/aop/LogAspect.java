@@ -21,10 +21,11 @@ public class LogAspect {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  @Before("(execution(* com.bgvacc.web.controllers.*.*(..))"
-          + " || execution(* com.bgvacc.web.controllers.*.*.*(..))"
-          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimCoreController.getCallsignStatusCard*(..)))"
-          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimMetarsController.getMetarAtIcao*(..)))"
+  @Before("((execution(* com.bgvacc.web.controllers.*.*(..))"
+          + " || execution(* com.bgvacc.web.controllers.*.*.*(..)))"
+          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimCoreController.getCallsignStatusCard*(..))"
+          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimMetarsController.getMetarAtIcao*(..))"
+          + " && !execution(* com.bgvacc.web.controllers.UtilsController.getCurrentZuluTime*(..)))"
           + " || execution(* com.bgvacc.web.services.*.*(..))")
   public void methodBegin(JoinPoint joinPoint) {
 
@@ -37,10 +38,11 @@ public class LogAspect {
     log.debug(builder.toString());
   }
 
-  @Around("(execution(* com.bgvacc.web.controllers.*.*(..))"
-          + " || execution(* com.bgvacc.web.controllers.*.*.*(..))"
-          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimCoreController.getCallsignStatusCard*(..)))"
-          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimMetarsController.getMetarAtIcao*(..)))"
+  @Around("((execution(* com.bgvacc.web.controllers.*.*(..))"
+          + " || execution(* com.bgvacc.web.controllers.*.*.*(..)))"
+          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimCoreController.getCallsignStatusCard*(..))"
+          + " && !execution(* com.bgvacc.web.controllers.vatsim.VatsimMetarsController.getMetarAtIcao*(..))"
+          + " && !execution(* com.bgvacc.web.controllers.UtilsController.getCurrentZuluTime*(..)))"
           + " || execution(* com.bgvacc.web.services.*.*(..))")
   public Object logExecTime(ProceedingJoinPoint pjp) throws Throwable {
 

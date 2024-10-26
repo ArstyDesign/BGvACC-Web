@@ -25,6 +25,11 @@
                     </a>
                   </div>
                 </li>
+                <li class="nav-item ms-3">
+                  <div class="text-muted">
+                    <span id="clock">--:--z</span>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="col-7 text-end">
@@ -123,8 +128,8 @@
                      th:classappend="${page eq 'atc' and subpage eq 'information'} ? 'active'" th:text="#{menu.atc.information}">Information</a>
                   <a href="#" class="dropdown-item" th:href="@{/atc/training-files}"
                      th:classappend="${page eq 'atc' and subpage eq 'training-files'} ? 'active'" th:text="#{menu.atc.trainingfiles}">Training files</a>
-                  <a href="#" class="dropdown-item" th:href="@{/atc/loa}"
-                     th:classappend="${page eq 'atc' and subpage eq 'loa'} ? 'active'" th:text="#{menu.atc.loas}">Letter of Agreements</a>
+                  <a href="#" class="dropdown-item" th:href="@{/atc/letter-of-agreements}"
+                     th:classappend="${page eq 'atc' and subpage eq 'letter-of-agreements'} ? 'active'" th:text="#{menu.atc.letterofagreements}">Letter of Agreements</a>
                   <a href="#" class="dropdown-item" th:href="@{/atc/stations}"
                      th:classappend="${page eq 'atc' and subpage eq 'stations'} ? 'active'" th:text="#{menu.atc.stations}">Stations</a>
                   <a href="#" class="dropdown-item" th:href="@{/atc/downloads}"
@@ -207,6 +212,35 @@
           </div>
         </div>
       </nav>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let updateTimeUrl = /*[[@{/api/time}]]*/;
+                let aux2 = /*[[@{/}]]*/;
+        /*]]>*/
+        function updateClock() {
+          fetch(updateTimeUrl)
+                  .then(response => response.json())
+                  .then(data => {
+                    // Директно присвоява стойността от API отговора
+                    document.getElementById('clock').innerText = data.time + 'z';
+                  })
+                  .catch(() => {
+                    // Fallback: добавя секунда към показаното време
+                    let clockElem = document.getElementById('clock');
+                    let parts = clockElem.innerText.split(':');
+                    let date = new Date();
+
+                    if (parts.length === 3) { // проверка за валидно време
+                      date.setHours(parseInt(parts[0]));
+                      date.setMinutes(parseInt(parts[1]));
+//                      date.setSeconds(parseInt(parts[2]) + 1);
+                      clockElem.innerText = date.toTimeString().substring(0, 6);
+                    }
+                  });
+        }
+        setInterval(updateClock, 1000);
+      </script>
     </div>
 
     <div id="footer" th:remove="tag">
