@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class DiscordEmbedsField implements Serializable {
+public class DiscordEmbedsFieldRequest implements Serializable {
 
   private String name;
   private String value;

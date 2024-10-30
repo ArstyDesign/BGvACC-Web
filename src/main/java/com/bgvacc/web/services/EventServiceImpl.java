@@ -1,8 +1,10 @@
 package com.bgvacc.web.services;
 
+import com.aarshinkov.datetimecalculator.utils.TimeUtils;
 import com.bgvacc.web.responses.events.*;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
+import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
@@ -30,30 +32,8 @@ public class EventServiceImpl implements EventService {
 
     final String getEventsSql = "SELECT * FROM events";
 
-    return getEvents(getEventsSql);
-  }
-
-  @Override
-  public List<EventResponse> getPastEvents() {
-
-    final String getEventsSql = "SELECT * FROM events WHERE end_at < NOW()";
-
-    return getEvents(getEventsSql);
-  }
-
-  @Override
-  public List<EventResponse> getUpcomingEvents() {
-
-    final String getEventsSql = "SELECT * FROM events WHERE start_at > NOW()";
-
-    return getEvents(getEventsSql);
-  }
-
-  @Override
-  public List<EventResponse> getEvents(String sql) {
-
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
 
       try {
 
@@ -69,8 +49,11 @@ public class EventServiceImpl implements EventService {
           ved.setEventId(getEventsRset.getLong("event_id"));
           ved.setName(getEventsRset.getString("name"));
           ved.setType(getEventsRset.getString("type"));
+          ved.setPriority(getEventsRset.getInt("priority"));
           ved.setDescription(getEventsRset.getString("description"));
           ved.setShortDescription(getEventsRset.getString("short_description"));
+          ved.setVatsimEventUrl(getEventsRset.getString("vatsim_event_url"));
+          ved.setVateudEventUrl(getEventsRset.getString("vateud_event_url"));
           ved.setImageUrl(getEventsRset.getString("image_url"));
 
           Timestamp startAtTimestamp = getEventsRset.getTimestamp("start_at");
@@ -121,6 +104,101 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public List<EventResponse> getPastEvents() {
+
+    final String getEventsSql = "SELECT * FROM events WHERE end_at < ? ORDER BY start_at DESC";
+
+    return getEventsBeforeAfterNow(getEventsSql);
+  }
+
+  @Override
+  public List<EventResponse> getUpcomingEvents() {
+
+    final String getEventsSql = "SELECT * FROM events WHERE start_at > ? ORDER BY start_at, created_at";
+
+    return getEventsBeforeAfterNow(getEventsSql);
+  }
+
+  @Override
+  public List<EventResponse> getEventsBeforeAfterNow(String sql) {
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        List<EventResponse> events = new ArrayList<>();
+
+        Timestamp now = TimeUtils.getNowTimeUTC();
+
+        getEventsPstmt.setTimestamp(1, now);
+
+        ResultSet getEventsRset = getEventsPstmt.executeQuery();
+
+        while (getEventsRset.next()) {
+
+          EventResponse ved = getEventResponseFromResultSet(getEventsRset);
+          events.add(ved);
+        }
+
+        return events;
+
+      } catch (SQLException ex) {
+        log.error("Error getting VATSIM events", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting VATSIM events", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public UpcomingEventsResponse getUpcomingEventsAfterDays(Integer days) {
+
+    final String getUpcomingEventsAfterDaysSql = "SELECT * FROM events WHERE DATE(start_at) = CURRENT_DATE + INTERVAL '" + days + " days' ORDER BY priority";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        List<EventResponse> events = new ArrayList<>();
+
+//        getUpcomingEventsAfterDaysPstmt.setInt(1, days);
+        ResultSet getEventsRset = getUpcomingEventsAfterDaysPstmt.executeQuery();
+
+        while (getEventsRset.next()) {
+
+          EventResponse ved = getEventResponseFromResultSet(getEventsRset);
+          events.add(ved);
+        }
+
+        UpcomingEventsResponse uer = new UpcomingEventsResponse(events);
+
+        return uer;
+
+      } catch (SQLException ex) {
+        log.error("Error getting upcoming VATSIM events", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting upcoming VATSIM events", e);
+    }
+
+    return null;
+  }
+
+  @Override
   public EventResponse getEvent(Long eventId) {
 
     final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
@@ -138,44 +216,8 @@ public class EventServiceImpl implements EventService {
 
         if (getEventsRset.next()) {
 
-          EventResponse event = new EventResponse();
-          event.setEventId(getEventsRset.getLong("event_id"));
-          event.setName(getEventsRset.getString("name"));
-          event.setType(getEventsRset.getString("type"));
-          event.setDescription(getEventsRset.getString("description"));
-          event.setShortDescription(getEventsRset.getString("short_description"));
-          event.setImageUrl(getEventsRset.getString("image_url"));
-
-          Timestamp startAtTimestamp = getEventsRset.getTimestamp("start_at");
-
-          if (startAtTimestamp != null) {
-            // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
-            ZonedDateTime startAtZonedDateTime = startAtTimestamp.toInstant()
-                    .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
-                    .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
-
-//            System.out.println("Event Start Time: " + zonedDateTime);
-            event.setStartAt(startAtZonedDateTime);
-          }
-
-          Timestamp endAtTimestamp = getEventsRset.getTimestamp("end_at");
-
-          if (endAtTimestamp != null) {
-            // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
-            ZonedDateTime endAtZonedDateTime = endAtTimestamp.toInstant()
-                    .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
-                    .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
-
-//            System.out.println("Event Start Time: " + zonedDateTime);
-            event.setEndAt(endAtZonedDateTime);
-          }
-
-//          ZonedDateTime zonedDateTime = getEventsRset.getObject("start_at", ZonedDateTime.class);
-//          ved.setEndAt(getEventsRset.getObject("end_at", ZonedDateTime.class));
-          event.setCreatedAt(getEventsRset.getTimestamp("created_at"));
-          event.setUpdatedAt(getEventsRset.getTimestamp("updated_at"));
-
-          return event;
+          EventResponse ved = getEventResponseFromResultSet(getEventsRset);
+          return ved;
         }
 
       } catch (SQLException ex) {
@@ -190,9 +232,9 @@ public class EventServiceImpl implements EventService {
 
     return null;
   }
-  
+
   public List<String> getEventRoster(Long eventId) {
-    
+
     return null;
   }
 
@@ -323,14 +365,14 @@ public class EventServiceImpl implements EventService {
   public void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data) {
 
     final String checkIfEventExistsInDatabaseSql = "SELECT EXISTS (SELECT 1 FROM events WHERE event_id = ?)";
-    final String synchoniseVatsimEventSql = "INSERT INTO events (event_id, name, type, description, short_description, image_url, start_at, end_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    final String synchoniseVatsimEventSql = "INSERT INTO events (event_id, name, type, priority, cpt_rating_number, cpt_rating_symbol, cpt_examinee, description, short_description, vatsim_event_url, vateud_event_url, image_url, start_at, end_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 //    for (VatsimEventData ved : data) {
 //      log.debug("ved: " + ved.getStart());
 //    }
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
             PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
-            PreparedStatement synchoniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
+            PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
 
       try {
 
@@ -348,18 +390,61 @@ public class EventServiceImpl implements EventService {
 
               log.debug("Event with ID '" + ved.getId() + "' does not exist.");
 
-              synchoniseVatsimEventPstmt.setLong(1, ved.getId());
-              synchoniseVatsimEventPstmt.setString(2, ved.getName());
+              synchroniseVatsimEventPstmt.setLong(1, ved.getId());
+              synchroniseVatsimEventPstmt.setString(2, ved.getName());
 
               if (ved.getName().toLowerCase().contains("exam")) {
-                synchoniseVatsimEventPstmt.setString(3, "cpt");
+                synchroniseVatsimEventPstmt.setString(3, "cpt");
+                synchroniseVatsimEventPstmt.setInt(4, 2); // CPT priority - 2
+
+                Integer cptRatingInt = null;
+                String cptRatingSymbol;
+
+                String cptRating = ved.getName().toLowerCase();
+
+                if (cptRating.contains("s2")) {
+                  cptRatingInt = 3;
+                } else if (cptRating.contains("s3")) {
+                  cptRatingInt = 4;
+                } else if (cptRating.contains("c1")) {
+                  cptRatingInt = 5;
+                } else if (cptRating.contains("c2")) {
+                  cptRatingInt = 6;
+                } else if (cptRating.contains("c3")) {
+                  cptRatingInt = 7;
+                } else if (cptRating.contains("i1")) {
+                  cptRatingInt = 8;
+                } else if (cptRating.contains("i2")) {
+                  cptRatingInt = 9;
+                } else if (cptRating.contains("i3")) {
+                  cptRatingInt = 10;
+                }
+
+                cptRatingSymbol = VatsimRatingUtils.getATCRatingSymbol(cptRatingInt);
+
+                if (cptRatingInt == null) {
+                  synchroniseVatsimEventPstmt.setNull(5, Types.INTEGER);
+                } else {
+                  synchroniseVatsimEventPstmt.setInt(5, cptRatingInt);
+                }
+
+                synchroniseVatsimEventPstmt.setString(6, cptRatingSymbol);
+                synchroniseVatsimEventPstmt.setString(7, null); // Examinee name
+
               } else {
-                synchoniseVatsimEventPstmt.setString(3, "event");
+                synchroniseVatsimEventPstmt.setString(3, "event");
+                synchroniseVatsimEventPstmt.setInt(4, 1); // Event priority - 1
+
+                synchroniseVatsimEventPstmt.setNull(5, Types.INTEGER);
+                synchroniseVatsimEventPstmt.setString(6, null);
+                synchroniseVatsimEventPstmt.setString(7, null); // Examinee name
               }
 
-              synchoniseVatsimEventPstmt.setString(4, ved.getDescription());
-              synchoniseVatsimEventPstmt.setString(5, ved.getShortDescription());
-              synchoniseVatsimEventPstmt.setString(6, ved.getImageUrl());
+              synchroniseVatsimEventPstmt.setString(8, ved.getDescription());
+              synchroniseVatsimEventPstmt.setString(9, ved.getShortDescription());
+              synchroniseVatsimEventPstmt.setString(10, null); // VATSIM Event URL
+              synchroniseVatsimEventPstmt.setString(11, "https://core.vateud.net/division/events/" + ved.getId()); // VATEUD Event URL
+              synchroniseVatsimEventPstmt.setString(12, ved.getImageUrl());
 
 //              ZoneId zoneId = ZoneId.of("Europe/Sofia");
               LocalDateTime startDateTime = ved.getFromDateTime();
@@ -370,17 +455,17 @@ public class EventServiceImpl implements EventService {
 //              ZonedDateTime zonedEndAtDateTimeUTC = toDateTime.atZone(ZoneId.of("UTC"));
 //              ZonedDateTime zonedEndAtDateTimeLocal = zonedEndAtDateTimeUTC.withZoneSameInstant(zoneId);
 
-              synchoniseVatsimEventPstmt.setTimestamp(7, Timestamp.valueOf(startDateTime));
-              synchoniseVatsimEventPstmt.setTimestamp(8, Timestamp.valueOf(endDateTime));
-              synchoniseVatsimEventPstmt.setTimestamp(9, ved.getCreatedAt());
+              synchroniseVatsimEventPstmt.setTimestamp(13, Timestamp.valueOf(startDateTime));
+              synchroniseVatsimEventPstmt.setTimestamp(14, Timestamp.valueOf(endDateTime));
+              synchroniseVatsimEventPstmt.setTimestamp(15, ved.getCreatedAt());
 
               if (ved.getUpdatedAt() != null) {
-                synchoniseVatsimEventPstmt.setTimestamp(10, ved.getUpdatedAt());
+                synchroniseVatsimEventPstmt.setTimestamp(16, ved.getUpdatedAt());
               } else {
-                synchoniseVatsimEventPstmt.setNull(10, Types.TIMESTAMP);
+                synchroniseVatsimEventPstmt.setNull(16, Types.TIMESTAMP);
               }
 
-              synchoniseVatsimEventPstmt.executeUpdate();
+              synchroniseVatsimEventPstmt.executeUpdate();
 
             } else {
 
@@ -400,5 +485,58 @@ public class EventServiceImpl implements EventService {
     } catch (Exception e) {
       log.error("Error synchronising VATSIM events to database", e);
     }
+  }
+
+  private EventResponse getEventResponseFromResultSet(ResultSet rset) throws SQLException {
+
+    EventResponse ved = new EventResponse();
+    ved.setEventId(rset.getLong("event_id"));
+    ved.setName(rset.getString("name"));
+    ved.setType(rset.getString("type"));
+    ved.setPriority(rset.getInt("priority"));
+    ved.setCptRatingNumber(rset.getInt("cpt_rating_number"));
+
+    if (rset.wasNull()) {
+      ved.setCptRatingNumber(null);
+    }
+
+    ved.setCptRatingSymbol(rset.getString("cpt_rating_symbol"));
+    ved.setCptExaminee(rset.getString("cpt_examinee"));
+    ved.setDescription(rset.getString("description"));
+    ved.setShortDescription(rset.getString("short_description"));
+    ved.setVatsimEventUrl(rset.getString("vatsim_event_url"));
+    ved.setVateudEventUrl(rset.getString("vateud_event_url"));
+    ved.setImageUrl(rset.getString("image_url"));
+
+    Timestamp startAtTimestamp = rset.getTimestamp("start_at");
+
+    if (startAtTimestamp != null) {
+      // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
+      ZonedDateTime startAtZonedDateTime = startAtTimestamp.toInstant()
+              .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
+              .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
+
+//            System.out.println("Event Start Time: " + zonedDateTime);
+      ved.setStartAt(startAtZonedDateTime);
+    }
+
+    Timestamp endAtTimestamp = rset.getTimestamp("end_at");
+
+    if (endAtTimestamp != null) {
+      // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
+      ZonedDateTime endAtZonedDateTime = endAtTimestamp.toInstant()
+              .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
+              .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
+
+//            System.out.println("Event Start Time: " + zonedDateTime);
+      ved.setEndAt(endAtZonedDateTime);
+    }
+
+//          ZonedDateTime zonedDateTime = getEventsRset.getObject("start_at", ZonedDateTime.class);
+//          ved.setEndAt(getEventsRset.getObject("end_at", ZonedDateTime.class));
+    ved.setCreatedAt(rset.getTimestamp("created_at"));
+    ved.setUpdatedAt(rset.getTimestamp("updated_at"));
+
+    return ved;
   }
 }

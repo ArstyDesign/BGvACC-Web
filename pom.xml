@@ -47,7 +47,7 @@
     <dependency>
       <groupId>com.aarshinkov</groupId>
       <artifactId>date-time-calculator</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
     </dependency>
     
     <dependency>
@@ -106,6 +106,12 @@
       <groupId>org.commonmark</groupId>
       <artifactId>commonmark</artifactId>
       <version>0.21.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20240303</version>
     </dependency>
     
     <dependency>

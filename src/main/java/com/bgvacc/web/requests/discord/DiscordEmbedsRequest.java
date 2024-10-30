@@ -19,6 +19,10 @@ public class DiscordEmbedsRequest implements Serializable {
   private String title;
   private String description;
   private Long color;
-  private List<DiscordEmbedsField> fields;
+  private String timestamp;
+  private String url;
+  private DiscordEmbedsAuthorRequest author;
+  private DiscordEmbedsImageRequest image;
+  private List<DiscordEmbedsFieldRequest> fields;
   private DiscordEmbedsFooterRequest footer;
 }

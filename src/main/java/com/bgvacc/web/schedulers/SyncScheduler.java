@@ -150,8 +150,8 @@ public class SyncScheduler {
     vatsimEudRosterService.getRosterControllers();
   }
 
-//  @Scheduled(fixedRate = 60000)
-  @Scheduled(cron = "0 0,30 * * * *", zone = "UTC")
+  @Scheduled(fixedRate = 30000)
+//  @Scheduled(cron = "0 0,30 * * * *", zone = "UTC")
   public void syncEvents() {
 
     log.info("Syncing events...");

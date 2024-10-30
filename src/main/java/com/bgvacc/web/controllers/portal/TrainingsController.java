@@ -9,7 +9,6 @@ import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
 import com.bgvacc.web.vatsim.vateud.ControllerNotes;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
-import java.sql.Timestamp;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

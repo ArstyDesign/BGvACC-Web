@@ -1,5 +1,6 @@
 package com.bgvacc.web.responses.sessions;
 
+import com.aarshinkov.datetimecalculator.domain.Time;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import lombok.*;
@@ -19,6 +20,7 @@ public class ClosedControllerSession implements Serializable {
   private String positionCallsign;
   private String positionName;
   private String frequency;
+  private Time activeTime;
   private Timestamp loggedOffAt;
 
 }

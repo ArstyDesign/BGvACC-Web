@@ -1,12 +1,14 @@
 package com.bgvacc.web.services;
 
+import com.aarshinkov.datetimecalculator.utils.TimeUtils;
+import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.responses.sessions.*;
 import static com.bgvacc.web.utils.ControllerPositionUtils.getPositionFrequency;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.atc.VatsimATC;
 import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
+import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.sql.*;
-import java.time.*;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,6 +28,8 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final JdbcTemplate jdbcTemplate;
+
+  private final VatEudCoreApi vatEudCoreApi;
 
   @Override
   public List<ControllerOnlineLogResponse> getControllerLastOnlineSessions(String cid, int numberOfConnections, boolean shouldIncludeNonCompleted) {
@@ -203,9 +207,7 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
             openNewControllerSessionPstmt.setString(3, onlineAtc.getServer());
             openNewControllerSessionPstmt.setString(4, onlineAtc.getCallsign());
 
-            Instant nowUtc = Instant.now();
-            LocalDateTime localDateTimeUtc = LocalDateTime.ofInstant(nowUtc, ZoneOffset.UTC);
-            Timestamp loggedAt = Timestamp.valueOf(localDateTimeUtc);
+            Timestamp loggedAt = TimeUtils.getNowTimeUTC();
 
             openNewControllerSessionPstmt.setTimestamp(5, loggedAt);
 
@@ -214,7 +216,7 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
             if (result) {
 
               conn.commit();
-              
+
               NewlyOpenedControllerSession nocs = new NewlyOpenedControllerSession();
 
               nocs.setCid(onlineAtc.getId());
@@ -251,40 +253,53 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   @Override
   public ClosedControllerSession endControllerSessionWithId(String controllerOnlineLogId, String callsign) {
 
+    final String getControllerSessionWithIdSql = "SELECT * FROM controllers_online_log WHERE controller_online_log_id = ?";
     final String endControllerSessionWithIdSql = "UPDATE controllers_online_log SET session_ended = ? WHERE controller_online_log_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllerSessionWithIdPstmt = conn.prepareStatement(getControllerSessionWithIdSql);
             PreparedStatement endControllerSessionWithIdPstmt = conn.prepareStatement(endControllerSessionWithIdSql)) {
 
       try {
 
         conn.setAutoCommit(false);
 
-        Instant nowUtc = Instant.now();
-        LocalDateTime localDateTimeUtc = LocalDateTime.ofInstant(nowUtc, ZoneOffset.UTC);
-        Timestamp loggedOffAt = Timestamp.valueOf(localDateTimeUtc);
+        getControllerSessionWithIdPstmt.setString(1, controllerOnlineLogId);
 
-        endControllerSessionWithIdPstmt.setTimestamp(1, loggedOffAt);
-        endControllerSessionWithIdPstmt.setString(2, controllerOnlineLogId);
+        ResultSet getControllerSessionWithIdRset = getControllerSessionWithIdPstmt.executeQuery();
 
-        boolean result = endControllerSessionWithIdPstmt.executeUpdate() > 0;
+        if (getControllerSessionWithIdRset.next()) {
 
-        if (result) {
+          Timestamp staredAt = getControllerSessionWithIdRset.getTimestamp("session_started");
+          Timestamp loggedOffAt = TimeUtils.getNowTimeUTC();
 
-          conn.commit();
+          long differenceSeconds = (loggedOffAt.getTime() - staredAt.getTime()) / 1000;
 
-          ClosedControllerSession ccs = new ClosedControllerSession();
+          com.aarshinkov.datetimecalculator.domain.Time activeTime = new com.aarshinkov.datetimecalculator.domain.Time(differenceSeconds);
 
-          VatsimATCInfo positionInfo = getPositionFrequency(callsign);
+          endControllerSessionWithIdPstmt.setTimestamp(1, loggedOffAt);
+          endControllerSessionWithIdPstmt.setString(2, controllerOnlineLogId);
 
-          ccs.setPositionCallsign(positionInfo.getCallsign());
-          ccs.setPositionName(positionInfo.getName());
-          ccs.setFrequency(positionInfo.getFrequency());
-          ccs.setLoggedOffAt(loggedOffAt);
+          boolean result = endControllerSessionWithIdPstmt.executeUpdate() > 0;
 
-          return ccs;
-        } else {
-          conn.rollback();
+          if (result) {
+
+            conn.commit();
+
+            ClosedControllerSession ccs = new ClosedControllerSession();
+
+            VatsimATCInfo positionInfo = getPositionFrequency(callsign);
+
+            ccs.setPositionCallsign(positionInfo.getCallsign());
+            ccs.setPositionName(positionInfo.getName());
+            ccs.setFrequency(positionInfo.getFrequency());
+            ccs.setActiveTime(activeTime);
+            ccs.setLoggedOffAt(loggedOffAt);
+
+            return ccs;
+          } else {
+            conn.rollback();
+          }
         }
 
       } catch (SQLException ex) {
@@ -295,6 +310,97 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
       }
     } catch (Exception e) {
       log.error("Error ending controller session with ID: '" + controllerOnlineLogId + "'.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public ControllersOnlineReportResponse getControllersOnlinePastWeekReport() {
+
+    final String getControllersOnlinePastWeekReportSql = "SELECT cid, position, SUM(CAST(EXTRACT(EPOCH FROM (session_ended - session_started)) AS INTEGER)) AS seconds_controlled FROM controllers_online_log WHERE session_started >= date_trunc('week', NOW() - INTERVAL '1 week') AND session_ended <= date_trunc('week', NOW()) + INTERVAL '4 hour' GROUP BY cid, position ORDER BY position, seconds_controlled DESC";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllersOnlinePastWeekReportPstmt = conn.prepareStatement(getControllersOnlinePastWeekReportSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        ResultSet getControllersOnlinePastWeekReportRset = getControllersOnlinePastWeekReportPstmt.executeQuery();
+
+        List<ControllersOnlineReportItemResponse> towerPositions = new ArrayList<>();
+        List<ControllersOnlineReportItemResponse> approachPositions = new ArrayList<>();
+        List<ControllersOnlineReportItemResponse> controlPositions = new ArrayList<>();
+
+        Map<String, Names> controllers = new HashMap<>();
+
+        int cidColumnMaxWidth = 0;
+        String namesMostLetters = "";
+        int namesColumnMaxWidth = 0;
+
+        while (getControllersOnlinePastWeekReportRset.next()) {
+
+          ControllersOnlineReportItemResponse cori = new ControllersOnlineReportItemResponse();
+          cori.setCid(getControllersOnlinePastWeekReportRset.getString("cid"));
+          cori.setPosition(getControllersOnlinePastWeekReportRset.getString("position"));
+          cori.setSecondsControlled(getControllersOnlinePastWeekReportRset.getLong("seconds_controlled"));
+
+          Names names;
+
+          if (!controllers.containsKey(cori.getCid())) {
+            VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(Long.valueOf(cori.getCid()));
+            names = Names.builder().firstName(memberDetails.getData().getFirstName()).lastName(memberDetails.getData().getLastName()).build();
+            controllers.put(cori.getCid(), names);
+          } else {
+            names = controllers.get(cori.getCid());
+          }
+
+          if (cori.getCid().length() > cidColumnMaxWidth) {
+            cidColumnMaxWidth = cori.getCid().length();
+          }
+
+          if (names.getFullName().length() > namesColumnMaxWidth) {
+            namesColumnMaxWidth = names.getFullName().length();
+            namesMostLetters = names.getFullName();
+          }
+
+          cori.setControllerName(names);
+
+          if (cori.getPosition().contains("_TWR")) {
+            towerPositions.add(cori);
+          }
+
+          if (cori.getPosition().contains("_APP")) {
+            approachPositions.add(cori);
+          }
+
+          if (cori.getPosition().contains("_CTR")) {
+            controlPositions.add(cori);
+          }
+        }
+
+//        log.debug("cidColumnMaxWidth: " + cidColumnMaxWidth);
+//        log.debug("namesMostLetters: " + namesMostLetters);
+//        log.debug("namesColumnMaxWidth: " + namesColumnMaxWidth);
+
+        ControllersOnlineReportResponse response = new ControllersOnlineReportResponse();
+        response.setTowerPositions(towerPositions);
+        response.setApproachPositions(approachPositions);
+        response.setControlPositions(controlPositions);
+        response.setCidColumnMaxWidth(cidColumnMaxWidth);
+        response.setNamesColumnMaxWidth(namesColumnMaxWidth);
+
+        return response;
+
+      } catch (SQLException ex) {
+        log.error("Error getting controllers online past week report.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting controllers online past week report.", e);
     }
 
     return null;

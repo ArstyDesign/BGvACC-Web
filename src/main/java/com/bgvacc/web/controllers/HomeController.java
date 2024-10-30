@@ -4,8 +4,6 @@ import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
-import com.bgvacc.web.vatsim.events.VatsimEventData;
-import com.bgvacc.web.vatsim.events.VatsimEvents;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

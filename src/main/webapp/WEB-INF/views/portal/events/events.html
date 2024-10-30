@@ -15,9 +15,9 @@
       </div>
 
       <div class="row" th:if="${!#lists.isEmpty(events)}">
-        
+
         <div class="text-muted mb-4" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
-        
+
         <div class="col-12 col-lg-3 mb-3" th:each="e : ${events}">
 
           <div class="card overflow-hidden">
@@ -30,26 +30,38 @@
               </h5>
             </div>
             <div class="card-body">
-<!--              <div class="row">
-                <div class="col-12 col-xl-6 mb-3" th:if="${e.airports.departure.size ge 1}">
-                  <div class="fw-bold" th:text="${e.airports.departure.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
-                  <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
-                        data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
-
-                  <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
-                </div>
-                <div class="col-12 col-xl-6 text-xl-end mb-3" th:if="${e.airports.arrival.size ge 1}">
-                  <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.arrivalairports} : #{events.arrivalairport}">Arrival airports</div>
-                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
-                        data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
-                  <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
-                </div>
-              </div>-->
+              <!--              <div class="row">
+                              <div class="col-12 col-xl-6 mb-3" th:if="${e.airports.departure.size ge 1}">
+                                <div class="fw-bold" th:text="${e.airports.departure.size gt 1} ? #{events.departureairports} : #{events.departureairport}">Departure airports</div>
+                                <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
+                                      data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
+              
+                                <span th:each="a, iStat : ${e.airports.departure}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
+                              </div>
+                              <div class="col-12 col-xl-6 text-xl-end mb-3" th:if="${e.airports.arrival.size ge 1}">
+                                <div class="fw-bold" th:text="${e.airports.arrival.size gt 1} ? #{events.arrivalairports} : #{events.arrivalairport}">Arrival airports</div>
+                                <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${@airportUtils.isManagedAirport(a)}"
+                                      data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-original-title="#{airport. + ${#strings.toLowerCase(a)}}"></span>
+                                <span th:each="a, iStat : ${e.airports.arrival}" th:text="${iStat.last} ? ${a} : (${a} + ', ')" th:if="${!@airportUtils.isManagedAirport(a)}"></span>
+                              </div>
+                            </div>-->
               <div class="">
+                <div class="row">
+                  <div class="col-12 mb-2" th:classappend="${e.isCpt} ? 'col-lg-6'">
+                    <div class="fw-bold" th:text="#{events.eventtype}">Event type</div>
+                    <div th:if="${e.isEvent}" class="badge bg-primary" th:text="#{events.eventtype.event}">Event</div>
+                    <div th:if="${e.isCpt}" class="badge bg-success" th:text="#{events.eventtype.cpt}">CPT</div>
+                  </div>
+                  <div class="col-12 col-lg-6 text-lg-end mb-2" th:if="${e.isCpt}">
+                    <div class="fw-bold" th:text="#{events.cptexaminee}">Examinee</div>
+                    <div class="" th:text="${e.cptExaminee ne null} ? ${e.cptExaminee} : '-'">Examinee</div>
+                  </div>
+                </div>
+
                 <div class="fw-bold" th:text="#{events.datetime}">Date &amp; time</div>
                 <div class="text-body-secondary">
-<!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
-                  <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
+                  <!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
+                                    <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
                   <span th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')} + 'z'">Mar 12, 2021</span>
                 </div>
               </div>

@@ -21,4 +21,5 @@ public interface ControllerOnlineLogService {
 
   ClosedControllerSession endControllerSessionWithId(String controllerOnlineLogId, String callsign);
 
+  ControllersOnlineReportResponse getControllersOnlinePastWeekReport();
 }

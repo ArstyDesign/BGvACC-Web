@@ -24,8 +24,14 @@ public class EventResponse implements Serializable {
   private Long eventId;
   private String name;
   private String type;
+  private Integer priority;
+  private Integer cptRatingNumber;
+  private String cptRatingSymbol;
+  private String cptExaminee;
   private String description;
   private String shortDescription;
+  private String vatsimEventUrl;
+  private String vateudEventUrl;
   private String imageUrl;
   private ZonedDateTime startAt;
   private Timestamp startAtTimestamp;

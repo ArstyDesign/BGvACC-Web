@@ -1,7 +1,6 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.events.EventPositionsResponse;
-import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.responses.events.*;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.util.List;
 
@@ -18,7 +17,9 @@ public interface EventService {
 
   List<EventResponse> getUpcomingEvents();
 
-  List<EventResponse> getEvents(String sql);
+  List<EventResponse> getEventsBeforeAfterNow(String sql);
+
+  UpcomingEventsResponse getUpcomingEventsAfterDays(Integer days);
 
   EventResponse getEvent(Long eventId);
 

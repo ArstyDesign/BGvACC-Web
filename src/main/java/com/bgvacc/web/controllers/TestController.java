@@ -2,8 +2,8 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
-import com.bgvacc.web.services.DatabaseService;
-import com.bgvacc.web.services.EventService;
+import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
+import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,6 +30,8 @@ public class TestController extends Base {
 
   private final EventService eventService;
 
+  private final ControllerOnlineLogService controllerOnlineLogService;
+
   @GetMapping("/test/db")
   public String testDatabase(Model model) {
 
@@ -38,6 +40,12 @@ public class TestController extends Base {
     model.addAttribute("isDbConnected", result);
 
     return "test/database";
+  }
+
+  @GetMapping("/test/controllers-online-week-report")
+  @ResponseBody
+  public ControllersOnlineReportResponse testGetControllersOnlinePastWeekReport() {
+    return controllerOnlineLogService.getControllersOnlinePastWeekReport();
   }
 
   @GetMapping("/test/events-sync")

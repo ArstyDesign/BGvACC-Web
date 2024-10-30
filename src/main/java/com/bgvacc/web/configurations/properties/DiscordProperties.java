@@ -18,12 +18,18 @@ public class DiscordProperties {
 
   @Value("${discord.bot.token}")
   private String discordBotToken;
-  
+
   @Value("${discord.controllers.online.announcement.channel.id}")
   private String discordControllersAnnouncementChannelId;
-  
+
   @Value("${discord.controllers.online.webhook.id}")
   private String discordControllersOnlineWebhookId;
+
+  @Value("${discord.events.announcement.channel.id}")
+  private String discordEventsAnnouncementChannelId;
+
+  @Value("${discord.events.webhook.id}")
+  private String discordEventsWebhookId;
 
   public String getDiscordClientId() {
     return discordClientId;
@@ -39,5 +45,13 @@ public class DiscordProperties {
 
   public String getDiscordControllersOnlineWebhookId() {
     return discordControllersOnlineWebhookId;
+  }
+
+  public String getDiscordEventsAnnouncementChannelId() {
+    return discordEventsAnnouncementChannelId;
+  }
+
+  public String getDiscordEventsWebhookId() {
+    return discordEventsWebhookId;
   }
 }
