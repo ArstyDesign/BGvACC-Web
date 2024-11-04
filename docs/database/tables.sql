@@ -41,6 +41,7 @@ INSERT INTO roles VALUES ('ATC_C3', 'ATC rating C3');
 INSERT INTO roles VALUES ('ATC_I1', 'ATC rating I1');
 INSERT INTO roles VALUES ('ATC_I3', 'ATC rating I3');
 INSERT INTO roles VALUES ('ATC_TRAINING', 'ATC training');
+INSERT INTO roles VALUES ('EXAMINER', 'Examiner');
 INSERT INTO roles VALUES ('USER', 'Regular user');
 
 CREATE TABLE user_roles(
@@ -63,15 +64,18 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'EXAMINER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_DIRECTOR');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC_C1');
+INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'EXAMINER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'ATC_S2');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'USER');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'ATC_C1');
 INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF_TRAINING');
+INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'EXAMINER');
 
 CREATE TABLE mailbox(
 	mail_id varchar(100) not null primary key default gen_random_uuid(),

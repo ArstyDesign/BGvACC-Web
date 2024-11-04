@@ -1,8 +1,8 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
-import com.bgvacc.web.responses.users.RoleResponse;
-import com.bgvacc.web.responses.users.UserResponse;
+import com.bgvacc.web.responses.users.*;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
 import java.sql.*;
@@ -417,6 +417,130 @@ public class UserServiceImpl implements UserService {
     }
 
     return false;
+  }
+
+  @Override
+  public Long getUsersCountByRole(UserRoles userRole) {
+
+    final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getUsersCountByRolePstmt.setString(1, userRole.getRoleName());
+
+        ResultSet getUsersCountByRoleRset = getUsersCountByRolePstmt.executeQuery();
+
+        if (getUsersCountByRoleRset.next()) {
+
+          return getUsersCountByRoleRset.getLong("user_by_role");
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting users count by role for role '" + userRole.getRoleName() + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting users count by role for role '" + userRole.getRoleName() + "'.", e);
+    }
+
+    return 0L;
+
+  }
+
+  @Override
+  public Long getUsersCountByRoles(UserRoles... userRoles) {
+
+    StringBuilder placeholders = new StringBuilder();
+    for (int i = 0; i < userRoles.length; i++) {
+      placeholders.append("?");
+      if (i < userRoles.length - 1) {
+        placeholders.append(", ");
+      }
+    }
+
+    final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename IN (" + placeholders + ")";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        for (int i = 0; i < userRoles.length; i++) {
+          getUsersCountByRolePstmt.setString(i + 1, userRoles[i].getRoleName());
+        }
+
+        ResultSet getUsersCountByRoleRset = getUsersCountByRolePstmt.executeQuery();
+
+        if (getUsersCountByRoleRset.next()) {
+
+          return getUsersCountByRoleRset.getLong("user_by_role");
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting users count by role for selected roles.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting users count by role for selected roles.", e);
+    }
+
+    return 0L;
+  }
+
+  @Override
+  public UsersCount getUsersCount() {
+
+    final String getTotalUsersCountSql = "SELECT COUNT(1) total_users_count FROM users";
+    final String getActiveUsersCountSql = "SELECT COUNT(1) active_users_count FROM users WHERE is_active = true";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
+            PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        ResultSet getTotalUsersCountRset = getTotalUsersCountPstmt.executeQuery();
+
+        Long totalUsers = 0L;
+
+        if (getTotalUsersCountRset.next()) {
+          totalUsers = getTotalUsersCountRset.getLong("total_users_count");
+        }
+
+        Long activeUsers = 0L;
+
+        ResultSet getActiveUsersCountRset = getActiveUsersCountPstmt.executeQuery();
+
+        if (getActiveUsersCountRset.next()) {
+          activeUsers = getActiveUsersCountRset.getLong("active_users_count");
+        }
+
+        return new UsersCount(totalUsers, activeUsers);
+
+      } catch (SQLException ex) {
+        log.error("Error getting users count.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting users count.", e);
+    }
+
+    return new UsersCount(0L, 0L);
   }
 
   private UserResponse getUserResponseFromResultSet(ResultSet rset) throws SQLException {

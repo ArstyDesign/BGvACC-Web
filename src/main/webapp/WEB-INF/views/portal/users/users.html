@@ -43,7 +43,7 @@
                     <td th:classappend="${isMe} ? 'bg-success-subtle'">
                       <div class="d-flex align-items-center mb-3">
                         <div class="me-2 avatar sm d-flex align-items-center fw-bolder justify-content-center text-white rounded-circle"
-                             th:classappend="${!u.roles.?[roleName == 'STAFF'].isEmpty()} ? 'bg-primary' : 'bg-success'">
+                             th:classappend="${!u.roles.?[roleName.contains('STAFF')].isEmpty()} ? 'bg-primary' : (${!u.roles.?[roleName.contains('EXAMINER')].isEmpty()} ? 'bg-danger' : (${!u.roles.?[roleName.contains('TRAINING')].isEmpty()} ? 'bg-warning' : 'bg-success'))">
                           <span th:text="${#strings.substring(u.names.firstName, 0, 1)}">J</span>
                           <span th:if="${u.names.lastName ne null and u.names.lastName.length gt 1}" th:text="${#strings.substring(u.names.lastName, 0, 1)}">D</span>
                         </div>
@@ -74,9 +74,9 @@
                         </a>
                         <!--Divider line-->
                         <span class="border-start mx-2 d-block height-20"></span>
-                        <a href="#" data-tippy-content="Edit user">
+<!--                        <a href="#" data-tippy-content="Edit user">
                           <span class="material-symbols-rounded align-middle fs-5 text-body">edit</span>
-                        </a>
+                        </a>-->
                         <!--Divider line-->
                         <!--                        <span class="border-start mx-2 d-block height-20"></span>
                                                 <a href="#" data-tippy-content="Delete user">

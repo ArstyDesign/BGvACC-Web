@@ -46,6 +46,7 @@ public class EventsController extends Base {
     model.addAttribute("subpage", "calendar");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.calendar", null, LocaleContextHolder.getLocale()), null));
 
@@ -66,6 +67,7 @@ public class EventsController extends Base {
     model.addAttribute("subpage", "upcoming-events");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.upcomingevents", null, LocaleContextHolder.getLocale()), null));
 
@@ -86,6 +88,7 @@ public class EventsController extends Base {
     model.addAttribute("subpage", "past-events");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.pastevents", null, LocaleContextHolder.getLocale()), null));
 
@@ -107,6 +110,7 @@ public class EventsController extends Base {
     model.addAttribute("page", "events");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
 
     if (event.getEndAtTimestamp().after(new Timestamp(System.currentTimeMillis()))) {

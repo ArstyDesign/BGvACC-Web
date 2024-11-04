@@ -1,8 +1,8 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
-import com.bgvacc.web.responses.users.RoleResponse;
-import com.bgvacc.web.responses.users.UserResponse;
+import com.bgvacc.web.responses.users.*;
 import java.util.List;
 
 /**
@@ -15,7 +15,7 @@ public interface UserService {
   List<UserResponse> getUsers();
 
   UserResponse getUser(String cidEmail);
-  
+
   boolean doUserExist(String cid);
 
   boolean createUser(UserCreateModel ucm);
@@ -29,4 +29,10 @@ public interface UserService {
   boolean addUserRole(String cid, String role);
 
   boolean removeUserRole(String cid, String role);
+
+  Long getUsersCountByRole(UserRoles userRole);
+
+  Long getUsersCountByRoles(UserRoles... userRole);
+  
+  UsersCount getUsersCount();
 }

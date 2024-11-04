@@ -18,16 +18,15 @@
               <div class="row justify-content-between align-items-center">
                 <div class="col-12">
 
-                  <h5 class="mb-3">
-                    Your photo
-                  </h5>
+                  <h5 class="mb-3">Profile information</h5>
                   <div class="row">
                     <div class="col-md-auto col-12 mb-4 mb-md-0">
 
                       <!-- Avatar -->
                       <div class="position-relative">
-                        <div class="avatar size-140">
-                          <img class="img-fluid rounded-pill" src="assets/media/avatars/01.jpg" alt="..."/>
+                        <div class="avatar-status status-online me-2 avatar d-flex align-items-center fw-bolder justify-content-center text-white bg-success rounded-circle">
+                          <span th:text="${#strings.substring(session.loggedUser.names.firstName, 0, 1)}">J</span>
+                          <span th:if="${session.loggedUser.names.lastName ne null and session.loggedUser.names.lastName.length gt 1}" th:text="${#strings.substring(session.loggedUser.names.lastName, 0, 1)}">D</span>
                         </div>
                       </div>
 
@@ -58,90 +57,17 @@
                 </div>
               </div>
 
-              <hr class="my-4"/>
-
-              <form>
-                <div class="row">
-                  <div class="col-12 col-md-6 mb-3">
-                    <label for="birthday" class="form-label">Birthday</label>
-
-                    <!--Input-->
-                    <input type="text" id="birthday" name="birthday" class="form-control"/>
-                  </div>
-                  <div class="col-12 col-md-6 mb-3">
-                    <label for="user-currency" class="form-label">Currency</label>
-
-                    <!--select-->
-                    <div class="choices" data-type="select-one" tabindex="0" role="listbox" aria-haspopup="true" aria-expanded="false"><div class="form-control"><select name="user-currency" id="user-currency" class="form-control" data-choices="{&quot;searchEnabled&quot;:false, &quot;itemSelectText&quot;:&quot;&quot;}" hidden="" tabindex="-1" data-choice="active"><option value="USD" data-custom-properties="[object Object]">USD - USA Dollar</option></select><div class="choices__list choices__list--single"><div class="choices__item choices__item--selectable" data-item="" data-id="1" data-value="USD" data-custom-properties="[object Object]" aria-selected="true">USD - USA Dollar</div></div></div><div class="choices__list dropdown-menu" aria-expanded="false"><div class="choices__list" role="listbox"><div id="choices--user-currency-item-choice-1" class="choices__item dropdown-item choices__item--selectable is-highlighted" role="option" data-choice="" data-id="1" data-value="USD" data-select-text="" data-choice-selectable="" aria-selected="true">AUD - Australian Dollar</div><div id="choices--user-currency-item-choice-2" class="choices__item dropdown-item choices__item--selectable" role="option" data-choice="" data-id="2" data-value="Euro" data-select-text="" data-choice-selectable="">GBP - British Pound</div><div id="choices--user-currency-item-choice-3" class="choices__item dropdown-item choices__item--selectable" role="option" data-choice="" data-id="3" data-value="USD" data-select-text="" data-choice-selectable="">INR - Indian Rupee</div><div id="choices--user-currency-item-choice-4" class="choices__item dropdown-item active choices__item--selectable" role="option" data-choice="" data-id="4" data-value="USD" data-select-text="" data-choice-selectable="">USD - USA Dollar</div></div></div></div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-12 mb-3">
-                    <label for="user-skills" class="form-label">Skills</label>
-                    <div class="choices" data-type="text" aria-haspopup="true" aria-expanded="false">
-                      <div class="form-control">
-                        <input id="user-skills" type="text" class="form-control" value="Bootstrap,Javascript,Figma,AngularJs" data-choices="{&quot;silent&quot;: true,&quot;removeItems&quot;: &quot;true&quot;,&quot;removeItemButton&quot;: &quot;true&quot;, &quot;itemSelectText&quot;:&quot;&quot;}" hidden="" tabindex="-1" data-choice="active"/>
-                        <div class="choices__list choices__list--multiple">
-                          <div class="choices__item choices__item--selectable" data-item="" data-id="1" data-value="Bootstrap" data-custom-properties="[object Object]" aria-selected="true" data-deletable="">Bootstrap<button type="button" class="choices__button" aria-label="Remove item: 'Bootstrap'" data-button="">Remove item</button></div>
-                          <div class="choices__item choices__item--selectable" data-item="" data-id="2" data-value="Javascript" data-custom-properties="[object Object]" aria-selected="true" data-deletable="">Javascript<button type="button" class="choices__button" aria-label="Remove item: 'Javascript'" data-button="">Remove item</button></div>
-                          <div class="choices__item choices__item--selectable" data-item="" data-id="3" data-value="Figma" data-custom-properties="[object Object]" aria-selected="true" data-deletable="">Figma<button type="button" class="choices__button" aria-label="Remove item: 'Figma'" data-button="">Remove item</button></div>
-                          <div class="choices__item choices__item--selectable" data-item="" data-id="4" data-value="AngularJs" data-custom-properties="[object Object]" aria-selected="true" data-deletable="">AngularJs<button type="button" class="choices__button" aria-label="Remove item: 'AngularJs'" data-button="">Remove item</button></div>
-                        </div>
-                        <input type="search" name="search_terms" class="form-control form-control-xs" autocomplete="off" autocapitalize="off" spellcheck="false" role="textbox" aria-autocomplete="list" aria-label="null"/>
-                      </div>
-                      <div class="choices__list dropdown-menu" aria-expanded="false"></div>
-
-                    </div>
-
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6 mb-3">
-
-                    <!-- Profile public or private -->
-                    <div class="p-3 border rounded">
-
-                      <div class="row">
-                        <div class="col-auto">
-
-                          <!-- Check / Uncheck -->
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="switchVisible"/>
-                            <label class="form-check-label" for="switchVisible">Public profile</label>
-                          </div>
-
-                        </div>
-                      </div> <!-- / .row -->
-                    </div>
-
-                  </div>
-                  <div class="col-12 col-md-6 mb-3">
-
-                    <!-- Profile available for hire -->
-                    <div class="p-3 border rounded">
-                      <div class="row">
-                        <div class="col-auto">
-
-                          <!-- Check / Uncheck -->
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="switchTwo" checked=""/>
-                            <label class="form-check-label" for="switchTwo">Available for hire</label>
-                          </div>
-
-                        </div>
-                      </div> <!-- / .row -->
-                    </div>
-
-                  </div>
-                </div>
-                <div class="text-end">
-                  <button type="button" id="profile_save" class="btn btn-primary">Save Changes</button>
-                </div>
-              </form>
+<!--              <hr class="my-4"/>-->
             </div>
           </div>
         </div>
       </div>
+      
+<!--      <div class="row">
+        <div class="col-12 mb-3">
+          <div th:each="s : ${sessions}" th:text="${s}"></div>
+        </div>
+      </div>-->
     </div>
   </body>
 </html>

@@ -42,6 +42,7 @@ public class PortalBlogController extends Base {
     model.addAttribute("subpage", "posts");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.title", null, LocaleContextHolder.getLocale()), null));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.posts", null, LocaleContextHolder.getLocale()), null));
@@ -69,6 +70,7 @@ public class PortalBlogController extends Base {
     model.addAttribute("subpage", "posts");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.title", null, LocaleContextHolder.getLocale()), null));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.posts", null, LocaleContextHolder.getLocale()), "/portal/blog/posts"));
@@ -91,6 +93,7 @@ public class PortalBlogController extends Base {
       model.addAttribute("subpage", "posts");
 
       List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.title", null, LocaleContextHolder.getLocale()), null));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.blog.posts", null, LocaleContextHolder.getLocale()), "/portal/blog/posts"));

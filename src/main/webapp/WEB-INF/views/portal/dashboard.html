@@ -5,14 +5,79 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/portalTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{app.portal.title(#{portal.dashboard.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div class="row">
-        <div class="col-12 col-md-8 mb-3">
-          <div>Dashboard</div>
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <!--::begin card-->
+          <div class="card card-body">
+            <!--Title-->
+            <h6 class="mb-3">
+              <span>Total ATC Sessions</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Total sessions as ATC counted from the start of the web application" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="${totalATCSessionsCount}">245</h4>
+            </div>
+          </div>
+          <!--::/end card-->
+        </div>
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <!--::begin card-->
+          <div class="card card-body">
+            <!--Title-->
+            <h6 class="mb-3">
+              <span>Total events applications</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Number of times the user applied for a controller on an event" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="${#numbers.formatInteger(totalUserEventApplications, 0, 'WHITESPACE')}">1 543</h4>
+            </div>
+          </div>
+          <!--::/end card-->
+        </div>
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <!--::begin card-->
+          <div class="card card-body">
+            <!--Title-->
+            <h6 class="mb-3">
+              <span>Staff count</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Users with any Staff role" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="${#numbers.formatInteger(staffCount, 0, 'WHITESPACE')}">5</h4>
+            </div>
+          </div>
+          <!--::/end card-->
+        </div>
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <!--::begin card-->
+          <div class="card card-body">
+            <!--Title-->
+            <h6 class="mb-3">
+              <span>Users count</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Total | Active | Inactive users" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="text-muted mb-0" th:text="${#numbers.formatInteger(usersCount.totalUsers, 0, 'WHITESPACE')}">87</h4>
+
+              <!--vertical line-->
+              <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
+              <!--::/vertical line-->
+
+              <h4 class="text-success mb-0" th:text="${#numbers.formatInteger(usersCount.activeUsers, 0, 'WHITESPACE')}">87</h4>
+              
+              <!--vertical line-->
+              <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
+              <!--::/vertical line-->
+
+              <h4 class="text-danger mb-0" th:text="${#numbers.formatInteger(usersCount.inactiveUsers, 0, 'WHITESPACE')}">87</h4>
+            </div>
+          </div>
+          <!--::/end card-->
         </div>
       </div>
     </div>

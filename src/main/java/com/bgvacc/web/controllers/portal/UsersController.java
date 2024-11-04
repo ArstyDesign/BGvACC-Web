@@ -52,6 +52,7 @@ public class UsersController extends Base {
     model.addAttribute("subpage", "users");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), null));
 
@@ -101,6 +102,7 @@ public class UsersController extends Base {
     model.addAttribute("subpage", "users");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
     breadcrumbs.add(new Breadcrumb(user.getNames().getFullName(), null));
@@ -138,6 +140,7 @@ public class UsersController extends Base {
     model.addAttribute("subpage", "createUser");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.users.create.title", null, LocaleContextHolder.getLocale()), null));
@@ -168,6 +171,7 @@ public class UsersController extends Base {
       model.addAttribute("subpage", "createUser");
 
       List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.users.create.title", null, LocaleContextHolder.getLocale()), null));
@@ -190,6 +194,7 @@ public class UsersController extends Base {
     model.addAttribute("subpage", "createUser");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.users.create.title", null, LocaleContextHolder.getLocale()), null));
@@ -218,6 +223,7 @@ public class UsersController extends Base {
       model.addAttribute("subpage", "createUser");
 
       List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.users.users", null, LocaleContextHolder.getLocale()), "/portal/users"));
       breadcrumbs.add(new Breadcrumb(getMessage("portal.users.create.title", null, LocaleContextHolder.getLocale()), null));

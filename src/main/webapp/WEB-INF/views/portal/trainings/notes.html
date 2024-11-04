@@ -115,12 +115,12 @@
         <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" style="display: none;" aria-hidden="true">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="createNoteModalLabel" th:utext="#{portal.trainings.notes.create.title(${member.data.fullName}, '' + ${cid})}">Add Training Note for John Doe - 9999999</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form th:action="@{/portal/trainings/notes/} + ${cid}" method="post">
+              <form th:action="@{/portal/trainings/notes/} + ${cid}" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="createNoteModalLabel" th:utext="#{portal.trainings.notes.create.title(${member.data.fullName}, '' + ${cid})}">Add Training Note for John Doe - 9999999</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                   <label class="form-label required" th:text="#{portal.trainings.notes.create.position}">Position</label>
                   <select class="form-control mb-3">
                     <option value="LBSF_TWR" th:text="#{portal.trainings.notes.create.position.lbsftwr}">LBSF_TWR - Sofia Tower</option>
@@ -138,12 +138,12 @@
 
                   <label class="form-label required" th:text="#{portal.trainings.notes.create.trainingnote}">Training note</label>
                   <textarea class="form-control mb-3" name="trainingNote" rows="5" style="min-height: 150px;"></textarea>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
-                <button type="button" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
-              </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
+                  <button type="submit" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

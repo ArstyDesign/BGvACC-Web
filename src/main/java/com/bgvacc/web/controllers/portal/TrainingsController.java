@@ -3,6 +3,10 @@ package com.bgvacc.web.controllers.portal;
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.models.portal.trainings.CreateTrainingNoteModel;
+import com.bgvacc.web.requests.portal.trainings.CreateTrainingNoteRequest;
+import com.bgvacc.web.responses.trainings.CreateTrainingNoteResponse;
+import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
@@ -10,6 +14,7 @@ import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidations;
 import com.bgvacc.web.vatsim.vateud.ControllerNotes;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.*;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +48,7 @@ public class TrainingsController extends Base {
     model.addAttribute("subpage", "notes");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.title", null, LocaleContextHolder.getLocale()), null));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.notes", null, LocaleContextHolder.getLocale()), null));
@@ -96,6 +102,7 @@ public class TrainingsController extends Base {
     model.addAttribute("subpage", "notes");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.title", null, LocaleContextHolder.getLocale()), null));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.notes", null, LocaleContextHolder.getLocale()), null));
@@ -103,6 +110,27 @@ public class TrainingsController extends Base {
     model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "portal/trainings/notes";
+  }
+
+  @PostMapping("/portal/trainings/notes/{cid}")
+  public String createTrainingNoteForUser(@PathVariable("cid") Long cid, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+
+    LoggedUser loggedUser = getLoggedUser(request);
+
+    log.debug("Instructor CID: " + loggedUser.getCid());
+
+    CreateTrainingNoteModel ctnm = new CreateTrainingNoteModel();
+    ctnm.setUserCid(cid);
+    ctnm.setInstructorCid(Long.valueOf(loggedUser.getCid()));
+    ctnm.setPosition("LBSF_TWR");
+    ctnm.setSessionType(0); // Sweatbox
+    ctnm.setNote("Testing");
+
+    CreateTrainingNoteResponse createdTrainingNote = vatEudCoreApi.createTrainingNote(ctnm);
+
+    log.debug(createdTrainingNote.toString());
+
+    return "redirect:/portal/trainings/notes/" + cid;
   }
 
   @GetMapping("/portal/trainings/solo-validations")
@@ -158,6 +186,7 @@ public class TrainingsController extends Base {
     model.addAttribute("subpage", "solo-validations");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu", null, LocaleContextHolder.getLocale()), "/portal/dashboard"));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.title", null, LocaleContextHolder.getLocale()), null));
     breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.trainings.solo", null, LocaleContextHolder.getLocale()), null));

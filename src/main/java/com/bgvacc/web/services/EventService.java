@@ -26,4 +26,6 @@ public interface EventService {
   List<EventPositionsResponse> getEventPositions(Long eventId);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
+  
+  Long getTotalUserEventApplications(String cid);
 }

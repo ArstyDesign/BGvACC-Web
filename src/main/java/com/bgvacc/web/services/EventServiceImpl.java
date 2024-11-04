@@ -487,6 +487,40 @@ public class EventServiceImpl implements EventService {
     }
   }
 
+  @Override
+  public Long getTotalUserEventApplications(String cid) {
+
+    final String getTotalUserEventApplicationsSql = "SELECT COUNT(1) total_user_events_applications FROM user_event_applications where user_cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getTotalUserEventApplicationsPstmt.setString(1, cid);
+
+        ResultSet getTotalATCSessionsForUserRset = getTotalUserEventApplicationsPstmt.executeQuery();
+
+        if (getTotalATCSessionsForUserRset.next()) {
+
+          return getTotalATCSessionsForUserRset.getLong("total_user_events_applications");
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting total user event application for controller with ID: '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting total user event application for controller with ID: '" + cid + "'.", e);
+    }
+
+    return 0L;
+  }
+
   private EventResponse getEventResponseFromResultSet(ResultSet rset) throws SQLException {
 
     EventResponse ved = new EventResponse();

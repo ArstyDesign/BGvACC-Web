@@ -3,6 +3,8 @@ package com.bgvacc.web.schedulers;
 import com.bgvacc.web.api.discord.DiscordNotifyApi;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.UpcomingEventsResponse;
+import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
+import com.bgvacc.web.services.ControllerOnlineLogService;
 import com.bgvacc.web.services.EventService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
@@ -25,6 +27,8 @@ public class NotifierScheduler {
 
   private final EventService eventService;
 
+  private final ControllerOnlineLogService controllerOnlineLogService;
+  
   private final DiscordNotifyApi discordNotifyApi;
 
 //  @Scheduled(fixedRate = 15000)
@@ -38,9 +42,17 @@ public class NotifierScheduler {
       if (upcomingEvents.getUpcomingEvents() != null) {
         log.debug("Upcoming events not null");
         if (!upcomingEvents.getUpcomingEvents().isEmpty()) {
-//          discordNotifyApi.notifyForUpcomingEvents(upcomingEvents);
+          discordNotifyApi.notifyForUpcomingEvents(upcomingEvents);
         }
       }
     }
+  }
+  
+//  @Scheduled(fixedRate = 15000)
+  public void sendLastWeekControllersLogReport() {
+    
+    ControllersOnlineReportResponse report = controllerOnlineLogService.getControllersOnlinePastWeekReport();
+    
+    
   }
 }

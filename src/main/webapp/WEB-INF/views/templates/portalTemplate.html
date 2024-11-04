@@ -71,6 +71,7 @@
                       <li th:each="b, iterStat : ${breadcrumbs}" class="breadcrumb-item" th:classappend="${iterStat.last or b.url eq null} ? 'active'">
                         <a th:href="@{${b.url}}" th:if="${b.url ne null}">
                           <i class="bi bi-house fs-5" th:if="${iterStat.first}"></i>
+                          <span class="material-symbols-rounded" th:if="${iterStat.count eq 2}">widgets</span>
                           <span th:utext="${b.label}" th:if="${!iterStat.first}">Item</span>
                         </a>
                         <span th:if="${b.url eq null}" th:utext="${b.label}"></span>

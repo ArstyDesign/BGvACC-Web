@@ -383,7 +383,6 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
 //        log.debug("cidColumnMaxWidth: " + cidColumnMaxWidth);
 //        log.debug("namesMostLetters: " + namesMostLetters);
 //        log.debug("namesColumnMaxWidth: " + namesColumnMaxWidth);
-
         ControllersOnlineReportResponse response = new ControllersOnlineReportResponse();
         response.setTowerPositions(towerPositions);
         response.setApproachPositions(approachPositions);
@@ -404,5 +403,40 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
     }
 
     return null;
+  }
+
+  @Override
+  public Long getTotalATCSessionsForUser(String cid) {
+
+    final String getTotalATCSessionsForUserSql = "SELECT COUNT(1) session_count FROM controllers_online_log WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getTotalATCSessionsForUserPstmt = conn.prepareStatement(getTotalATCSessionsForUserSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getTotalATCSessionsForUserPstmt.setString(1, cid);
+
+        ResultSet getTotalATCSessionsForUserRset = getTotalATCSessionsForUserPstmt.executeQuery();
+
+        if (getTotalATCSessionsForUserRset.next()) {
+
+          return getTotalATCSessionsForUserRset.getLong("session_count");
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting total ATC sessions for controller with ID: '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting total ATC sessions for controller with ID: '" + cid + "'.", e);
+    }
+
+    return 0L;
+
   }
 }
