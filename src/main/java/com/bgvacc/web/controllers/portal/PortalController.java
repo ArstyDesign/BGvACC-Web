@@ -52,21 +52,29 @@ public class PortalController extends Base {
     model.addAttribute("staffCount", userService.getUsersCountByRoles(UserRoles.STAFF_DIRECTOR, UserRoles.STAFF_EVENTS, UserRoles.STAFF_TRAINING));
     model.addAttribute("usersCount", userService.getUsersCount());
 
+    List<String> months = new ArrayList<>();
+
+    for (int i = 1; i <= 12; i++) {
+      months.add(getMessage("month." + i));
+    }
+    model.addAttribute("months", months);
+
     int thisYear = LocalDate.now().getYear();
     EventsYearlyReportResponse eventsYearlyReport = eventService.getEventsYearlyReportForYear(thisYear);
+    model.addAttribute("eventsYearlyReport", eventsYearlyReport);
 
     List<Integer> eventsCountByMonths = new ArrayList<>();
-    for (EventYearlyReportResponse event : eventsYearlyReport.getEvents()) {
+    for (EventYearlyReportResponse event : eventsYearlyReport.getEvents().getReport()) {
       eventsCountByMonths.add(event.getCount());
     }
 
     List<Integer> cptsCountByMonths = new ArrayList<>();
-    for (EventYearlyReportResponse cpt : eventsYearlyReport.getCpts()) {
+    for (EventYearlyReportResponse cpt : eventsYearlyReport.getCpts().getReport()) {
       cptsCountByMonths.add(cpt.getCount());
     }
 
     List<Integer> vasOpsCountByMonths = new ArrayList<>();
-    for (EventYearlyReportResponse vasops : eventsYearlyReport.getVasops()) {
+    for (EventYearlyReportResponse vasops : eventsYearlyReport.getVasops().getReport()) {
       vasOpsCountByMonths.add(vasops.getCount());
     }
 

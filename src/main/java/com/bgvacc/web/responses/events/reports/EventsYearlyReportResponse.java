@@ -17,76 +17,57 @@ import lombok.*;
 public class EventsYearlyReportResponse implements Serializable {
 
   private Integer year;
-  private List<EventYearlyReportResponse> events;
-  private Integer totalEvents;
-  private List<EventYearlyReportResponse> cpts;
-  private Integer totalCpts;
-  private List<EventYearlyReportResponse> vasops;
-  private Integer totalVasOps;
+  private EventTypeReportResponse events;
+  private EventTypeReportResponse cpts;
+  private EventTypeReportResponse vasops;
+
+  public Integer getMonthWithMostEvents() {
+    return getMonthWithMostEventType(events);
+  }
+
+  public Integer getMonthWithMostCpts() {
+    return getMonthWithMostEventType(cpts);
+  }
+
+  public Integer getMonthWithMostVasops() {
+    return getMonthWithMostEventType(vasops);
+  }
+
+  private Integer getMonthWithMostEventType(EventTypeReportResponse eventType) {
+    if (eventType == null) {
+      return -1;
+    }
+
+    Integer currentMonth = -1;
+    Integer currentMaximum = 0;
+
+    for (EventYearlyReportResponse eyrr : eventType.getReport()) {
+      if (eyrr.getCount() >= currentMaximum) {
+        currentMaximum = eyrr.getCount();
+        currentMonth = eyrr.getMonth();
+      }
+    }
+
+    return currentMonth;
+  }
 
   public Integer getAllEventsCount() {
-
-    if (totalEvents == null || totalEvents < 0) {
-      totalEvents = 0;
-    }
-
-    if (totalCpts == null || totalCpts < 0) {
-      totalCpts = 0;
-    }
-
-    if (totalVasOps == null || totalVasOps < 0) {
-      totalVasOps = 0;
-    }
-
-    return totalEvents + totalCpts + totalVasOps;
-  }
-
-  public Double getAverageEventsCount() {
-
-    return getTotalEvents() / 12.00;
-  }
-
-  public Double getAverageCptsCount() {
-
-    return getTotalCpts() / 12.00;
-  }
-
-  public Double getAverageVasOpsCount() {
-
-    return getTotalVasOps() / 12.00;
+    return events.getTotal() + cpts.getTotal() + vasops.getTotal();
   }
 
   public void setYear(Integer year) {
     this.year = year;
   }
 
-  public void setEvents(List<EventYearlyReportResponse> events) {
+  public void setEvents(EventTypeReportResponse events) {
     this.events = events;
-
-    this.totalEvents = 0;
-
-    for (EventYearlyReportResponse eyrr : events) {
-      this.totalEvents += eyrr.getCount();
-    }
   }
 
-  public void setCpts(List<EventYearlyReportResponse> cpts) {
+  public void setCpts(EventTypeReportResponse cpts) {
     this.cpts = cpts;
-
-    this.totalCpts = 0;
-
-    for (EventYearlyReportResponse eyrr : cpts) {
-      this.totalCpts += eyrr.getCount();
-    }
   }
 
-  public void setVasops(List<EventYearlyReportResponse> vasops) {
+  public void setVasops(EventTypeReportResponse vasops) {
     this.vasops = vasops;
-
-    this.totalVasOps = 0;
-
-    for (EventYearlyReportResponse eyrr : vasops) {
-      this.totalVasOps += eyrr.getCount();
-    }
   }
 }

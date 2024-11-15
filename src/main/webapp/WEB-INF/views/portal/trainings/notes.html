@@ -12,19 +12,25 @@
 
       <div class="row">
         <div class="col-12 mb-3">
-          <div class="card overflow-hidden">
-            <div class="card-header">
-              <h5 class="mb-0" th:text="#{portal.trainings.notes.viewnotes}">View notes</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3" th:text="#{portal.trainings.notes.viewnotes.message}">Enter the CID of the controller you would like to view notes for. You will only be able to view the notes for controllers that are either in your facility home vACC (BULG), or are visiting in your home vACC.</div>
+          <form th:action="@{/portal/trainings/notes}" method="post">
+            <div class="card overflow-hidden">
+              <div class="card-header">
+                <h5 class="mb-0" th:text="#{portal.trainings.notes.viewnotes}">View notes</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3" th:text="#{portal.trainings.notes.viewnotes.message}">Enter the CID of the controller you would like to view notes for. You will only be able to view the notes for controllers that are either in your facility home vACC (BULG), or are visiting in your home vACC.</div>
 
-              <form th:action="@{/portal/trainings/notes}" method="post">
-                <label class="form-label" th:text="#{portal.trainings.notes.entercid}">Enter controller's CID</label>
+                <label class="form-label" th:text="#{portal.trainings.notes.cid}">Controller's CID</label>
                 <input class="form-control form-control-lg mb-0" type="text" name="cid" th:value="${cid ne null} ? ${cid}"/>
-              </form>
+              </div>
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-search"></i>
+                  <span th:text="#{portal.trainings.notes.search}">Search</span>
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -54,10 +60,10 @@
               <div class="card-header d-flex align-items-center justify-content-between">
                 <!--                <div class="h5 mb-0 me-3" th:text="#{portal.trainings.notes.trainingnotes}">Training Notes</div>-->
                 <div class="h5 mb-0 me-3" th:text="#{portal.trainings.notes.viewnotesfor(${member.data.fullName}, ${member.data.cid})}">Viewing Notes for John Doe - 9999999</div>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#createNoteModal" class="btn btn-primary text-transform-normal btn-sm">
-                  <span class="material-symbols-rounded">post_add</span>
-                  <span th:text="#{portal.trainings.notes.createanote}">Create a note</span>
-                </a>
+                <!--                <a href="#" data-bs-toggle="modal" data-bs-target="#createNoteModal" class="btn btn-primary text-transform-normal btn-sm">
+                                  <span class="material-symbols-rounded">post_add</span>
+                                  <span th:text="#{portal.trainings.notes.createanote}">Create a note</span>
+                                </a>-->
               </div>
               <div class="card-body">
                 <div class="mb-0" th:if="${#lists.isEmpty(notes.notes)}">

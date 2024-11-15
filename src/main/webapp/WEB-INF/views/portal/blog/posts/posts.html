@@ -21,8 +21,8 @@
                   <span class="material-symbols-rounded align-middle">more_vert</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end mt-1">
-                  <a class="dropdown-item" href="#" th:href="@{/portal/blog/posts/} + ${p.id}"
-                     th:text="#{portal.blog.posts.view}">View</a>
+<!--                  <a class="dropdown-item" href="#" th:href="@{/portal/blog/posts/} + ${p.id}"
+                     th:text="#{portal.blog.posts.view}">View</a>-->
                   <a class="dropdown-item" href="#" th:href="@{/portal/blog/posts/} + ${p.id} + '/edit'"
                      th:text="#{portal.blog.posts.edit}">Edit</a>
                   <form th:action="@{/portal/blog/posts/} + ${p.id} + '/hide'" method="post" onsubmit="event.preventDefault();">
@@ -46,7 +46,7 @@
                    th:text="${p.isVisible} ? #{portal.blog.posts.visible} : #{portal.blog.posts.invisible}">Visible/invisible</div>
             </div>
             <div class="card-footer d-flex">
-              <small class="text-muted" th:text="#{portal.blog.posts.author(${p.names.fullNameWithShortFirst})}">Author: J. Doe</small>
+              <small class="text-muted" th:text="${p.names ne null} ? #{portal.blog.posts.author(${p.names.fullNameWithShortFirst})} : '-'">Author: J. Doe</small>
               <small class="text-muted ms-auto" th:text="${#dates.format(p.createdAt, 'dd MMMM yyyy')}">13.10.2024</small>
             </div>
           </div>

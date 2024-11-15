@@ -12,87 +12,119 @@
 
       <div class="row">
         <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
-          <!--::begin card-->
           <div class="card card-body">
-            <!--Title-->
             <h6 class="mb-3">
-              <span>Total ATC Sessions</span>
-              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Total sessions as ATC counted from the start of the web application" data-tippy-placement="top">info</span>
+              <span th:text="#{portal.dashboard.totalatcsessions}">Total ATC Sessions</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.totalatcsessions.desc}" data-tippy-placement="top">info</span>
             </h6>
             <div class="d-flex lh-1 align-items-center">
               <h4 class="mb-0" th:text="${totalATCSessionsCount}">245</h4>
             </div>
           </div>
-          <!--::/end card-->
         </div>
         <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
-          <!--::begin card-->
           <div class="card card-body">
-            <!--Title-->
             <h6 class="mb-3">
-              <span>Total events applications</span>
-              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Number of times the user applied for a controller on an event" data-tippy-placement="top">info</span>
+              <span th:text="#{portal.dashboard.totaleventsapplications}">Total events applications</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.totaleventsapplications.desc}" data-tippy-placement="top">info</span>
             </h6>
             <div class="d-flex lh-1 align-items-center">
               <h4 class="mb-0" th:text="${#numbers.formatInteger(totalUserEventApplications, 0, 'WHITESPACE')}">1 543</h4>
             </div>
           </div>
-          <!--::/end card-->
         </div>
         <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
-          <!--::begin card-->
           <div class="card card-body">
-            <!--Title-->
             <h6 class="mb-3">
-              <span>Staff count</span>
-              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Users with any Staff role" data-tippy-placement="top">info</span>
+              <span th:text="#{portal.dashboard.staffcount}">Staff count</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.staffcount.desc}" data-tippy-placement="top">info</span>
             </h6>
             <div class="d-flex lh-1 align-items-center">
               <h4 class="mb-0" th:text="${#numbers.formatInteger(staffCount, 0, 'WHITESPACE')}">5</h4>
             </div>
           </div>
-          <!--::/end card-->
         </div>
         <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
-          <!--::begin card-->
           <div class="card card-body">
-            <!--Title-->
             <h6 class="mb-3">
-              <span>Users count</span>
-              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" data-tippy-content="Total | Active | Inactive users" data-tippy-placement="top">info</span>
+              <span th:text="#{portal.dashboard.userscount}">Users count</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.userscount.desc}" data-tippy-placement="top">info</span>
             </h6>
             <div class="d-flex lh-1 align-items-center">
               <h4 class="text-muted mb-0" th:text="${#numbers.formatInteger(usersCount.totalUsers, 0, 'WHITESPACE')}">87</h4>
 
-              <!--vertical line-->
               <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
-              <!--::/vertical line-->
 
               <h4 class="text-success mb-0" th:text="${#numbers.formatInteger(usersCount.activeUsers, 0, 'WHITESPACE')}">87</h4>
 
-              <!--vertical line-->
               <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
-              <!--::/vertical line-->
 
               <h4 class="text-danger mb-0" th:text="${#numbers.formatInteger(usersCount.inactiveUsers, 0, 'WHITESPACE')}">87</h4>
             </div>
           </div>
-          <!--::/end card-->
         </div>
       </div>
 
       <div class="row">
         <div class="col-12 mb-3">
-          <div class="h3 mb-0">Events</div>
+          <div class="h3 mb-0" th:text="#{portal.dashboard.events}">Events</div>
           <hr class="my-2"/>
+        </div>
+
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <div class="card card-body">
+            <h6 class="mb-3">
+              <span th:text="#{portal.dashboard.eventsthisyear}">Events this year</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.eventsthisyear.desc}" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="${#numbers.formatInteger(eventsYearlyReport.events.total, 0, 'WHITESPACE')}">5</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <div class="card card-body">
+            <h6 class="mb-3">
+              <span th:text="#{portal.dashboard.cptsthisyear}">CPTs this year</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.cptsthisyear.desc}" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="${#numbers.formatInteger(eventsYearlyReport.cpts.total, 0, 'WHITESPACE')}">5</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <div class="card card-body">
+            <h6 class="mb-3">
+              <span th:text="#{portal.dashboard.monthwithmostevents}">Month with most Events</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.monthwithmostevents.desc}" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="#{month. + ${eventsYearlyReport.monthWithMostEvents}}">5</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
+          <div class="card card-body">
+            <h6 class="mb-3">
+              <span th:text="#{portal.dashboard.monthwithmostcpts}">Month with most CPTS</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.monthwithmostcpts.desc}" data-tippy-placement="top">info</span>
+            </h6>
+            <div class="d-flex lh-1 align-items-center">
+              <h4 class="mb-0" th:text="#{month. + ${eventsYearlyReport.monthWithMostCpts}}">5</h4>
+            </div>
+          </div>
         </div>
 
         <div class="col-12 mb-3">
           <div class="card">
             <div class="card-header">
-              <h5 class="mb-0">Chart Area</h5>
+              <h5 class="mb-0" th:text="#{portal.dashboard.chart.title('' + ${#dates.year(#dates.createNow())})}">Chart Area</h5>
             </div>
-            <!--Chart-->
+
             <div id="chart_area"></div>
           </div>
         </div>
@@ -104,6 +136,9 @@
                 let eventsCountByMonths = /*[[${eventsCountByMonths}]]*/;
                 let cptsCountByMonths = /*[[${cptsCountByMonths}]]*/;
                 let vasOpsCountByMonths = /*[[${vasOpsCountByMonths}]]*/;
+                let columnEvents = /*[[#{portal.dashboard.chart.events}]]*/;
+                let columnCpts = /*[[#{portal.dashboard.chart.cpts}]]*/;
+                let months = /*[[${months}]]*/;
                 let aux2 = /*[[@{/}]]*/;
         /*]]>*/
 
@@ -114,11 +149,11 @@
         var optionsArea = {
           colors: [cPrimary, cSuccess],
           series: [{
-              name: 'Events',
+              name: columnEvents,
               data: eventsCountByMonths,
             },
             {
-              name: 'CPTs',
+              name: columnCpts,
               data: cptsCountByMonths,
             },
           ],
@@ -157,7 +192,7 @@
               },
             },
           },
-          labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+          labels: months,
 
           yaxis: {
             labels: {

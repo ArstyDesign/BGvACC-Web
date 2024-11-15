@@ -2,8 +2,7 @@ package com.bgvacc.web.services;
 
 import com.aarshinkov.datetimecalculator.utils.TimeUtils;
 import com.bgvacc.web.responses.events.*;
-import com.bgvacc.web.responses.events.reports.EventYearlyReportResponse;
-import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
+import com.bgvacc.web.responses.events.reports.*;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
@@ -540,13 +539,19 @@ public class EventServiceImpl implements EventService {
         eventsYearlyReport.setYear(year);
 
         List<EventYearlyReportResponse> eventsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "event");
-        eventsYearlyReport.setEvents(eventsCount);
+        EventTypeReportResponse events = new EventTypeReportResponse();
+        events.setEvents(eventsCount);
+        eventsYearlyReport.setEvents(events);
 
         List<EventYearlyReportResponse> cptsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "cpt");
-        eventsYearlyReport.setCpts(cptsCount);
+        EventTypeReportResponse cpts = new EventTypeReportResponse();
+        cpts.setEvents(cptsCount);
+        eventsYearlyReport.setCpts(cpts);
 
         List<EventYearlyReportResponse> vasopsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "vasops");
-        eventsYearlyReport.setVasops(vasopsCount);
+        EventTypeReportResponse vasops = new EventTypeReportResponse();
+        vasops.setEvents(vasopsCount);
+        eventsYearlyReport.setVasops(vasops);
 
         return eventsYearlyReport;
 
