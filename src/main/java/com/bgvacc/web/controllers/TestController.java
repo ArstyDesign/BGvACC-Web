@@ -2,16 +2,17 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -31,6 +32,14 @@ public class TestController extends Base {
   private final EventService eventService;
 
   private final ControllerOnlineLogService controllerOnlineLogService;
+
+  @GetMapping("/test/events/yearly-report")
+  @ResponseBody
+  public EventsYearlyReportResponse getEventsYearlyReportForYear(@RequestParam(name = "year", required = false, defaultValue = "2024") Integer year) {
+
+//    year = (year == null) ? LocalDate.now().getYear() : year;
+    return eventService.getEventsYearlyReportForYear(year);
+  }
 
   @GetMapping("/test/db")
   public String testDatabase(Model model) {

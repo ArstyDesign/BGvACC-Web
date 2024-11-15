@@ -75,6 +75,7 @@ public class DiscordNotifyApi extends Api {
     der.setDescription(":x: ATC logged off! :x:");
     der.setColor(15548997L);
     List<DiscordEmbedsFieldRequest> fields = new ArrayList<>();
+//    fields.add(new DiscordEmbedsFieldRequest(":person_red_hair: Controller", ccs.getControllerNames().getFullName() + " - " + nocs.getCid()));
     fields.add(new DiscordEmbedsFieldRequest(":id: Position", ccs.getPositionCallsign() + " - " + ccs.getPositionName()));
     fields.add(new DiscordEmbedsFieldRequest(":clock3: Active time", ccs.getActiveTime().toString()));
     fields.add(new DiscordEmbedsFieldRequest(":radio: Frequency", ccs.getFrequency()));

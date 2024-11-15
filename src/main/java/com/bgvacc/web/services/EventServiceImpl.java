@@ -2,6 +2,8 @@ package com.bgvacc.web.services;
 
 import com.aarshinkov.datetimecalculator.utils.TimeUtils;
 import com.bgvacc.web.responses.events.*;
+import com.bgvacc.web.responses.events.reports.EventYearlyReportResponse;
+import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
@@ -519,6 +521,70 @@ public class EventServiceImpl implements EventService {
     }
 
     return 0L;
+  }
+
+  @Override
+  public EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year) {
+
+//    final String getEventsYearlyReportForYearSql = "SELECT month_series.month, COALESCE(event_counts.type, 'No events') AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month, type";
+    final String getEventsYearlyReportForYearSql = "SELECT month_series.month, ? AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? AND type = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        EventsYearlyReportResponse eventsYearlyReport = new EventsYearlyReportResponse();
+        eventsYearlyReport.setYear(year);
+
+        List<EventYearlyReportResponse> eventsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "event");
+        eventsYearlyReport.setEvents(eventsCount);
+
+        List<EventYearlyReportResponse> cptsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "cpt");
+        eventsYearlyReport.setCpts(cptsCount);
+
+        List<EventYearlyReportResponse> vasopsCount = getEventsCount(getEventsYearlyReportForYearPstmt, year, "vasops");
+        eventsYearlyReport.setVasops(vasopsCount);
+
+        return eventsYearlyReport;
+
+      } catch (SQLException ex) {
+        log.error("Error getting events yearly report for year '" + year + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting events yearly report for year '" + year + "'.", e);
+    }
+
+    return null;
+  }
+
+  private List<EventYearlyReportResponse> getEventsCount(PreparedStatement pstmt, Integer year, String type) throws SQLException {
+
+    pstmt.setString(1, type);
+    pstmt.setInt(2, year);
+    pstmt.setInt(3, year);
+    pstmt.setString(4, type);
+
+    List<EventYearlyReportResponse> eventsCount = new ArrayList<>();
+
+    ResultSet rset = pstmt.executeQuery();
+
+    while (rset.next()) {
+      EventYearlyReportResponse eyrr = new EventYearlyReportResponse();
+
+      eyrr.setMonth(rset.getInt("month"));
+      eyrr.setType(rset.getString("type"));
+      eyrr.setCount(rset.getInt("event_count"));
+
+      eventsCount.add(eyrr);
+    }
+
+    return eventsCount;
   }
 
   private EventResponse getEventResponseFromResultSet(ResultSet rset) throws SQLException {

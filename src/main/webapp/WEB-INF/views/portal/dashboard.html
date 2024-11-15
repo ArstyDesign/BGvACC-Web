@@ -69,7 +69,7 @@
               <!--::/vertical line-->
 
               <h4 class="text-success mb-0" th:text="${#numbers.formatInteger(usersCount.activeUsers, 0, 'WHITESPACE')}">87</h4>
-              
+
               <!--vertical line-->
               <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
               <!--::/vertical line-->
@@ -80,6 +80,135 @@
           <!--::/end card-->
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="h3 mb-0">Events</div>
+          <hr class="my-2"/>
+        </div>
+
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Chart Area</h5>
+            </div>
+            <!--Chart-->
+            <div id="chart_area"></div>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let updateTimeUrl = /*[[@{/api/time}]]*/;
+                let eventsCountByMonths = /*[[${eventsCountByMonths}]]*/;
+                let cptsCountByMonths = /*[[${cptsCountByMonths}]]*/;
+                let vasOpsCountByMonths = /*[[${vasOpsCountByMonths}]]*/;
+                let aux2 = /*[[@{/}]]*/;
+        /*]]>*/
+
+        var cPrimary = "var(--bs-primary)";
+        var cSuccess = "var(--bs-success)";
+
+        //Chart Area
+        var optionsArea = {
+          colors: [cPrimary, cSuccess],
+          series: [{
+              name: 'Events',
+              data: eventsCountByMonths,
+            },
+            {
+              name: 'CPTs',
+              data: cptsCountByMonths,
+            },
+          ],
+
+          chart: {
+            type: 'area',
+            height: 350,
+            fontFamily: 'Inherit',
+            toolbar: {
+              show: false
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            width: 3,
+            curve: 'smooth',
+          },
+          grid: {
+            strokeDashArray: 2,
+            padding: {
+              left: 16,
+              top: 0,
+              bottom: 10,
+              right: 0
+            },
+            xaxis: {
+              lines: {
+                show: true,
+              },
+            },
+            yaxis: {
+              lines: {
+                show: false,
+              },
+            },
+          },
+          labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+
+          yaxis: {
+            labels: {
+              show: true,
+              offsetX: 6
+            },
+          },
+          xaxis: {
+            tickAmount: 12,
+            labels: {
+              show: true,
+              rotate: 0
+            },
+            tooltip: {
+              enabled: false
+            },
+            axisTicks: {
+              show: false,
+            },
+            axisBorder: {
+              show: false,
+            },
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              opacityFrom: 0.1,
+              opacityTo: 0,
+              stops: [0, 100]
+            }
+          },
+          tooltip: {
+            shared: true,
+            intersect: false,
+            y: {
+              formatter: function (val) {
+                return val + ' <span class="fw-normal text-muted"></span>';
+              },
+            },
+          },
+          markers: {
+            strokeWidth: 5,
+            strokeOpacity: 1,
+            strokeColors: ['#ffffff', '#ffffff', '#ffffff'],
+          },
+        };
+
+        var chartArea = new ApexCharts(document.querySelector('#chart_area'), optionsArea);
+        chartArea.render();
+
+      </script>
     </div>
   </body>
 </html>

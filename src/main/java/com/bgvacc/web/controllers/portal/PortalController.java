@@ -1,13 +1,14 @@
 package com.bgvacc.web.controllers.portal;
 
-import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.enums.UserRoles;
-import com.bgvacc.web.security.LoggedUser;
+import com.bgvacc.web.responses.events.reports.EventYearlyReportResponse;
+import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,28 @@ public class PortalController extends Base {
     model.addAttribute("totalUserEventApplications", eventService.getTotalUserEventApplications(loggedUserCid));
     model.addAttribute("staffCount", userService.getUsersCountByRoles(UserRoles.STAFF_DIRECTOR, UserRoles.STAFF_EVENTS, UserRoles.STAFF_TRAINING));
     model.addAttribute("usersCount", userService.getUsersCount());
+
+    int thisYear = LocalDate.now().getYear();
+    EventsYearlyReportResponse eventsYearlyReport = eventService.getEventsYearlyReportForYear(thisYear);
+
+    List<Integer> eventsCountByMonths = new ArrayList<>();
+    for (EventYearlyReportResponse event : eventsYearlyReport.getEvents()) {
+      eventsCountByMonths.add(event.getCount());
+    }
+
+    List<Integer> cptsCountByMonths = new ArrayList<>();
+    for (EventYearlyReportResponse cpt : eventsYearlyReport.getCpts()) {
+      cptsCountByMonths.add(cpt.getCount());
+    }
+
+    List<Integer> vasOpsCountByMonths = new ArrayList<>();
+    for (EventYearlyReportResponse vasops : eventsYearlyReport.getVasops()) {
+      vasOpsCountByMonths.add(vasops.getCount());
+    }
+
+    model.addAttribute("eventsCountByMonths", eventsCountByMonths);
+    model.addAttribute("cptsCountByMonths", cptsCountByMonths);
+    model.addAttribute("vasOpsCountByMonths", vasOpsCountByMonths);
 
     model.addAttribute("pageTitle", getMessage("portal.dashboard.header", member.getData().getFullName()));
     model.addAttribute("page", "dashboard");

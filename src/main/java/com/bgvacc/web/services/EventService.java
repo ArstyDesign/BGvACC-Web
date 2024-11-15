@@ -1,6 +1,7 @@
 package com.bgvacc.web.services;
 
 import com.bgvacc.web.responses.events.*;
+import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public interface EventService {
   List<EventPositionsResponse> getEventPositions(Long eventId);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
-  
+
   Long getTotalUserEventApplications(String cid);
+
+  EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
 }
