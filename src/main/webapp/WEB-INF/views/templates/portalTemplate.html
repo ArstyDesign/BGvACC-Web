@@ -42,8 +42,10 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     <script src="https://cdn.tiny.cloud/1/d578o4mngytjfz0d1zp3rxmwjmwnf0btaogegl6csv94pchh/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-    
+
     <script src="../../resources/theme/portal/vendor/js/apexcharts.min.js" th:src="@{/resources/theme/portal/vendor/js/apexcharts.min.js}"></script>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   </head>
   <body id="mainBody" class="">
 
@@ -113,6 +115,10 @@
     <script>
       const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
       const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+
+    <script>
+      lucide.createIcons();
     </script>
   </body>
 </html>

@@ -16,5 +16,5 @@ public class AppConstants {
 
   public static final String BULGARIAN_PREFIX = "LB";
   public static final Integer USER_LAST_PARTICIPATION_EVENTS_COUNT = 5;
-  public static final Integer USER_LAST_CONNECTIONS_COUNT = 10;
+  public static final Integer USER_LAST_CONNECTIONS_COUNT = 5;
 }

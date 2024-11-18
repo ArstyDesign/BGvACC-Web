@@ -33,7 +33,8 @@
                   <a href="#" th:href="@{/portal/dashboard}" class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'dashboard'} ? 'active'">
                     <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">widgets</span>
+                      <i data-lucide="layout-dashboard"></i>
+                      <!--<span class="material-symbols-rounded">widgets</span>-->
                     </span>
                     <span class="sidebar-text" th:text="#{portal.menu.main.dashboard}">Dashboard</span>
                   </a>
@@ -43,7 +44,8 @@
                      class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'profile'} ? 'active'">
                     <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">person</span>
+                      <i data-lucide="user"></i>
+                      <!--<span class="material-symbols-rounded">person</span>-->
                     </span>
                     <span class="sidebar-text" th:text="${session.loggedUser.names.fullName}">John Doe</span></span>
                   </a>
@@ -67,7 +69,8 @@
                   <a href="#" th:href="@{/portal/events/calendar}" class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'events' and subpage eq 'calendar'} ? 'active'">
                     <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">calendar_month</span>
+                      <i data-lucide="calendar-days"></i>
+                      <!--<span class="material-symbols-rounded">calendar_month</span>-->
                     </span>
                     <span class="sidebar-text" th:text="#{portal.menu.events.calendar}">Calendar</span>
                   </a>
@@ -76,7 +79,8 @@
                   <a href="#" th:href="@{/portal/events/upcoming}" class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'events' and subpage eq 'upcoming-events'} ? 'active'">
                     <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">event_upcoming</span>
+                      <i data-lucide="calendar-clock"></i>
+                      <!--<span class="material-symbols-rounded">event_upcoming</span>-->
                     </span>
                     <span class="sidebar-text" th:text="#{portal.menu.events.upcomingevents}">Upcoming events</span>
                   </a>
@@ -85,7 +89,8 @@
                   <a href="#" th:href="@{/portal/events/past}" class="nav-link d-flex align-items-center text-truncate"
                      th:classappend="${page eq 'events' and subpage eq 'past-events'} ? 'active'">
                     <span class="sidebar-icon">
-                      <span class="material-symbols-rounded">event_repeat</span>
+                      <i data-lucide="calendar-fold"></i>
+                      <!--<span class="material-symbols-rounded">event_repeat</span>-->
                     </span>
                     <span class="sidebar-text" th:text="#{portal.menu.events.pastevents}">Events</span>
                   </a>
@@ -100,7 +105,8 @@
                     <a href="#" th:href="@{/portal/trainings/notes}" class="nav-link d-flex align-items-center text-truncate"
                        th:classappend="${page eq 'trainings' and subpage eq 'notes'} ? 'active'">
                       <span class="sidebar-icon">
-                        <span class="material-symbols-rounded">sticky_note_2</span>
+                        <i data-lucide="notebook-pen"></i>
+                        <!--<span class="material-symbols-rounded">sticky_note_2</span>-->
                       </span>
                       <span class="sidebar-text" th:text="#{portal.menu.trainings.notes}">Notes</span>
                     </a>
@@ -109,7 +115,9 @@
                     <a href="#" th:href="@{/portal/trainings/solo-validations}" class="nav-link d-flex align-items-center text-truncate"
                        th:classappend="${page eq 'trainings' and subpage eq 'solo-validations'} ? 'active'">
                       <span class="sidebar-icon">
-                        <span class="material-symbols-rounded">record_voice_over</span>
+                        <i data-lucide="chevrons-left-right-ellipsis"></i>
+                        <!--<i data-lucide="ticket-slash"></i>-->
+                        <!--<span class="material-symbols-rounded">record_voice_over</span>-->
                       </span>
                       <span class="sidebar-text" th:text="#{portal.menu.trainings.solo}">Solo validations</span>
                     </a>
@@ -125,7 +133,8 @@
                     <a href="#" th:href="@{/portal/users}" class="nav-link d-flex align-items-center text-truncate"
                        th:classappend="${page eq 'users'} ? 'active'">
                       <span class="sidebar-icon">
-                        <span class="material-symbols-rounded">groups_2</span>
+                        <i data-lucide="users"></i>
+                        <!--<span class="material-symbols-rounded">groups_2</span>-->
                       </span>
                       <span class="sidebar-text" th:text="#{portal.menu.users.users}">Users</span>
                     </a>
@@ -141,7 +150,8 @@
                     <a href="#" th:href="@{/portal/blog/posts}" class="nav-link d-flex align-items-center text-truncate"
                        th:classappend="${page eq 'blog' and subpage eq 'posts'} ? 'active'">
                       <span class="sidebar-icon">
-                        <span class="material-symbols-rounded">article</span>
+                        <i data-lucide="sticky-note"></i>
+                        <!--<span class="material-symbols-rounded">article</span>-->
                       </span>
                       <span class="sidebar-text" th:text="#{portal.menu.blog.posts}">Posts</span>
                     </a>

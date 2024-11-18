@@ -198,3 +198,12 @@ CREATE TABLE user_event_applications (
 	applied_at timestamp not null default NOW(),
 	unique (user_cid, slot_id)
 );
+
+CREATE TABLE user_atc_authorized_positions (
+	id varchar(100) not null primary key default gen_random_uuid(),
+	user_cid varchar(30) not null references users(cid) on delete cascade,
+	position_id varchar(30) not null references positions(position_id),
+	is_position_manually_added boolean default false,
+	expires_on timestamp,
+	created_at timestamp not null default NOW()
+);

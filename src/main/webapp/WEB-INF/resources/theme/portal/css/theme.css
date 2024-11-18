@@ -18623,6 +18623,11 @@ div.dt-container.dt-empty-footer tbody > tr:last-child > * {
   font-weight: 400 !important;
 }
 
+[data-lucide] {
+  width: 18px;
+  height: 18px;
+}
+
 /*.footer {
   position: absolute;
   right: 0;
