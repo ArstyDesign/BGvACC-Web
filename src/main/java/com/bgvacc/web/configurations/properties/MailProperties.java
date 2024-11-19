@@ -1,5 +1,7 @@
 package com.bgvacc.web.configurations.properties;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -10,41 +12,36 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@PropertySource("classpath:mail.properties")
+//@PropertySource("classpath:mail.properties")
 public class MailProperties {
 
-  @Value("${mail.host}")
-  private String host;
-
-  @Value("${mail.port}")
-  private Integer port;
-
-  @Value("${mail.protocol}")
-  private String protocol;
-
-  @Value("${mail.username}")
-  private String username;
-
-  @Value("${mail.password}")
-  private String password;
-
   public String getHost() {
-    return host;
+    return getProperty("config/mail/host");
   }
 
   public Integer getPort() {
-    return port;
+    String value = getProperty("config/mail/port");
+    return Integer.valueOf(value);
   }
 
   public String getProtocol() {
-    return protocol;
+    return getProperty("config/mail/protocol");
   }
 
   public String getUsername() {
-    return username;
+    return getProperty("config/mail/username");
   }
 
   public String getPassword() {
-    return password;
+    return getProperty("config/mail/password");
+  }
+
+  private String getProperty(String propertyName) {
+    try {
+      Context ctx = new InitialContext();
+      return (String) ctx.lookup("java:comp/env/" + propertyName);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to fetch JNDI resource", e);
+    }
   }
 }

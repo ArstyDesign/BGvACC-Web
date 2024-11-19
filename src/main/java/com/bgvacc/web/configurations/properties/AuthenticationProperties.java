@@ -1,7 +1,7 @@
 package com.bgvacc.web.configurations.properties;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,55 +10,43 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@PropertySource("classpath:authentication.properties")
+//@PropertySource("classpath:authentication.properties")
 public class AuthenticationProperties {
 
-  @Value("${vatsim.client-secret}")
-  private String vatsimClientSecret;
-
-  @Value("${vateud.api.key}")
-  private String vatEudApiKey;
-
-  @Value("${db.host}")
-  private String dbHost;
-
-  @Value("${db.port}")
-  private String dbPort;
-
-  @Value("${db.schema}")
-  private String dbSchema;
-
-  @Value("${db.username}")
-  private String dbUsername;
-
-  @Value("${db.password}")
-  private String dbPassword;
-
   public String getVatsimClientSecret() {
-    return vatsimClientSecret;
+    return getProperty("config/vatsim/client-secret");
   }
 
   public String getVatEudApiKey() {
-    return vatEudApiKey;
+    return getProperty("config/vateud/api-key");
   }
 
   public String getDbHost() {
-    return dbHost;
+    return getProperty("config/db/host");
   }
 
   public String getDbPort() {
-    return dbPort;
+    return getProperty("config/db/port");
   }
 
   public String getDbSchema() {
-    return dbSchema;
+    return getProperty("config/db/schema");
   }
 
   public String getDbUsername() {
-    return dbUsername;
+    return getProperty("config/db/username");
   }
 
   public String getDbPassword() {
-    return dbPassword;
+    return getProperty("config/db/password");
+  }
+
+  private String getProperty(String propertyName) {
+    try {
+      Context ctx = new InitialContext();
+      return (String) ctx.lookup("java:comp/env/" + propertyName);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to fetch JNDI resource", e);
+    }
   }
 }

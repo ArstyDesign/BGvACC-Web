@@ -1,5 +1,7 @@
 package com.bgvacc.web.configurations.properties;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -13,45 +15,36 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:discord.properties")
 public class DiscordProperties {
 
-  @Value("${discord.clientid}")
-  private String discordClientId;
-
-  @Value("${discord.bot.token}")
-  private String discordBotToken;
-
-  @Value("${discord.controllers.online.announcement.channel.id}")
-  private String discordControllersAnnouncementChannelId;
-
-  @Value("${discord.controllers.online.webhook.id}")
-  private String discordControllersOnlineWebhookId;
-
-  @Value("${discord.events.announcement.channel.id}")
-  private String discordEventsAnnouncementChannelId;
-
-  @Value("${discord.events.webhook.id}")
-  private String discordEventsWebhookId;
-
   public String getDiscordClientId() {
-    return discordClientId;
+    return getProperty("config/discord/client-id");
   }
 
   public String getDiscordBotToken() {
-    return discordBotToken;
+    return getProperty("config/discord/bot/token");
   }
 
   public String getDiscordControllersAnnouncementChannelId() {
-    return discordControllersAnnouncementChannelId;
+    return getProperty("config/discord/controllers-online/announcements-channel-id");
   }
 
   public String getDiscordControllersOnlineWebhookId() {
-    return discordControllersOnlineWebhookId;
+    return getProperty("config/discord/controllers-online/webhook-id");
   }
 
   public String getDiscordEventsAnnouncementChannelId() {
-    return discordEventsAnnouncementChannelId;
+    return getProperty("config/discord/events/announcements-channel-id");
   }
 
   public String getDiscordEventsWebhookId() {
-    return discordEventsWebhookId;
+    return getProperty("config/discord/events/webhook-id");
+  }
+
+  private String getProperty(String propertyName) {
+    try {
+      Context ctx = new InitialContext();
+      return (String) ctx.lookup("java:comp/env/" + propertyName);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to fetch JNDI resource", e);
+    }
   }
 }
