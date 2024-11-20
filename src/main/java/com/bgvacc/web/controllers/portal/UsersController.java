@@ -7,6 +7,7 @@ import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import com.bgvacc.web.responses.users.UserResponse;
+import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_CONNECTIONS_COUNT;
@@ -102,6 +103,9 @@ public class UsersController extends Base {
     List<UserATCAuthorizedPositionResponse> userATCAuthorizedPositions = userATCAuthorizedPositionsService.getUserATCAuthorizedPositions(cid);
     model.addAttribute("userATCAuthorizedPositions", userATCAuthorizedPositions);
 
+    List<PositionResponse> unauthorizedPositions = userATCAuthorizedPositionsService.getUnauthorizedPositionsForUser(cid);
+    model.addAttribute("unauthorizedPositions", unauthorizedPositions);
+
     model.addAttribute("pageTitle", user.getNames().getFullName() + " - " + user.getCid());
     model.addAttribute("page", "users");
     model.addAttribute("subpage", "users");
@@ -133,6 +137,26 @@ public class UsersController extends Base {
     log.debug("CID: " + cid + ", Role: " + role);
 
     boolean isRemoved = userService.removeUserRole(cid, role);
+
+    return "redirect:/portal/users/" + cid;
+  }
+
+  @PostMapping("/portal/users/{cid}/position/add")
+  public String addUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position) {
+
+    log.debug("CID: " + cid + ", Position: " + position);
+
+    boolean isAdded = userATCAuthorizedPositionsService.addUserATCPosition(cid, position);
+
+    return "redirect:/portal/users/" + cid;
+  }
+
+  @PostMapping("/portal/users/{cid}/position/delete")
+  public String deleteUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position) {
+
+    log.debug("CID: " + cid + ", Position: " + position);
+
+    boolean isRemoved = userATCAuthorizedPositionsService.removeUserATCPosition(cid, position);
 
     return "redirect:/portal/users/" + cid;
   }

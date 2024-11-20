@@ -1,5 +1,6 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import java.sql.*;
 import java.util.*;
@@ -22,12 +23,173 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
 
   private final JdbcTemplate jdbcTemplate;
 
+  @Override
+  public List<PositionResponse> getAllPositions() {
+
+    final String getAllPositionsSql = "SELECT * FROM positions ORDER BY order_priority";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement getAllPositionsPstmt = conn.prepareStatement(getAllPositionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        List<PositionResponse> allPositions = new ArrayList<>();
+
+        ResultSet getAllPositionsRset = getAllPositionsPstmt.executeQuery();
+
+        while (getAllPositionsRset.next()) {
+
+          PositionResponse p = getPosition(getAllPositionsRset);
+
+          allPositions.add(p);
+        }
+
+        return allPositions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting all positions.", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting all positions.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public List<PositionResponse> getUnauthorizedPositionsForUser(String userCid) {
+
+    final String getUnauthorizedPositionsForUserSql = "SELECT p.* FROM positions p LEFT JOIN user_atc_authorized_positions uap ON p.position_id = uap.position_id AND uap.user_cid = ? WHERE uap.position_id IS NULL";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement getUnauthorizedPositionsForUserPstmt = conn.prepareStatement(getUnauthorizedPositionsForUserSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getUnauthorizedPositionsForUserPstmt.setString(1, userCid);
+
+        List<PositionResponse> allPositions = new ArrayList<>();
+
+        ResultSet getUnauthorizedPositionsForUserRset = getUnauthorizedPositionsForUserPstmt.executeQuery();
+
+        while (getUnauthorizedPositionsForUserRset.next()) {
+
+          PositionResponse p = getPosition(getUnauthorizedPositionsForUserRset);
+
+          allPositions.add(p);
+        }
+
+        return allPositions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting all positions.", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting all positions.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public boolean addUserATCPosition(String cid, String position) {
+
+    final String addUserATCPositionSql = "INSERT INTO user_atc_authorized_positions (user_cid, position_id) VALUES (?, ?)";
+    final String checkIfPositionForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement addUserATCPositionPstmt = conn.prepareStatement(addUserATCPositionSql);
+         PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        checkIfPositionForUserExistsPstmt.setString(1, cid);
+        checkIfPositionForUserExistsPstmt.setString(2, position);
+
+        ResultSet checkIfUserRoleForUserExistsRset = checkIfPositionForUserExistsPstmt.executeQuery();
+
+        log.info("Checking if position '" + position + "' exists for user with CID '" + cid + "'");
+
+        if (checkIfUserRoleForUserExistsRset.next()) {
+          if (checkIfUserRoleForUserExistsRset.getBoolean(1)) {
+            log.info("The position '" + position + "' is already authorized for user with CID '" + cid + "'");
+            return false;
+          }
+        }
+
+        log.info("Adding position '" + position + "' for user with CID '" + cid + "'");
+
+        addUserATCPositionPstmt.setString(1, cid);
+        addUserATCPositionPstmt.setString(2, position);
+
+        int rows = addUserATCPositionPstmt.executeUpdate();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error adding user ATC position for user with CID '" + cid + "' and position '" + position + "'", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error adding user ATC position for user with CID '" + cid + "' and position '" + position + "'", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean removeUserATCPosition(String cid, String position) {
+
+    final String removeUserPositionSql = "DELETE FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement removeUserPositionPstmt = conn.prepareStatement(removeUserPositionSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        removeUserPositionPstmt.setString(1, cid);
+        removeUserPositionPstmt.setString(2, position);
+
+        int rows = removeUserPositionPstmt.executeUpdate();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error removing user ATC position for user with CID '" + cid + "' and position '" + position + "'", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error removing user ATC position for user with CID '" + cid + "' and position '" + position + "'", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public List<UserATCAuthorizedPositionResponse> getAllATCCIDsWithAuthorizedPosition(String position) {
 
     final String getAllATCWithAuthorizedPositionSql = "SELECT * FROM user_atc_authorized_positions WHERE position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAllATCWithAuthorizedPositionPstmt = conn.prepareStatement(getAllATCWithAuthorizedPositionSql)) {
+         PreparedStatement getAllATCWithAuthorizedPositionPstmt = conn.prepareStatement(getAllATCWithAuthorizedPositionSql)) {
 
       try {
 
@@ -67,7 +229,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String getAuthorizedPositionsSql = "SELECT * FROM user_atc_authorized_positions WHERE user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAuthorizedPositionsPstmt = conn.prepareStatement(getAuthorizedPositionsSql)) {
+         PreparedStatement getAuthorizedPositionsPstmt = conn.prepareStatement(getAuthorizedPositionsSql)) {
 
       try {
 
@@ -99,6 +261,16 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     }
 
     return null;
+  }
+
+  private PositionResponse getPosition(ResultSet rset) throws SQLException {
+
+    PositionResponse p = new PositionResponse();
+    p.setPosition(rset.getString("position_id"));
+    p.setName(rset.getString("name"));
+    p.setOrderPriority(rset.getInt("order_priority"));
+
+    return p;
   }
 
   private UserATCAuthorizedPositionResponse getAuthorizedPosition(ResultSet rset) throws SQLException {

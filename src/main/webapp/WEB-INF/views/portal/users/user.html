@@ -106,7 +106,7 @@
                 <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
                    class="btn btn-primary btn-sm disabled">Add an authorized position</a>
               </div>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#addUserRoleModal" th:if="${user.cid ne session.loggedUser.cid}"
+              <a href="#" data-bs-toggle="modal" data-bs-target="#addATCPositionModal" th:if="${user.cid ne session.loggedUser.cid}"
                  class="btn btn-primary btn-sm ms-auto">
                 <i data-lucide="plus"></i>
                 <span>Add an authorized position</span>
@@ -205,6 +205,29 @@
                 <label class="form-label required" th:text="#{portal.users.user.roles.add.role}">Role</label>
                 <select class="form-control mb-3" name="role">
                   <option th:each="ur : ${unassignedRoles}" th:value="${ur}" th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.trainings.notes.create.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{portal.trainings.notes.create.save}">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal fade" id="addATCPositionModal" tabindex="-1" aria-labelledby="addATCPositionModalLabel" style="display: none;" aria-hidden="true">
+        <form th:action="@{/portal/users/} + ${cid} + '/position/add'" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addATCPositionModalLabel">Authorize ATC position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label required">Position</label>
+                <select class="form-control mb-3" name="role">
+                  <option th:each="up : ${unauthorizedPositions}" th:value="${up.position}" th:text="${up.position} + ' - ' + ${up.name}">User role</option>
                 </select>
               </div>
               <div class="modal-footer">
