@@ -2,8 +2,6 @@ package com.bgvacc.web.configurations.properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-@PropertySource("classpath:discord.properties")
 public class DiscordProperties {
 
   public String getDiscordClientId() {

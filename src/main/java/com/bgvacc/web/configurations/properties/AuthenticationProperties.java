@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @since 1.0.0
  */
 @Component
-//@PropertySource("classpath:authentication.properties")
 public class AuthenticationProperties {
 
   public String getVatsimClientSecret() {

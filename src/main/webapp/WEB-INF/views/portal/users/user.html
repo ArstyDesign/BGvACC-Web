@@ -104,7 +104,7 @@
               <div class="h5 mb-0">ATC authorized positions</div>
               <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
                 <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
-                   class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.roles.add}">Add a user role</a>
+                   class="btn btn-primary btn-sm disabled">Add an authorized position</a>
               </div>
               <a href="#" data-bs-toggle="modal" data-bs-target="#addUserRoleModal" th:if="${user.cid ne session.loggedUser.cid}"
                  class="btn btn-primary btn-sm ms-auto">
@@ -113,6 +113,29 @@
               </a>
             </div>
             <div class="card-body">
+              <table class="table align-middle table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Position</th>
+                    <th>Created on</th>
+                    <th>Expires on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="uaap, iterStat : ${userATCAuthorizedPositions}">
+                    <td>
+                      <span class="" th:text="${uaap.position}"></span>
+                    </td>
+                    <td>
+                      <span class="" th:text="${#dates.format(uaap.createdOn, 'dd.MM.yyyy, HH:mm')}"></span>
+                    </td>
+                    <td>
+                      <span class="" th:if="${uaap.expiresOn ne null}" th:text="${#dates.format(uaap.expiresOn, 'dd.MM.yyyy, HH:mm')}"></span>
+                      <span class="" th:if="${uaap.expiresOn eq null}" th:text="'-'"></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

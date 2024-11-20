@@ -7,8 +7,8 @@ import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import com.bgvacc.web.responses.users.UserResponse;
-import com.bgvacc.web.services.ControllerOnlineLogService;
-import com.bgvacc.web.services.UserService;
+import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
+import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_CONNECTIONS_COUNT;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_PARTICIPATION_EVENTS_COUNT;
 import com.bgvacc.web.utils.Breadcrumb;
@@ -39,6 +39,8 @@ public class UsersController extends Base {
   private final ControllerOnlineLogService controllerOnlineLogService;
 
   private final VatEudCoreApi vatEudCoreApi;
+
+  private final UserATCAuthorizedPositionsService userATCAuthorizedPositionsService;
 
   @GetMapping("/portal/users")
   public String getUsers(Model model) {
@@ -96,6 +98,9 @@ public class UsersController extends Base {
 
     model.addAttribute("completedSessions", completedSessions);
     model.addAttribute("totalTime", totalTime);
+
+    List<UserATCAuthorizedPositionResponse> userATCAuthorizedPositions = userATCAuthorizedPositionsService.getUserATCAuthorizedPositions(cid);
+    model.addAttribute("userATCAuthorizedPositions", userATCAuthorizedPositions);
 
     model.addAttribute("pageTitle", user.getNames().getFullName() + " - " + user.getCid());
     model.addAttribute("page", "users");
