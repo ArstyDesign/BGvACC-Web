@@ -1,5 +1,6 @@
 package com.bgvacc.web.utils;
 
+import com.aarshinkov.wordtransliterator.WordTransliterator;
 import java.io.Serializable;
 import lombok.*;
 
@@ -45,6 +46,18 @@ public class Names implements Serializable {
     }
 
     return "-";
+  }
+
+  public String getBgFullName() {
+    String fullName = getFullName();
+    WordTransliterator wt = new WordTransliterator();
+    return wt.transliterateWord(fullName);
+  }
+
+  public String getBGFullNameWithShortFirst() {
+    String fullNameWithShortFirst = getFullNameWithShortFirst();
+    WordTransliterator wt = new WordTransliterator();
+    return wt.transliterateWord(fullNameWithShortFirst);
   }
 
   @Override

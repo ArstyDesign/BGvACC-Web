@@ -24,6 +24,11 @@
   font-weight: 400 !important;
 }
 
+.no-url {
+  pointer-events: none;
+  cursor: default;
+}
+
 /*.footer {
   position: absolute;
   right: 0;

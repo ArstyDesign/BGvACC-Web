@@ -207,3 +207,29 @@ CREATE TABLE user_atc_authorized_positions (
 	expires_on timestamp,
 	created_at timestamp not null default NOW()
 );
+
+CREATE TABLE atc_reservation_types (
+	reservation_type varchar(40) not null primary key
+);
+
+INSERT INTO atc_reservation_types VALUES ('Normal');
+INSERT INTO atc_reservation_types VALUES ('Training');
+
+CREATE TABLE atc_reservations (
+	reservation_id varchar(100) not null primary key default gen_random_uuid(),
+	reservation_type varchar(40) not null references atc_reservation_types(reservation_type) on delete restrict,
+	position_id varchar(30) not null references positions(position_id),
+	user_cid varchar(30) not null references users(cid) on delete cascade,
+	trainee_cid varchar(30) references users(cid) on delete set null,
+	from_time timestamp not null,
+	to_time timestamp not null,
+	created_at timestamp not null default NOW()
+);
+
+CREATE TABLE mentor_trainees (
+	mentor_trainee_id varchar(100) not null primary key default gen_random_uuid(),
+	mentor_cid varchar(30) not null references users(cid) on delete cascade,
+	trainee_cid varchar(30) references users(cid) on delete set null,
+	position_id varchar(30) not null references positions(position_id),
+	assigned_at timestamp not null default NOW()
+);

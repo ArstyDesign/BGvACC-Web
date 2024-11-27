@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div>New ATC reservation</div>
+
+          <!--<div class="col-md-6 mb-5 mb-md-0">-->
+
+          <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+              <label for="fromTimeInput" class="form-label required">Start time</label>
+              <input type="text" value="2022-01-14" class="form-control flatpick flatpickr-input" data-flatpickr="" id="fromTimeInput" readonly="readonly"/>
+              <!--<span class="invalid-feedback">Error</span>-->
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+              <label for="toTimeInput" class="form-label required">End time</label>
+              <input type="text" value="2022-01-14" class="form-control flatpick flatpickr-input" data-flatpickr="" id="toTimeInput" readonly="readonly"/>
+              <!--<span class="invalid-feedback">Error</span>-->
+            </div>
+            
+            <div class="col-12 mb-3">
+              <label for="typeInput" class="form-label required">Type</label>
+              <select id="typeInput" class="form-control">
+                <option value="n">Normal</option>
+                <option value="t">Training</option>
+              </select>
+              <!--<span class="invalid-feedback">Error</span>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let todayText = /*[[#{calendar.today}]]*/;
+
+        let calendarEvents = /*[[#{language.current}]]*/;
+                let aux = /*[[@{/}]]*/;
+        /*]]>*/
+
+        let config = {
+          defaultDate: "today",
+          minDate: "today",
+          maxDate: new Date().fp_incr(7),
+          hourIncrement: 1,
+          minuteIncrement: 15,
+          dateFormat: 'd.m.Y H:i\\z',
+          enableTime: true,
+          time_24hr: true,
+          locale: calendarEvents,
+          firstDayOfWeek: 1
+        };
+
+        $(".flatpick").flatpickr(config);
+      </script>
+    </div>
+  </body>
+</html>

@@ -33,7 +33,9 @@
         <div class="eventDescription mx-4 mb-4 mt-0 mt-lg-4">
           <div th:utext="${event.htmlDescription}">Description</div>
 
-          <div>
+          <!--<div th:text="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">test</div>-->
+
+          <div sec:authorize="isAuthenticated()" th:if="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">
             <a href="#" class="btn btn-primary btn-sm mt-3">Apply for controlling</a>
           </div>
         </div>

@@ -248,7 +248,7 @@
                   <span th:text="${#strings.substring(session.loggedUser.names.firstName, 0, 1)}">J</span>
                   <span th:if="${session.loggedUser.names.lastName ne null and session.loggedUser.names.lastName.length gt 1}" th:text="${#strings.substring(session.loggedUser.names.lastName, 0, 1)}">D</span>
                 </div>
-                <span class="d-none d-md-inline-block" th:text="${session.loggedUser.names.fullName}">John Doe</span>
+                <span class="d-none d-md-inline-block" th:text="${session.loggedUser.names.bgFullName}">John Doe</span>
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" style="--bs-dropdown-min-width: 9rem;">

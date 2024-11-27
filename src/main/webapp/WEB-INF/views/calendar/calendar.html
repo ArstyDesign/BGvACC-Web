@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{templates/portalTemplate}">
+      layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title th:text="#{app.title(#{app.portal.title(#{portal.events.calendar.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
-
-    <style>
-      .fc-daygrid-day-events a {
-        color: inherit !important;
-      }
-    </style>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
@@ -19,17 +12,23 @@
       <div class="row">
         <div class="col-12 mb-3">
 
-          <div class="text-muted mb-4" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
-
-          <div class="card card-body">
-            <!--calendar-->
-            <div id="eventsCalendar"></div>
+          <div class="d-flex align-items-center mb-4">
+            <div class="text-muted" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
+            <div class="ms-auto">
+              <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-primary btn-sm">
+                <span>Make a reservation</span>
+              </a>
+            </div>
           </div>
+
+          <!--calendar-->
+          <div id="eventsCalendar"></div>
         </div>
       </div>
 
       <!--App calendar Plugin-->
       <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
+
       <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         let todayText = /*[[#{calendar.today}]]*/;
@@ -54,7 +53,16 @@
         // Initialize the calendar
         const eventsCalendar = new FullCalendar.Calendar(document.getElementById('eventsCalendar'), {
           events: calendarEvents,
+          eventDataTransform: function (event) {
+            if (!event.url || event.url === 'null') {
+              event.classNames = event.classNames || [];
+              event.classNames.push('no-url');
+            }
+          },
           timeZone: 'UTC',
+          initialView: 'timeGridWeek',
+          expandRows: false,
+          aspectRatio: 1.8,
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -77,10 +85,16 @@
             next: '❯'
           },
           dayMaxEvents: true, // allow "more" link when too many events
-          editable: true,
+          editable: false,
           droppable: true,
           eventClick: function (info) {
-            console.log(info.event);
+            info.jsEvent.preventDefault(); // don't let the browser navigate
+
+            if (info.event.url === 'null') {
+              info.el.classList.add('no-url');
+            } else {
+              window.open(info.event.url, '_blank');
+            }
 //            alert('Event: ' + info.event.title);
 //            alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
 //            alert('View: ' + info.view.type);

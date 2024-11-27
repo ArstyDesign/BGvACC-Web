@@ -41,7 +41,7 @@
                   <li class="nav-item dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
                       <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
-                      <small class="ms-1" th:text="${session.loggedUser.names.fullName}">John Doe</small>
+                      <small class="ms-1" th:text="${session.loggedUser.names.bgFullName}">John Doe</small>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                       <a href="#" th:href="@{/portal/profile/}" class="dropdown-item">
@@ -114,6 +114,10 @@
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/events}" th:text="#{menu.events}"
                    th:classappend="${page eq 'events'} ? 'active'">Events</a>
+              </li>
+              <li class="nav-item me-lg-3">
+                <a class="nav-link" href="#" th:href="@{/calendar}" th:text="#{menu.calendar}"
+                   th:classappend="${page eq 'calendar'} ? 'active'">Calendar</a>
               </li>
               <li class="nav-item dropdown me-lg-3">
                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle"

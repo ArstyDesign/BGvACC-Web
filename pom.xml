@@ -40,6 +40,11 @@
       <name>MetarDecoder</name>
       <url>file://${project.basedir}/libs</url>
     </repository>
+    <repository>
+      <id>word-transliterator</id>
+      <name>WordTransliterator</name>
+      <url>file://${project.basedir}/libs</url>
+    </repository>
   </repositories>
   
   <dependencies>
@@ -53,6 +58,12 @@
     <dependency>
       <groupId>com.aarshinkov</groupId>
       <artifactId>metar-decoder</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.aarshinkov</groupId>
+      <artifactId>word-transliterator</artifactId>
       <version>1.0.0</version>
     </dependency>
     

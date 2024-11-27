@@ -2,10 +2,12 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,14 @@ public class TestController extends Base {
   private final EventService eventService;
 
   private final ControllerOnlineLogService controllerOnlineLogService;
+  
+  private final ATCReservationService atcReservationService;
+  
+  @GetMapping("/test/atc/reservations")
+  @ResponseBody
+  public List<ATCReservationResponse> getATCReservations() {
+    return atcReservationService.getAllFutureATCReservations();
+  }
 
   @GetMapping("/test/events/yearly-report")
   @ResponseBody

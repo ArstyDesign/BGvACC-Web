@@ -46,7 +46,7 @@
         background: rgba($secondary,.1);
     }
     .fc-daygrid-day.fc-day-today{
-        background-color:var(--#{$prefix}body-bg);;
+        /*background-color:var(--#{$prefix}body-bg);*/
     }
     .fc-toolbar-chunk+.fc-toolbar-chunk{
         margin-top:$spacer * .75;

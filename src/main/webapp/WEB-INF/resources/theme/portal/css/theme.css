@@ -18083,7 +18083,7 @@ table th {
   background: rgba(71, 85, 105, 0.1);
 }
 .fc .fc-daygrid-day.fc-day-today {
-  background-color: var(--bs-body-bg);
+  /*background-color:var(--bs-body-bg);*/
 }
 .fc .fc-toolbar-chunk + .fc-toolbar-chunk {
   margin-top: 0.75rem;

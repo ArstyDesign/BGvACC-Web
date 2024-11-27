@@ -146,7 +146,13 @@ public class UsersController extends Base {
 
     log.debug("CID: " + cid + ", Position: " + position);
 
-    boolean isAdded = userATCAuthorizedPositionsService.addUserATCPosition(cid, position);
+    boolean isAdded;
+
+    if (position.equalsIgnoreCase("all")) {
+      isAdded = userATCAuthorizedPositionsService.addAllUserATCPositions(cid);
+    } else {
+      isAdded = userATCAuthorizedPositionsService.addUserATCPosition(cid, position);
+    }
 
     return "redirect:/portal/users/" + cid;
   }
@@ -157,6 +163,14 @@ public class UsersController extends Base {
     log.debug("CID: " + cid + ", Position: " + position);
 
     boolean isRemoved = userATCAuthorizedPositionsService.removeUserATCPosition(cid, position);
+
+    return "redirect:/portal/users/" + cid;
+  }
+
+  @PostMapping("/portal/users/{cid}/position/delete/all")
+  public String deleteAllUserATCPosition(@PathVariable("cid") String cid) {
+
+    boolean areRemoved = userATCAuthorizedPositionsService.removeAllUserATCPositions(cid);
 
     return "redirect:/portal/users/" + cid;
   }

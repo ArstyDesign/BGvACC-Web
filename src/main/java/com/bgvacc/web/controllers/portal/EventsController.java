@@ -6,6 +6,7 @@ import com.bgvacc.web.responses.events.EventPositionsResponse;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
+import static com.bgvacc.web.utils.Utils.convertEventsToCalendarEvents;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class EventsController extends Base {
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final EventService eventService;
+  
+  
 
   @GetMapping("/portal/events/calendar")
   public String getEventsCalendar(Model model) {
@@ -126,47 +129,5 @@ public class EventsController extends Base {
     model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "portal/events/event";
-  }
-
-  private List<CalendarEvent> convertEventsToCalendarEvents(List<EventResponse> events) {
-
-    List<CalendarEvent> calendarEvents = new ArrayList<>();
-
-    for (EventResponse e : events) {
-
-      CalendarEvent ce = new CalendarEvent();
-
-      ce.setId(String.valueOf(e.getEventId()));
-      ce.setTitle(e.getName());
-
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-      String startDate = e.getStartAt().format(formatter);
-      String endDate = e.getEndAt().format(formatter);
-
-      ce.setStart(startDate);
-      ce.setEnd(endDate);
-
-      ce.setUrl(ce.getId());
-
-      String eventColor = "var(--bs-primary)";
-      String cptColor = "var(--bs-success)";
-
-      ce.setBackgroundColor(eventColor);
-      ce.setBorderColor(eventColor);
-
-      if (e.isCpt()) {
-        ce.setBackgroundColor(cptColor);
-        ce.setBorderColor(cptColor);
-      }
-
-      if (e.isEvent()) {
-        ce.setBackgroundColor(eventColor);
-        ce.setBorderColor(eventColor);
-      }
-
-      calendarEvents.add(ce);
-    }
-
-    return calendarEvents;
   }
 }

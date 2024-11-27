@@ -17,7 +17,11 @@ public interface UserATCAuthorizedPositionsService {
   
   boolean addUserATCPosition(String cid, String position);
   
+  boolean addAllUserATCPositions(String cid);
+  
   boolean removeUserATCPosition(String cid, String position);
+  
+  boolean removeAllUserATCPositions(String cid);
 
   List<UserATCAuthorizedPositionResponse> getAllATCCIDsWithAuthorizedPosition(String position);
 
