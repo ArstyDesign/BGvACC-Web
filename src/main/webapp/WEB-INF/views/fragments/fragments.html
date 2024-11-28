@@ -41,7 +41,7 @@
                   <li class="nav-item dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link dropdown-toggle">
                       <i class="bi bi-person d-none d-sm-inline-block me-2 align-middle"></i>
-                      <small class="ms-1" th:text="${session.loggedUser.names.bgFullName}">John Doe</small>
+                      <small class="ms-1" th:text="${session.loggedUser.names.fullName}">John Doe</small>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                       <a href="#" th:href="@{/portal/profile/}" class="dropdown-item">

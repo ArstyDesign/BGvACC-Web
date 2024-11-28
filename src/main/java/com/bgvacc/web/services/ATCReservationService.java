@@ -1,5 +1,6 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
 import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import java.util.List;
 
@@ -11,4 +12,6 @@ import java.util.List;
 public interface ATCReservationService {
 
   List<ATCReservationResponse> getAllFutureATCReservations();
+  
+  boolean createNewATCReservation(CreateATCReservationModel carm);
 }

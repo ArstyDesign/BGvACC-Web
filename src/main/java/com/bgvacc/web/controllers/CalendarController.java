@@ -39,9 +39,10 @@ public class CalendarController extends Base {
 
     List<CalendarEvent> calendarEvents = convertEventsToCalendarEvents(events, "events");
     calendarEvents.addAll(convertATCReservationsToCalendarEvents(allFutureATCReservations, "atc-reservations"));
-
+    
     model.addAttribute("ces", calendarEvents);
 
+    model.addAttribute("pageTitle", "Calendar");
     model.addAttribute("page", "calendar");
 
     return "calendar/calendar";

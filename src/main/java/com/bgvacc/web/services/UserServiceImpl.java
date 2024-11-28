@@ -371,6 +371,8 @@ public class UserServiceImpl implements UserService {
         addUserRolePstmt.setString(2, role);
 
         int rows = addUserRolePstmt.executeUpdate();
+        
+        conn.commit();
 
         return rows > 0;
 
@@ -403,6 +405,8 @@ public class UserServiceImpl implements UserService {
         removeUserRolePstmt.setString(2, role);
 
         int rows = removeUserRolePstmt.executeUpdate();
+        
+        conn.commit();
 
         return rows > 0;
 

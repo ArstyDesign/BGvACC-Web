@@ -15,6 +15,8 @@ public interface UserATCAuthorizedPositionsService {
   
   List<PositionResponse> getUnauthorizedPositionsForUser(String userCid);
   
+  boolean hasUserAuthorizedPositions(String userCid);
+  
   boolean addUserATCPosition(String cid, String position);
   
   boolean addAllUserATCPositions(String cid);

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 @RequiredArgsConstructor
-public class EventsController extends Base {
+public class PortalEventsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 

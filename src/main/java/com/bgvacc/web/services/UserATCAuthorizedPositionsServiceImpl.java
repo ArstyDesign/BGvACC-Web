@@ -102,6 +102,41 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
   }
 
   @Override
+  public boolean hasUserAuthorizedPositions(String userCid) {
+
+    final String hasUserAuthorizedPositionsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ?) AS has_authorized_positions";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement hasUserAuthorizedPositionsPstmt = conn.prepareStatement(hasUserAuthorizedPositionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        hasUserAuthorizedPositionsPstmt.setString(1, userCid);
+
+        ResultSet hasUserAuthorizedPositionsRset = hasUserAuthorizedPositionsPstmt.executeQuery();
+
+        if (hasUserAuthorizedPositionsRset.next()) {
+          return hasUserAuthorizedPositionsRset.getBoolean(1);
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user has any authorized ATC positions.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user has any authorized ATC positions.", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public boolean addUserATCPosition(String cid, String position) {
 
     final String addUserATCPositionSql = "INSERT INTO user_atc_authorized_positions (user_cid, position_id) VALUES (?, ?)";

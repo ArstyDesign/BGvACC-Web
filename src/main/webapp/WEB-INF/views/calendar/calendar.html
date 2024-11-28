@@ -15,7 +15,7 @@
           <div class="d-flex align-items-center mb-4">
             <div class="text-muted" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
             <div class="ms-auto">
-              <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-primary btn-sm">
+              <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-primary btn-sm" sec:authorize="isAuthenticated()">
                 <span>Make a reservation</span>
               </a>
             </div>

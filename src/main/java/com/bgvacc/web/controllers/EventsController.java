@@ -1,10 +1,9 @@
-package com.bgvacc.web.controllers.vatsim;
+package com.bgvacc.web.controllers;
 
-import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
-import com.bgvacc.web.vatsim.events.VatsimEventData;
-import com.bgvacc.web.vatsim.events.VatsimEvents;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,18 +22,18 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 @RequiredArgsConstructor
-public class VatsimEventsController extends Base {
+public class EventsController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
-  private final EventApi eventApi;
+  private final EventService eventService;
 
   @GetMapping("/events")
   public String getEventsInBulgaria(Model model) {
 
-    VatsimEvents vatsimEvents = eventApi.getVatsimEvents();
+    List<EventResponse> events = eventService.getUpcomingEvents();
 
-    model.addAttribute("events", vatsimEvents);
+    model.addAttribute("events", events);
 
     model.addAttribute("pageTitle", getMessage("events.title"));
     model.addAttribute("page", "events");
@@ -51,29 +50,17 @@ public class VatsimEventsController extends Base {
   @GetMapping("/events/{eventId}")
   public String getEvent(@PathVariable("eventId") Long eventId, Model model) {
 
-    VatsimEvents vatsimEvents = eventApi.getVatsimEvents();
+    EventResponse event = eventService.getEvent(eventId);
 
-    VatsimEventData vatsimEventData = null;
-
-    for (VatsimEventData ved : vatsimEvents.getData()) {
-      if (ved.getId().equals(eventId)) {
-        vatsimEventData = ved;
-      }
-    }
-
-    if (vatsimEventData == null) {
-      return "redirect:/events";
-    }
-
-    model.addAttribute("event", vatsimEventData);
+    model.addAttribute("event", event);
 //
-    model.addAttribute("pageTitle", getMessage("event.title", vatsimEventData.getName()));
+    model.addAttribute("pageTitle", getMessage("event.title", event.getName()));
     model.addAttribute("page", "events");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
     breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
     breadcrumbs.add(new Breadcrumb(getMessage("menu.events", null, LocaleContextHolder.getLocale()), "/events"));
-    breadcrumbs.add(new Breadcrumb(vatsimEventData.getName(), null));
+    breadcrumbs.add(new Breadcrumb(event.getName(), null));
 
     model.addAttribute("breadcrumbs", breadcrumbs);
 

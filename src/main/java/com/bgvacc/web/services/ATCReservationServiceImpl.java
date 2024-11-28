@@ -1,10 +1,11 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
 import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.utils.Names;
 import java.sql.*;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -61,6 +62,69 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     }
 
     return null;
+  }
+
+  @Override
+  public boolean createNewATCReservation(CreateATCReservationModel carm) {
+
+    final String createNewATCReservationSql = "INSERT INTO atc_reservations (reservation_type, position_id, user_cid, trainee_cid, from_time, to_time) VALUES (?, ?, ?, ?, ?, ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement createNewATCReservationPstmt = conn.prepareStatement(createNewATCReservationSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        if (carm.getType() != null) {
+          switch (carm.getType()) {
+            case "t":
+              createNewATCReservationPstmt.setString(1, "Training");
+              break;
+            default:
+              createNewATCReservationPstmt.setString(1, "Normal");
+              break;
+          }
+        } else {
+          createNewATCReservationPstmt.setString(1, "Normal");
+        }
+
+        createNewATCReservationPstmt.setString(2, carm.getPosition());
+        createNewATCReservationPstmt.setString(3, carm.getUserCid());
+
+        if (carm.getTraineeCid() == null || carm.getTraineeCid().trim().isEmpty()) {
+          createNewATCReservationPstmt.setString(4, carm.getTraineeCid());
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm'z'");
+
+        LocalDateTime startLocalDateTime = LocalDateTime.parse(carm.getStartTime(), formatter);
+        LocalDateTime endLocalDateTime = LocalDateTime.parse(carm.getEndTime(), formatter);
+
+        // Задаваме времева зона UTC (Zulu)
+        Timestamp startDateTime = Timestamp.valueOf(startLocalDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime());
+        Timestamp endDateTime = Timestamp.valueOf(endLocalDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime());
+
+        createNewATCReservationPstmt.setTimestamp(5, startDateTime);
+        createNewATCReservationPstmt.setTimestamp(6, endDateTime);
+
+        int rows = createNewATCReservationPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error creating new ATC reservation.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error creating new ATC reservation.", e);
+    }
+
+    return false;
   }
 
   private ATCReservationResponse getATCReservation(ResultSet rset) throws SQLException {

@@ -15,27 +15,46 @@
 
           <!--<div class="col-md-6 mb-5 mb-md-0">-->
 
-          <div class="row">
-            <div class="col-12 col-md-6 mb-3">
-              <label for="fromTimeInput" class="form-label required">Start time</label>
-              <input type="text" value="2022-01-14" class="form-control flatpick flatpickr-input" data-flatpickr="" id="fromTimeInput" readonly="readonly"/>
-              <!--<span class="invalid-feedback">Error</span>-->
+          <form th:action="@{/atc-reservations/create}" method="post" th:object="${carm}">
+            <div class="row">
+              <div class="col-12 col-md-6 mb-3">
+                <label for="fromTimeInput" class="form-label required">Start time</label>
+                <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="fromTimeInput" readonly="readonly"
+                       th:field="*{startTime}"/>
+                <!--<span class="invalid-feedback">Error</span>-->
+              </div>
+              <div class="col-12 col-md-6 mb-3">
+                <label for="toTimeInput" class="form-label required">End time</label>
+                <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="toTimeInput" readonly="readonly"
+                       th:field="*{endTime}"/>
+                <!--<span class="invalid-feedback">Error</span>-->
+              </div>
+              
+              <div class="col-12 mb-3">
+                <label for="positionInput" class="form-label required">Position</label>
+                <select id="positionInput" class="form-control"
+                        th:field="*{position}">
+                  <option th:each="ap : ${authorizedPositions}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                </select>
+                <!--<span class="invalid-feedback">Error</span>-->
+              </div>
+
+              <div class="col-12 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
+                <label for="typeInput" class="form-label required">Type</label>
+                <select id="typeInput" class="form-control"
+                        th:field="*{type}">
+                  <option value="n">Normal</option>
+                  <option value="t">Training</option>
+                </select>
+                <!--<span class="invalid-feedback">Error</span>-->
+              </div>
+
+              <div class="col-12 mb-3">
+                <!--<button type="submit" class="btn btn-accent" th:text="#{atc.application.form.submit}">Submit</button>-->
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
             </div>
-            <div class="col-12 col-md-6 mb-3">
-              <label for="toTimeInput" class="form-label required">End time</label>
-              <input type="text" value="2022-01-14" class="form-control flatpick flatpickr-input" data-flatpickr="" id="toTimeInput" readonly="readonly"/>
-              <!--<span class="invalid-feedback">Error</span>-->
-            </div>
-            
-            <div class="col-12 mb-3">
-              <label for="typeInput" class="form-label required">Type</label>
-              <select id="typeInput" class="form-control">
-                <option value="n">Normal</option>
-                <option value="t">Training</option>
-              </select>
-              <!--<span class="invalid-feedback">Error</span>-->
-            </div>
-          </div>
+          </form>
         </div>
       </div>
 
