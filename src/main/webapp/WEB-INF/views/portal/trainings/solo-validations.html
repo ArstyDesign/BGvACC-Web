@@ -15,7 +15,7 @@
           <div class="h3" th:text="#{portal.trainings.solo.lbsrctr}">Sofia Control - LBSR_CTR position</div>
           <hr class="mb-4"/>
           <div class="row">
-            <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="sv : ${soloValidations.data}" th:if="${sv.position eq 'LBSF_APP'}">
+            <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="sv : ${soloValidations.data}" th:if="${sv.position eq 'LBSR_CTR'}">
               <div th:replace="portal/trainings/fragments :: #soloValidationCard(sv=${sv})"></div>
             </div>
           </div>
