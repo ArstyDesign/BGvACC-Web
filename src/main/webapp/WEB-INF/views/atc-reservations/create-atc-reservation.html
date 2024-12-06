@@ -29,12 +29,27 @@
                        th:field="*{endTime}"/>
                 <!--<span class="invalid-feedback">Error</span>-->
               </div>
-              
+
               <div class="col-12 mb-3">
                 <label for="positionInput" class="form-label required">Position</label>
                 <select id="positionInput" class="form-control"
                         th:field="*{position}">
-                  <option th:each="ap : ${authorizedPositions}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+
+                  <optgroup label="Control" th:if="${canControlAnyControl}">
+                    <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('CTR')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                  </optgroup>
+                  <optgroup label="Sofia" th:if="${canControlAnySofia}">
+                    <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBSF')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                  </optgroup>
+                  <optgroup label="Varna" th:if="${canControlAnyVarna}">
+                    <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBWN')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                  </optgroup>
+                  <optgroup label="Burgas" th:if="${canControlAnyBurgas}">
+                    <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBBG')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                  </optgroup>
+                  <optgroup label="Others" th:if="${canControlAnyOthers}">
+                    <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBPD') or ap.position.contains('LBGO')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
+                  </optgroup>
                 </select>
                 <!--<span class="invalid-feedback">Error</span>-->
               </div>

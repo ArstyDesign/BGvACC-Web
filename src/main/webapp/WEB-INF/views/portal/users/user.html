@@ -106,15 +106,15 @@
                               <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
                                  class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</a>
                             </div>-->
-              <a href="#" data-bs-toggle="modal" data-bs-target="#addATCPositionModal" th:if="${!#lists.isEmpty(unauthorizedPositions)}"
-                 class="btn btn-primary btn-sm ms-auto">
-                <i data-lucide="plus"></i>
-                <span th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</span>
-              </a>
               <a href="#" data-bs-toggle="modal" data-bs-target="#removeAllATCPositionModal" th:if="${#lists.size(userATCAuthorizedPositions) gt 1}"
-                 class="btn btn-danger btn-sm" th:classappend="${!#lists.isEmpty(unauthorizedPositions)} ? 'ms-2' : 'ms-auto'">
+                 class="btn btn-danger btn-sm ms-auto me-2">
                 <i data-lucide="trash-2"></i>
                 <span th:text="#{portal.users.user.authorizedpositions.deleteallpositions}">Remove all authorized positions</span>
+              </a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#addATCPositionModal" th:if="${!#lists.isEmpty(unauthorizedPositions)}"
+                 class="btn btn-primary btn-sm" th:classappend="${!#lists.isEmpty(unauthorizedPositions) and #lists.size(userATCAuthorizedPositions) lt 2} ? 'ms-auto'">
+                <i data-lucide="plus"></i>
+                <span th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</span>
               </a>
             </div>
             <div class="card-body">

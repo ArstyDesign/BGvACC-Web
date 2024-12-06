@@ -8,7 +8,6 @@ import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
 import static com.bgvacc.web.utils.Utils.convertEventsToCalendarEvents;
 import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -76,7 +76,7 @@ public class Utils {
   }
 
   public static List<CalendarEvent> convertEventsToCalendarEvents(List<EventResponse> events) {
-    return convertEventsToCalendarEvents(events, "");
+    return convertEventsToCalendarEvents(events, null);
   }
 
   public static List<CalendarEvent> convertEventsToCalendarEvents(List<EventResponse> events, String urlPrefix) {
@@ -97,7 +97,11 @@ public class Utils {
       ce.setStart(startDate);
       ce.setEnd(endDate);
 
-      ce.setUrl(urlPrefix + "/" + ce.getId());
+      if (urlPrefix == null) {
+        ce.setUrl(ce.getId());
+      } else {
+        ce.setUrl(urlPrefix + "/" + ce.getId());
+      }
 
 //      String eventColor = "var(--bs-primary)";
       String eventColor = "#3788d8";

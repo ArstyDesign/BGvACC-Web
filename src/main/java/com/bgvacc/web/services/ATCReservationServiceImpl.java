@@ -24,6 +24,8 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
+  private final static String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm'z'";
+
   private final JdbcTemplate jdbcTemplate;
 
   @Override
@@ -32,7 +34,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     final String getAllFutureATCReservationsSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE ar.from_time > NOW() ORDER BY ar.from_time, ar.to_time";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAllFutureATCReservationsPstmt = conn.prepareStatement(getAllFutureATCReservationsSql)) {
+         PreparedStatement getAllFutureATCReservationsPstmt = conn.prepareStatement(getAllFutureATCReservationsSql)) {
 
       try {
 
@@ -70,7 +72,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     final String createNewATCReservationSql = "INSERT INTO atc_reservations (reservation_type, position_id, user_cid, trainee_cid, from_time, to_time) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement createNewATCReservationPstmt = conn.prepareStatement(createNewATCReservationSql)) {
+         PreparedStatement createNewATCReservationPstmt = conn.prepareStatement(createNewATCReservationSql)) {
 
       try {
 
@@ -96,17 +98,8 @@ public class ATCReservationServiceImpl implements ATCReservationService {
           createNewATCReservationPstmt.setString(4, carm.getTraineeCid());
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm'z'");
-
-        LocalDateTime startLocalDateTime = LocalDateTime.parse(carm.getStartTime(), formatter);
-        LocalDateTime endLocalDateTime = LocalDateTime.parse(carm.getEndTime(), formatter);
-
-        // Задаваме времева зона UTC (Zulu)
-        Timestamp startDateTime = Timestamp.valueOf(startLocalDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime());
-        Timestamp endDateTime = Timestamp.valueOf(endLocalDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime());
-
-        createNewATCReservationPstmt.setTimestamp(5, startDateTime);
-        createNewATCReservationPstmt.setTimestamp(6, endDateTime);
+        createNewATCReservationPstmt.setTimestamp(5, getTimestampFromString(carm.getStartTime(), DATE_TIME_FORMAT));
+        createNewATCReservationPstmt.setTimestamp(6, getTimestampFromString(carm.getEndTime(), DATE_TIME_FORMAT));
 
         int rows = createNewATCReservationPstmt.executeUpdate();
 
@@ -125,6 +118,69 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     }
 
     return false;
+  }
+
+  @Override
+  public boolean isPositionFreeForTimeSlot(String position, String startTime, String endTime) {
+
+    final String isPositionFreeForTimeSlotSql = "SELECT EXISTS (SELECT 1 FROM atc_reservations WHERE position_id = ? AND (from_time <= ? AND to_time >= ?)) AS are_overlapping";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement isPositionFreeForTimeSlotPstmt = conn.prepareStatement(isPositionFreeForTimeSlotSql)) {
+
+      try {
+
+//        conn.setAutoCommit(false);
+        isPositionFreeForTimeSlotPstmt.setString(1, position);
+        isPositionFreeForTimeSlotPstmt.setTimestamp(2, getTimestampFromString(endTime, DATE_TIME_FORMAT));
+        isPositionFreeForTimeSlotPstmt.setTimestamp(3, getTimestampFromString(startTime, DATE_TIME_FORMAT));
+
+        ResultSet isPositionFreeForTimeSlotRset = isPositionFreeForTimeSlotPstmt.executeQuery();
+
+        if (isPositionFreeForTimeSlotRset.next()) {
+          return !isPositionFreeForTimeSlotRset.getBoolean(1);
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error checking if position '" + position + "' is free for time slot.", ex);
+//        conn.rollback();
+      } finally {
+//        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if position '" + position + "' is free for time slot.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean isFromBeforeToTime(String startTime, String endTime) {
+
+    return false;
+  }
+
+  @Override
+  public boolean isReservationLongerThan(int minutes) {
+
+    return true;
+  }
+
+  @Override
+  public boolean hasUserReservedAnotherPositionForTime(String userCid, String startTime, String endTime) {
+
+    return false;
+  }
+
+  private Timestamp getTimestampFromString(String time, String pattern) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+
+    LocalDateTime localDateTime = LocalDateTime.parse(time, formatter);
+
+    Timestamp dateTime = Timestamp.valueOf(localDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime());
+
+    return dateTime;
   }
 
   private ATCReservationResponse getATCReservation(ResultSet rset) throws SQLException {
