@@ -221,6 +221,7 @@ CREATE TABLE atc_reservations (
 	position_id varchar(30) not null references positions(position_id),
 	user_cid varchar(30) not null references users(cid) on delete cascade,
 	trainee_cid varchar(30) references users(cid) on delete set null,
+	is_canceled boolean not null default false,
 	from_time timestamp not null,
 	to_time timestamp not null,
 	created_at timestamp not null default NOW()

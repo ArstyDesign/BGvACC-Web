@@ -34,7 +34,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     final String getAllFutureATCReservationsSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE ar.from_time > NOW() ORDER BY ar.from_time, ar.to_time";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getAllFutureATCReservationsPstmt = conn.prepareStatement(getAllFutureATCReservationsSql)) {
+            PreparedStatement getAllFutureATCReservationsPstmt = conn.prepareStatement(getAllFutureATCReservationsSql)) {
 
       try {
 
@@ -72,7 +72,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     final String createNewATCReservationSql = "INSERT INTO atc_reservations (reservation_type, position_id, user_cid, trainee_cid, from_time, to_time) VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement createNewATCReservationPstmt = conn.prepareStatement(createNewATCReservationSql)) {
+            PreparedStatement createNewATCReservationPstmt = conn.prepareStatement(createNewATCReservationSql)) {
 
       try {
 
@@ -123,22 +123,39 @@ public class ATCReservationServiceImpl implements ATCReservationService {
   @Override
   public boolean isPositionFreeForTimeSlot(String position, String startTime, String endTime) {
 
-    final String isPositionFreeForTimeSlotSql = "SELECT EXISTS (SELECT 1 FROM atc_reservations WHERE position_id = ? AND (from_time <= ? AND to_time >= ?)) AS are_overlapping";
+    final String isPositionFreeForTimeSlotSql = "SELECT EXISTS ( SELECT 1 FROM atc_reservations WHERE position_id = ? AND ( (from_time < ? AND to_time > ?) OR (from_time >= ? AND to_time <= ?) OR (from_time < ? AND to_time > ?) OR (from_time <= ? AND to_time >= ?) ) ) AS overlapping";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement isPositionFreeForTimeSlotPstmt = conn.prepareStatement(isPositionFreeForTimeSlotSql)) {
+            PreparedStatement isPositionFreeForTimeSlotPstmt = conn.prepareStatement(isPositionFreeForTimeSlotSql)) {
 
       try {
 
 //        conn.setAutoCommit(false);
         isPositionFreeForTimeSlotPstmt.setString(1, position);
-        isPositionFreeForTimeSlotPstmt.setTimestamp(2, getTimestampFromString(endTime, DATE_TIME_FORMAT));
-        isPositionFreeForTimeSlotPstmt.setTimestamp(3, getTimestampFromString(startTime, DATE_TIME_FORMAT));
+
+        Timestamp startTimestamp = getTimestampFromString(startTime, DATE_TIME_FORMAT);
+        Timestamp endTimestamp = getTimestampFromString(endTime, DATE_TIME_FORMAT);
+
+        isPositionFreeForTimeSlotPstmt.setTimestamp(2, endTimestamp);
+        isPositionFreeForTimeSlotPstmt.setTimestamp(3, startTimestamp);
+
+        isPositionFreeForTimeSlotPstmt.setTimestamp(4, startTimestamp);
+        isPositionFreeForTimeSlotPstmt.setTimestamp(5, endTimestamp);
+
+        isPositionFreeForTimeSlotPstmt.setTimestamp(6, endTimestamp);
+        isPositionFreeForTimeSlotPstmt.setTimestamp(7, startTimestamp);
+
+        isPositionFreeForTimeSlotPstmt.setTimestamp(8, startTimestamp);
+        isPositionFreeForTimeSlotPstmt.setTimestamp(9, endTimestamp);
 
         ResultSet isPositionFreeForTimeSlotRset = isPositionFreeForTimeSlotPstmt.executeQuery();
 
         if (isPositionFreeForTimeSlotRset.next()) {
-          return !isPositionFreeForTimeSlotRset.getBoolean(1);
+          boolean result = !isPositionFreeForTimeSlotRset.getBoolean(1);
+
+          log.debug("Is free? " + (result ? "Yes" : "No"));
+
+          return result;
         }
 
       } catch (SQLException ex) {
@@ -155,19 +172,43 @@ public class ATCReservationServiceImpl implements ATCReservationService {
   }
 
   @Override
-  public boolean isFromBeforeToTime(String startTime, String endTime) {
-
-    return false;
-  }
-
-  @Override
-  public boolean isReservationLongerThan(int minutes) {
-
-    return true;
-  }
-
-  @Override
   public boolean hasUserReservedAnotherPositionForTime(String userCid, String startTime, String endTime) {
+
+    final String hasUserReservedAnotherPositionForTimeSql = "SELECT EXISTS (SELECT 1 FROM atc_reservations WHERE user_cid = ? AND ((from_time < ? AND to_time > ?))) AS overlapping";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement hasUserReservedAnotherPositionForTimePstmt = conn.prepareStatement(hasUserReservedAnotherPositionForTimeSql)) {
+
+      try {
+
+//        conn.setAutoCommit(false);
+        hasUserReservedAnotherPositionForTimePstmt.setString(1, userCid);
+
+        Timestamp startTimestamp = getTimestampFromString(startTime, DATE_TIME_FORMAT);
+        Timestamp endTimestamp = getTimestampFromString(endTime, DATE_TIME_FORMAT);
+
+        hasUserReservedAnotherPositionForTimePstmt.setTimestamp(2, endTimestamp);
+        hasUserReservedAnotherPositionForTimePstmt.setTimestamp(3, startTimestamp);
+
+        ResultSet hasUserReservedAnotherPositionForTimeRset = hasUserReservedAnotherPositionForTimePstmt.executeQuery();
+
+        if (hasUserReservedAnotherPositionForTimeRset.next()) {
+          boolean result = hasUserReservedAnotherPositionForTimeRset.getBoolean(1);
+
+          log.debug("Has user reserved another position for this time? " + (result ? "Yes" : "No"));
+
+          return result;
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user with CID '" + userCid + "' has reserved another position, overlapping with the new one.", ex);
+//        conn.rollback();
+      } finally {
+//        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user with CID '" + userCid + "' has reserved another position, overlapping with the new one.", e);
+    }
 
     return false;
   }

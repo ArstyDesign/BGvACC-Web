@@ -1,10 +1,12 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.domains.ATCCanControlPositions;
 import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
 import com.bgvacc.web.responses.mentortrainees.MentorTraineeResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
+import static com.bgvacc.web.utils.AppConstants.ATC_RESERVATION_MAX_HOURS;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,48 +50,14 @@ public class ATCReservationsController extends Base {
       return "redirect:/calendar";
     }
 
-//    if ()
     List<MentorTraineeResponse> mentorTrainees = mentorTraineeService.getMentorTrainees(getLoggedUserCid(request));
-
     model.addAttribute("mentorTrainees", mentorTrainees);
 
     List<UserATCAuthorizedPositionResponse> authorizedPositions = userATCAuthorizedPositionsService.getUserATCAuthorizedPositions(getLoggedUserCid(request));
-
     model.addAttribute("authorizedPositions", authorizedPositions);
 
-    boolean canControlAnyControl = false;
-    boolean canControlAnySofia = false;
-    boolean canControlAnyVarna = false;
-    boolean canControlAnyBurgas = false;
-    boolean canControlAnyOthers = false;
-
-    for (UserATCAuthorizedPositionResponse ap : authorizedPositions) {
-      if (ap.getPosition().contains("CTR")) {
-        canControlAnyControl = true;
-      }
-
-      if (ap.getPosition().contains("LBSF")) {
-        canControlAnySofia = true;
-      }
-
-      if (ap.getPosition().contains("LBWN")) {
-        canControlAnyVarna = true;
-      }
-
-      if (ap.getPosition().contains("LBBG")) {
-        canControlAnyBurgas = true;
-      }
-
-      if (ap.getPosition().contains("LBPD") || ap.getPosition().contains("LBGO")) {
-        canControlAnyOthers = true;
-      }
-    }
-
-    model.addAttribute("canControlAnyControl", canControlAnyControl);
-    model.addAttribute("canControlAnySofia", canControlAnySofia);
-    model.addAttribute("canControlAnyVarna", canControlAnyVarna);
-    model.addAttribute("canControlAnyBurgas", canControlAnyBurgas);
-    model.addAttribute("canControlAnyOthers", canControlAnyOthers);
+    ATCCanControlPositions canControl = getCanControlPositions(authorizedPositions);
+    model.addAttribute("canControl", canControl);
 
     CreateATCReservationModel carm = new CreateATCReservationModel();
     model.addAttribute("carm", carm);
@@ -126,6 +94,14 @@ public class ATCReservationsController extends Base {
     if (!atcReservationService.isPositionFreeForTimeSlot(carm.getPosition(), carm.getStartTime(), carm.getEndTime())) {
       hasErrors = true;
       error = "Position taken";
+
+      bindingResult.rejectValue("startTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
+      bindingResult.rejectValue("endTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
+    }
+    
+    if (atcReservationService.hasUserReservedAnotherPositionForTime(loggedUserCid, carm.getStartTime(), carm.getEndTime())) {
+      hasErrors = true;
+      error = "User reserved another position for this time";
     }
 
     if (hasErrors) {
@@ -133,8 +109,13 @@ public class ATCReservationsController extends Base {
       log.error("Last error: '" + error + "'");
 
       List<MentorTraineeResponse> mentorTrainees = mentorTraineeService.getMentorTrainees(getLoggedUserCid(request));
-
       model.addAttribute("mentorTrainees", mentorTrainees);
+
+      List<UserATCAuthorizedPositionResponse> authorizedPositions = userATCAuthorizedPositionsService.getUserATCAuthorizedPositions(getLoggedUserCid(request));
+      model.addAttribute("authorizedPositions", authorizedPositions);
+
+      ATCCanControlPositions canControl = getCanControlPositions(authorizedPositions);
+      model.addAttribute("canControl", canControl);
 
       model.addAttribute("pageTitle", "Calendar");
       model.addAttribute("page", "atc-reservations");
@@ -146,5 +127,34 @@ public class ATCReservationsController extends Base {
     boolean isCreated = atcReservationService.createNewATCReservation(carm);
 
     return "redirect:/calendar";
+  }
+
+  private ATCCanControlPositions getCanControlPositions(List<UserATCAuthorizedPositionResponse> authorizedPositions) {
+
+    ATCCanControlPositions canControl = new ATCCanControlPositions();
+
+    for (UserATCAuthorizedPositionResponse ap : authorizedPositions) {
+      if (ap.getPosition().contains("CTR")) {
+        canControl.setCanControlAnyControl(true);
+      }
+
+      if (ap.getPosition().contains("LBSF")) {
+        canControl.setCanControlAnySofia(true);
+      }
+
+      if (ap.getPosition().contains("LBWN")) {
+        canControl.setCanControlAnyVarna(true);
+      }
+
+      if (ap.getPosition().contains("LBBG")) {
+        canControl.setCanControlAnyBurgas(true);
+      }
+
+      if (ap.getPosition().contains("LBPD") || ap.getPosition().contains("LBGO")) {
+        canControl.setCanControlAnyOthers(true);
+      }
+    }
+
+    return canControl;
   }
 }

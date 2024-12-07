@@ -17,9 +17,5 @@ public interface ATCReservationService {
   
   boolean isPositionFreeForTimeSlot(String position, String startTime, String endTime);
   
-  boolean isFromBeforeToTime(String startTime, String endTime);
-  
-  boolean isReservationLongerThan(int minutes);
-  
   boolean hasUserReservedAnotherPositionForTime(String userCid, String startTime, String endTime);
 }

@@ -11,23 +11,20 @@
 
       <div class="row">
         <div class="col-12 mb-3">
-          <div>New ATC reservation</div>
-
-          <!--<div class="col-md-6 mb-5 mb-md-0">-->
 
           <form th:action="@{/atc-reservations/create}" method="post" th:object="${carm}">
             <div class="row">
               <div class="col-12 col-md-6 mb-3">
                 <label for="fromTimeInput" class="form-label required">Start time</label>
                 <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="fromTimeInput" readonly="readonly"
-                       th:field="*{startTime}"/>
-                <!--<span class="invalid-feedback">Error</span>-->
+                       th:field="*{startTime}" th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"/>
+                <span class="invalid-feedback" th:errors="*{startTime}">Error</span>
               </div>
               <div class="col-12 col-md-6 mb-3">
                 <label for="toTimeInput" class="form-label required">End time</label>
                 <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="toTimeInput" readonly="readonly"
-                       th:field="*{endTime}"/>
-                <!--<span class="invalid-feedback">Error</span>-->
+                       th:field="*{endTime}" th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"/>
+                <span class="invalid-feedback" th:errors="*{endTime}">Error</span>
               </div>
 
               <div class="col-12 mb-3">
@@ -35,19 +32,19 @@
                 <select id="positionInput" class="form-control"
                         th:field="*{position}">
 
-                  <optgroup label="Control" th:if="${canControlAnyControl}">
+                  <optgroup label="Control" th:if="${canControl.canControlAnyControl}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('CTR')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Sofia" th:if="${canControlAnySofia}">
+                  <optgroup label="Sofia" th:if="${canControl.canControlAnySofia}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBSF')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Varna" th:if="${canControlAnyVarna}">
+                  <optgroup label="Varna" th:if="${canControl.canControlAnyVarna}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBWN')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Burgas" th:if="${canControlAnyBurgas}">
+                  <optgroup label="Burgas" th:if="${canControl.canControlAnyBurgas}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBBG')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Others" th:if="${canControlAnyOthers}">
+                  <optgroup label="Others" th:if="${canControl.canControlAnyOthers}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBPD') or ap.position.contains('LBGO')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
                 </select>
