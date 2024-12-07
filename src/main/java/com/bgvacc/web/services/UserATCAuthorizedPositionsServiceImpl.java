@@ -29,7 +29,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String getAllPositionsSql = "SELECT * FROM positions ORDER BY order_priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAllPositionsPstmt = conn.prepareStatement(getAllPositionsSql)) {
+         PreparedStatement getAllPositionsPstmt = conn.prepareStatement(getAllPositionsSql)) {
 
       try {
 
@@ -67,7 +67,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String getUnauthorizedPositionsForUserSql = "SELECT p.* FROM positions p LEFT JOIN user_atc_authorized_positions uap ON p.position_id = uap.position_id AND uap.user_cid = ? WHERE uap.position_id IS NULL";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUnauthorizedPositionsForUserPstmt = conn.prepareStatement(getUnauthorizedPositionsForUserSql)) {
+         PreparedStatement getUnauthorizedPositionsForUserPstmt = conn.prepareStatement(getUnauthorizedPositionsForUserSql)) {
 
       try {
 
@@ -102,12 +102,48 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
   }
 
   @Override
+  public boolean isPositionAuthorizedForUser(String position, String userCid) {
+
+    final String isPositionAuthorizedForUserSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?) as is_authorized";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement isPositionAuthorizedForUserPstmt = conn.prepareStatement(isPositionAuthorizedForUserSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        isPositionAuthorizedForUserPstmt.setString(1, userCid);
+        isPositionAuthorizedForUserPstmt.setString(2, position);
+
+        ResultSet hasUserAuthorizedPositionsRset = isPositionAuthorizedForUserPstmt.executeQuery();
+
+        if (hasUserAuthorizedPositionsRset.next()) {
+          return hasUserAuthorizedPositionsRset.getBoolean(1);
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user with '" + userCid + "' is authorized for position '" + position + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user with '" + userCid + "' is authorized for position '" + position + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public boolean hasUserAuthorizedPositions(String userCid) {
 
     final String hasUserAuthorizedPositionsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ?) AS has_authorized_positions";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement hasUserAuthorizedPositionsPstmt = conn.prepareStatement(hasUserAuthorizedPositionsSql)) {
+         PreparedStatement hasUserAuthorizedPositionsPstmt = conn.prepareStatement(hasUserAuthorizedPositionsSql)) {
 
       try {
 
@@ -143,8 +179,8 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String checkIfPositionForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement addUserATCPositionPstmt = conn.prepareStatement(addUserATCPositionSql);
-            PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql)) {
+         PreparedStatement addUserATCPositionPstmt = conn.prepareStatement(addUserATCPositionSql);
+         PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql)) {
 
       try {
 
@@ -196,9 +232,9 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String checkIfPositionForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getPositionsPstmt = conn.prepareStatement(getPositionsSql);
-            PreparedStatement addUserATCPositionPstmt = conn.prepareStatement(addUserATCPositionSql);
-            PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql)) {
+         PreparedStatement getPositionsPstmt = conn.prepareStatement(getPositionsSql);
+         PreparedStatement addUserATCPositionPstmt = conn.prepareStatement(addUserATCPositionSql);
+         PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql)) {
 
       try {
 
@@ -255,7 +291,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String removeUserPositionSql = "DELETE FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement removeUserPositionPstmt = conn.prepareStatement(removeUserPositionSql)) {
+         PreparedStatement removeUserPositionPstmt = conn.prepareStatement(removeUserPositionSql)) {
 
       try {
 
@@ -289,7 +325,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String removeUserPositionSql = "DELETE FROM user_atc_authorized_positions WHERE user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement removeUserPositionPstmt = conn.prepareStatement(removeUserPositionSql)) {
+         PreparedStatement removeUserPositionPstmt = conn.prepareStatement(removeUserPositionSql)) {
 
       try {
 
@@ -322,7 +358,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String getAllATCWithAuthorizedPositionSql = "SELECT * FROM user_atc_authorized_positions WHERE position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAllATCWithAuthorizedPositionPstmt = conn.prepareStatement(getAllATCWithAuthorizedPositionSql)) {
+         PreparedStatement getAllATCWithAuthorizedPositionPstmt = conn.prepareStatement(getAllATCWithAuthorizedPositionSql)) {
 
       try {
 
@@ -362,7 +398,7 @@ public class UserATCAuthorizedPositionsServiceImpl implements UserATCAuthorizedP
     final String getAuthorizedPositionsSql = "SELECT uaap.*, p.order_priority FROM user_atc_authorized_positions uaap JOIN positions p ON uaap.position_id = p.position_id WHERE uaap.user_cid = ? ORDER BY order_priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getAuthorizedPositionsPstmt = conn.prepareStatement(getAuthorizedPositionsSql)) {
+         PreparedStatement getAuthorizedPositionsPstmt = conn.prepareStatement(getAuthorizedPositionsSql)) {
 
       try {
 

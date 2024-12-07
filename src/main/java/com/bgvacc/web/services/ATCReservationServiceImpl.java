@@ -31,7 +31,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
   @Override
   public List<ATCReservationResponse> getAllFutureATCReservations() {
 
-    final String getAllFutureATCReservationsSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE ar.from_time > NOW() ORDER BY ar.from_time, ar.to_time";
+    final String getAllFutureATCReservationsSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE ar.from_time > NOW() AND is_canceled = false ORDER BY ar.from_time, ar.to_time";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
             PreparedStatement getAllFutureATCReservationsPstmt = conn.prepareStatement(getAllFutureATCReservationsSql)) {
@@ -98,8 +98,8 @@ public class ATCReservationServiceImpl implements ATCReservationService {
           createNewATCReservationPstmt.setString(4, carm.getTraineeCid());
         }
 
-        createNewATCReservationPstmt.setTimestamp(5, getTimestampFromString(carm.getStartTime(), DATE_TIME_FORMAT));
-        createNewATCReservationPstmt.setTimestamp(6, getTimestampFromString(carm.getEndTime(), DATE_TIME_FORMAT));
+        createNewATCReservationPstmt.setTimestamp(5, Timestamp.valueOf(carm.getStartTime()));
+        createNewATCReservationPstmt.setTimestamp(6, Timestamp.valueOf(carm.getEndTime()));
 
         int rows = createNewATCReservationPstmt.executeUpdate();
 
@@ -121,7 +121,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
   }
 
   @Override
-  public boolean isPositionFreeForTimeSlot(String position, String startTime, String endTime) {
+  public boolean isPositionFreeForTimeSlot(String position, LocalDateTime startTime, LocalDateTime endTime) {
 
     final String isPositionFreeForTimeSlotSql = "SELECT EXISTS ( SELECT 1 FROM atc_reservations WHERE position_id = ? AND ( (from_time < ? AND to_time > ?) OR (from_time >= ? AND to_time <= ?) OR (from_time < ? AND to_time > ?) OR (from_time <= ? AND to_time >= ?) ) ) AS overlapping";
 
@@ -133,8 +133,8 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 //        conn.setAutoCommit(false);
         isPositionFreeForTimeSlotPstmt.setString(1, position);
 
-        Timestamp startTimestamp = getTimestampFromString(startTime, DATE_TIME_FORMAT);
-        Timestamp endTimestamp = getTimestampFromString(endTime, DATE_TIME_FORMAT);
+        Timestamp startTimestamp = Timestamp.valueOf(startTime);
+        Timestamp endTimestamp = Timestamp.valueOf(endTime);
 
         isPositionFreeForTimeSlotPstmt.setTimestamp(2, endTimestamp);
         isPositionFreeForTimeSlotPstmt.setTimestamp(3, startTimestamp);
@@ -170,9 +170,15 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 
     return false;
   }
+  
+  @Override
+  public boolean isThereAnEventForTimeSlot(LocalDateTime startTime, LocalDateTime endTime) {
+    
+    return false;
+  }
 
   @Override
-  public boolean hasUserReservedAnotherPositionForTime(String userCid, String startTime, String endTime) {
+  public boolean hasUserReservedAnotherPositionForTime(String userCid, LocalDateTime startTime, LocalDateTime endTime) {
 
     final String hasUserReservedAnotherPositionForTimeSql = "SELECT EXISTS (SELECT 1 FROM atc_reservations WHERE user_cid = ? AND ((from_time < ? AND to_time > ?))) AS overlapping";
 
@@ -184,8 +190,8 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 //        conn.setAutoCommit(false);
         hasUserReservedAnotherPositionForTimePstmt.setString(1, userCid);
 
-        Timestamp startTimestamp = getTimestampFromString(startTime, DATE_TIME_FORMAT);
-        Timestamp endTimestamp = getTimestampFromString(endTime, DATE_TIME_FORMAT);
+        Timestamp startTimestamp = Timestamp.valueOf(startTime);
+        Timestamp endTimestamp = Timestamp.valueOf(endTime);
 
         hasUserReservedAnotherPositionForTimePstmt.setTimestamp(2, endTimestamp);
         hasUserReservedAnotherPositionForTimePstmt.setTimestamp(3, startTimestamp);

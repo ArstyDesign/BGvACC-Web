@@ -14,56 +14,68 @@
 
           <form th:action="@{/atc-reservations/create}" method="post" th:object="${carm}">
             <div class="row">
+
+              <div class="col-12 mb-3" th:if="${hasErrors}">
+                <div class="alert alert-danger mb-0" th:text="${error}">Error</div>
+              </div>
+
               <div class="col-12 col-md-6 mb-3">
-                <label for="fromTimeInput" class="form-label required">Start time</label>
-                <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="fromTimeInput" readonly="readonly"
+                <label for="fromTimeInput" class="form-label required" th:text="#{calendar.reservation.create.starttime}">Start time</label>
+                <input id="flatpickFromDateTimeInput" type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" readonly="readonly"
                        th:field="*{startTime}" th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'"/>
                 <span class="invalid-feedback" th:errors="*{startTime}">Error</span>
               </div>
               <div class="col-12 col-md-6 mb-3">
-                <label for="toTimeInput" class="form-label required">End time</label>
-                <input type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" id="toTimeInput" readonly="readonly"
+                <label for="toTimeInput" class="form-label required" th:text="#{calendar.reservation.create.endtime}">End time</label>
+                <input id="flatpickToDateTimeInput" type="text" class="form-control flatpick flatpickr-input" data-flatpickr="" readonly="readonly"
                        th:field="*{endTime}" th:classappend="${#fields.hasErrors('endTime')} ? 'is-invalid'"/>
                 <span class="invalid-feedback" th:errors="*{endTime}">Error</span>
               </div>
 
               <div class="col-12 mb-3">
-                <label for="positionInput" class="form-label required">Position</label>
+                <label for="positionInput" class="form-label required" th:text="#{calendar.reservation.create.position}">Position</label>
                 <select id="positionInput" class="form-control"
-                        th:field="*{position}">
+                        th:field="*{position}" th:classappend="${#fields.hasErrors('position')} ? 'is-invalid'">
 
-                  <optgroup label="Control" th:if="${canControl.canControlAnyControl}">
+                  <optgroup th:label="#{calendar.reservation.create.position.control}" th:if="${canControl.canControlAnyControl}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('CTR')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Sofia" th:if="${canControl.canControlAnySofia}">
+                  <optgroup th:label="#{calendar.reservation.create.position.sofia}" th:if="${canControl.canControlAnySofia}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBSF')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Varna" th:if="${canControl.canControlAnyVarna}">
+                  <optgroup th:label="#{calendar.reservation.create.position.varna}" th:if="${canControl.canControlAnyVarna}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBWN')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Burgas" th:if="${canControl.canControlAnyBurgas}">
+                  <optgroup th:label="#{calendar.reservation.create.position.burgas}" th:if="${canControl.canControlAnyBurgas}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBBG')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
-                  <optgroup label="Others" th:if="${canControl.canControlAnyOthers}">
+                  <optgroup th:label="#{calendar.reservation.create.position.others}" th:if="${canControl.canControlAnyOthers}">
                     <option th:each="ap : ${authorizedPositions}" th:if="${ap.position.contains('LBPD') or ap.position.contains('LBGO')}" th:value="${ap.position}" th:text="#{positions. + ${#strings.toLowerCase(ap.position)}}">Position</option>
                   </optgroup>
+                </select>
+                <span class="invalid-feedback" th:errors="*{position}">Error</span>
+              </div>
+
+              <div class="col-12 col-md-6 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
+                <label for="typeInput" class="form-label required" th:text="#{calendar.reservation.create.type}">Type</label>
+                <select id="typeInput" class="form-control"
+                        th:field="*{type}">
+                  <option value="n" th:text="#{calendar.reservation.create.type.normal}">Normal</option>
+                  <option value="t" th:text="#{calendar.reservation.create.type.training}">Training</option>
                 </select>
                 <!--<span class="invalid-feedback">Error</span>-->
               </div>
 
-              <div class="col-12 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
-                <label for="typeInput" class="form-label required">Type</label>
-                <select id="typeInput" class="form-control"
-                        th:field="*{type}">
-                  <option value="n">Normal</option>
-                  <option value="t">Training</option>
-                </select>
-                <!--<span class="invalid-feedback">Error</span>-->
+              <div class="col-12 col-md-6 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
+                <label for="traineeCidInput" class="form-label required" th:text="#{calendar.reservation.create.traineecid}">Trainee CID</label>
+                <input id="traineeCidInput" type="text" class="form-control"
+                       th:field="*{traineeCid}" th:classappend="${#fields.hasErrors('traineeCid')} ? 'is-invalid'"/>
+                <span class="invalid-feedback" th:errors="*{traineeCid}">Error</span>
               </div>
 
               <div class="col-12 mb-3">
                 <!--<button type="submit" class="btn btn-accent" th:text="#{atc.application.form.submit}">Submit</button>-->
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" th:text="#{calendar.reservation.create.submit}">Submit</button>
               </div>
             </div>
           </form>
@@ -74,24 +86,44 @@
         /*<![CDATA[*/
         let todayText = /*[[#{calendar.today}]]*/;
 
-        let calendarEvents = /*[[#{language.current}]]*/;
+        let languageCurrent = /*[[#{language.current}]]*/;
                 let aux = /*[[@{/}]]*/;
         /*]]>*/
 
-        let config = {
+        let configFromDateTime = {
           defaultDate: "today",
           minDate: "today",
           maxDate: new Date().fp_incr(7),
           hourIncrement: 1,
           minuteIncrement: 15,
-          dateFormat: 'd.m.Y H:i\\z',
+          dateFormat: 'd.m.Y H:i',
           enableTime: true,
+          altInput: true,
+          altFormat: "d.m.Y H:i\\z",
           time_24hr: true,
-          locale: calendarEvents,
-          firstDayOfWeek: 1
+          locale: languageCurrent,
+          firstDayOfWeek: 1,
+          defaultDate: document.getElementById('flatpickFromDateTimeInput').value || "today"
         };
 
-        $(".flatpick").flatpickr(config);
+        let configToDateTime = {
+          defaultDate: "today",
+          minDate: "today",
+          maxDate: new Date().fp_incr(7),
+          hourIncrement: 1,
+          minuteIncrement: 15,
+          dateFormat: 'd.m.Y H:i',
+          enableTime: true,
+          altInput: true,
+          altFormat: "d.m.Y H:i\\z",
+          time_24hr: true,
+          locale: languageCurrent,
+          firstDayOfWeek: 1,
+          defaultDate: document.getElementById('flatpickToDateTimeInput').value || "today"
+        };
+
+        $("#flatpickFromDateTimeInput").flatpickr(configFromDateTime);
+        $("#flatpickToDateTimeInput").flatpickr(configToDateTime);
       </script>
     </div>
   </body>

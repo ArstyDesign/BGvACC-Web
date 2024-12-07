@@ -7,6 +7,8 @@ import com.bgvacc.web.responses.mentortrainees.MentorTraineeResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.ATC_RESERVATION_MAX_HOURS;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -91,22 +93,81 @@ public class ATCReservationsController extends Base {
     boolean hasErrors = false;
     String error = null;
 
-    if (!atcReservationService.isPositionFreeForTimeSlot(carm.getPosition(), carm.getStartTime(), carm.getEndTime())) {
+    if (!userATCAuthorizedPositionsService.isPositionAuthorizedForUser(carm.getPosition(), carm.getUserCid())) {
       hasErrors = true;
-      error = "Position taken";
+      error = "User is not authorized for that position";
 
-      bindingResult.rejectValue("startTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
-      bindingResult.rejectValue("endTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
+      bindingResult.rejectValue("position", "calendar.reservation.create.error.notavailableposition", new Object[]{carm.getPosition()}, null);
     }
-    
-    if (atcReservationService.hasUserReservedAnotherPositionForTime(loggedUserCid, carm.getStartTime(), carm.getEndTime())) {
-      hasErrors = true;
-      error = "User reserved another position for this time";
+
+    if (!hasErrors) {
+      if (carm.getStartTime().isAfter(carm.getEndTime())) {
+        hasErrors = true;
+        error = "Start time is after end time";
+
+        bindingResult.rejectValue("startTime", "calendar.reservation.create.error.starttimeafterendtime");
+      }
+    }
+
+    if (!hasErrors) {
+      int minimumMinutes = 60;
+
+      if (!isDifferenceAtLeastMinutes(carm.getStartTime(), carm.getEndTime(), minimumMinutes)) {
+        hasErrors = true;
+        error = "Reservation is less than " + minimumMinutes;
+
+        bindingResult.rejectValue("endTime", "calendar.reservation.create.error.atleast", new Object[]{minimumMinutes}, null);
+      }
+    }
+
+    if (!hasErrors) {
+      int maxMinutes = ATC_RESERVATION_MAX_HOURS * 60;
+
+      if (!isDifferenceLessThanMinutes(carm.getStartTime(), carm.getEndTime(), maxMinutes)) {
+        hasErrors = true;
+        error = "Reservation is more than maximum time of " + maxMinutes + " minutes";
+
+        bindingResult.rejectValue("startTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
+        bindingResult.rejectValue("endTime", "calendar.reservation.create.error.timelonger", new Object[]{ATC_RESERVATION_MAX_HOURS}, null);
+      }
+    }
+
+    if (!hasErrors) {
+      if (!atcReservationService.isPositionFreeForTimeSlot(carm.getPosition(), carm.getStartTime(), carm.getEndTime())) {
+        hasErrors = true;
+        error = "Position taken";
+
+        bindingResult.rejectValue("startTime", "calendar.reservation.create.error.positiontaken");
+        bindingResult.rejectValue("endTime", "calendar.reservation.create.error.positiontaken");
+      }
+    }
+
+    if (!hasErrors) {
+      if (atcReservationService.hasUserReservedAnotherPositionForTime(loggedUserCid, carm.getStartTime(), carm.getEndTime())) {
+        hasErrors = true;
+        error = "User reserved another position for this time";
+      }
+    }
+
+    if (!hasErrors) {
+
+      if (carm.getType().equals("t")) {
+
+        if (carm.getTraineeCid().equals(carm.getUserCid())) {
+          hasErrors = true;
+          error = "You cannot train yourself.";
+          
+          bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineecidmatchusercid");
+        }
+      }
     }
 
     if (hasErrors) {
 
       log.error("Last error: '" + error + "'");
+
+      model.addAttribute("hasErrors", hasErrors);
+      model.addAttribute("error", error);
 
       List<MentorTraineeResponse> mentorTrainees = mentorTraineeService.getMentorTrainees(getLoggedUserCid(request));
       model.addAttribute("mentorTrainees", mentorTrainees);
@@ -156,5 +217,15 @@ public class ATCReservationsController extends Base {
     }
 
     return canControl;
+  }
+
+  public boolean isDifferenceAtLeastMinutes(LocalDateTime start, LocalDateTime end, int minimumMinutes) {
+    Duration duration = Duration.between(start, end);
+    return duration.toMinutes() >= minimumMinutes;
+  }
+
+  public boolean isDifferenceLessThanMinutes(LocalDateTime start, LocalDateTime end, int minutes) {
+    Duration duration = Duration.between(start, end);
+    return duration.toMinutes() <= minutes;
   }
 }
