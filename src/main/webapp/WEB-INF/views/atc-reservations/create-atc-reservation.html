@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{calendar.reservation.create.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
@@ -76,7 +76,10 @@
 
               <div class="col-12 mb-3">
                 <!--<button type="submit" class="btn btn-accent" th:text="#{atc.application.form.submit}">Submit</button>-->
-                <button type="submit" class="btn btn-primary" th:text="#{calendar.reservation.create.submit}">Submit</button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-send me-1"></i>
+                  <span th:text="#{calendar.reservation.create.submit}">Submit</span>
+                </button>
               </div>
             </div>
           </form>
@@ -131,7 +134,7 @@
       <script type="text/javascript" th:inline="javascript" sec:authorize="hasRole('STAFF_TRAINING')">
         /*<![CDATA[*/
         let searchTraineeByCidUrl = /*[[@{/atc-reservations/search-trainee/}]]*/;
-        let traineeNotFound = /*[[#{calendar.reservation.create.error.traineenotfound}]]*/;
+                let traineeNotFound = /*[[#{calendar.reservation.create.error.traineenotfound}]]*/;
         /*]]>*/
         $('#typeInput').on('change', function () {
           const type = $(this).val();
@@ -177,7 +180,7 @@
         });
 
       </script>
-      
+
     </div>
   </body>
 </html>

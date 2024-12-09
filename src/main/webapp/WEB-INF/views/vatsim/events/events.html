@@ -19,7 +19,7 @@
         <div class="col-12 col-md-6 col-xl-4 mb-3" th:each="e : ${events}">
           <!--article-->
           <div class="card overflow-hidden">
-            <a href="#" th:href="@{/portal/events/} + ${e.eventId}" class="text-reset">
+            <a href="#" th:href="@{/events/} + ${e.eventId}" class="text-reset">
               <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
             </a>
             <div class="card-body">

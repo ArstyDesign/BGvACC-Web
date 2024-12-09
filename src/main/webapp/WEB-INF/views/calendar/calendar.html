@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{calendar.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
@@ -15,8 +15,9 @@
           <div class="d-flex align-items-center mb-4">
             <div class="text-muted" th:text="#{portal.events.calendar.note}">All events are presented in local time in Sofia - (UTC+3 - EEST, UTC+2 EET) time</div>
             <div class="ms-auto">
-              <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-primary btn-sm" sec:authorize="isAuthenticated()">
-                <span>Make a reservation</span>
+              <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-success text-white btn-sm" sec:authorize="isAuthenticated()">
+                <i class="bi bi-plus-circle me-1"></i>
+                <span th:text="#{calendar.makereservation}">Make a reservation</span>
               </a>
             </div>
           </div>

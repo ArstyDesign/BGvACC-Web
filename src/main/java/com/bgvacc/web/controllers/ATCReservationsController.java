@@ -8,13 +8,16 @@ import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.ATC_RESERVATION_MAX_HOURS;
+import com.bgvacc.web.utils.Breadcrumb;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -68,8 +71,15 @@ public class ATCReservationsController extends Base {
     carm.setType("n");
     model.addAttribute("carm", carm);
 
-    model.addAttribute("pageTitle", "Calendar");
+    model.addAttribute("pageTitle", getMessage("calendar.reservation.create.title"));
     model.addAttribute("page", "atc-reservations");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar", null, LocaleContextHolder.getLocale()), "/calendar"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar.makeatcreservation", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "atc-reservations/create-atc-reservation";
   }
@@ -98,8 +108,15 @@ public class ATCReservationsController extends Base {
 
       model.addAttribute("mentorTrainees", mentorTrainees);
 
-      model.addAttribute("pageTitle", "Calendar");
+      model.addAttribute("pageTitle", getMessage("calendar.reservation.create.title"));
       model.addAttribute("page", "atc-reservations");
+
+      List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar", null, LocaleContextHolder.getLocale()), "/calendar"));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar.makeatcreservation", null, LocaleContextHolder.getLocale()), null));
+
+      model.addAttribute("breadcrumbs", breadcrumbs);
 
       return "atc-reservations/create-atc-reservation";
     }
@@ -117,11 +134,11 @@ public class ATCReservationsController extends Base {
 
         bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineecidempty");
       }
-      
+
       if (!userService.doUserExist(carm.getTraineeCid().trim())) {
         hasErrors = true;
         error = "User with this CID does not exist";
-        
+
         bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineedoesnotexist");
       }
     }
@@ -180,6 +197,7 @@ public class ATCReservationsController extends Base {
     if (!hasErrors) {
       if (atcReservationService.hasUserReservedAnotherPositionForTime(loggedUserCid, carm.getStartTime(), carm.getEndTime())) {
         hasErrors = true;
+        // TO BE SHOWN
         error = "User reserved another position for this time";
       }
     }
@@ -213,8 +231,15 @@ public class ATCReservationsController extends Base {
       ATCCanControlPositions canControl = getCanControlPositions(authorizedPositions);
       model.addAttribute("canControl", canControl);
 
-      model.addAttribute("pageTitle", "Calendar");
+      model.addAttribute("pageTitle", getMessage("calendar.reservation.create.title"));
       model.addAttribute("page", "atc-reservations");
+
+      List<Breadcrumb> breadcrumbs = new ArrayList<>();
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar", null, LocaleContextHolder.getLocale()), "/calendar"));
+      breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar.makeatcreservation", null, LocaleContextHolder.getLocale()), null));
+
+      model.addAttribute("breadcrumbs", breadcrumbs);
 
       return "atc-reservations/create-atc-reservation";
     }

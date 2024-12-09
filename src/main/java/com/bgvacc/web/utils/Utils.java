@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  *
@@ -51,8 +53,16 @@ public class Utils extends Base {
 
       if (atcr.getReservationType().equalsIgnoreCase("training")) {
         // Training session
-//        String message = messageSource.getMessage("");
-        ce.setTitle(atcr.getPosition() + " Training session, trainee " + atcr.getTraineeNames().getFullName() + " (" + atcr.getTraineeCid() + ")");
+//        messageSource.getMessage("fsd");
+
+        String title = "";
+
+        try {
+          title = messageSource.getMessage("calendar.trainingsession", new Object[]{atcr.getPosition(), atcr.getTraineeNames().getFullName(), atcr.getTraineeCid(), atcr.getUserNames().getFullNameWithShortFirst(), atcr.getUserCid()}, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException e) {
+
+        }
+        ce.setTitle(title);
 
         ce.setBackgroundColor("#ff9300");
         ce.setBorderColor("#ff9300");
