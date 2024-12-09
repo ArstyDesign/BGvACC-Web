@@ -4,6 +4,7 @@ import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.ATCCanControlPositions;
 import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
 import com.bgvacc.web.responses.mentortrainees.MentorTraineeResponse;
+import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.ATC_RESERVATION_MAX_HOURS;
@@ -36,6 +37,8 @@ public class ATCReservationsController extends Base {
 
   private final UserATCAuthorizedPositionsService userATCAuthorizedPositionsService;
 
+  private final UserService userService;
+
   @GetMapping("/atc-reservations/{reservationId}")
   public String viewATCReservation(@PathVariable("reservationId") String reservationId, Model model) {
 
@@ -62,12 +65,26 @@ public class ATCReservationsController extends Base {
     model.addAttribute("canControl", canControl);
 
     CreateATCReservationModel carm = new CreateATCReservationModel();
+    carm.setType("n");
     model.addAttribute("carm", carm);
 
     model.addAttribute("pageTitle", "Calendar");
     model.addAttribute("page", "atc-reservations");
 
     return "atc-reservations/create-atc-reservation";
+  }
+
+  @GetMapping("/atc-reservations/search-trainee/{traineeCid}")
+  @ResponseBody
+  public String searchTrainee(@PathVariable("traineeCid") String traineeCid) {
+
+    UserResponse trainee = userService.getUser(traineeCid);
+
+    if (trainee == null) {
+      return null;
+    }
+
+    return trainee.getNames().getFullName() + " - " + trainee.getCid();
   }
 
   @PostMapping("/atc-reservations/create")
@@ -93,11 +110,29 @@ public class ATCReservationsController extends Base {
     boolean hasErrors = false;
     String error = null;
 
-    if (!userATCAuthorizedPositionsService.isPositionAuthorizedForUser(carm.getPosition(), carm.getUserCid())) {
-      hasErrors = true;
-      error = "User is not authorized for that position";
+    if (carm.getType() != null && carm.getType().equals("t")) {
+      if (carm.getTraineeCid().trim().isEmpty()) {
+        hasErrors = true;
+        error = "Trainee CID empty";
 
-      bindingResult.rejectValue("position", "calendar.reservation.create.error.notavailableposition", new Object[]{carm.getPosition()}, null);
+        bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineecidempty");
+      }
+      
+      if (!userService.doUserExist(carm.getTraineeCid().trim())) {
+        hasErrors = true;
+        error = "User with this CID does not exist";
+        
+        bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineedoesnotexist");
+      }
+    }
+
+    if (!hasErrors) {
+      if (!userATCAuthorizedPositionsService.isPositionAuthorizedForUser(carm.getPosition(), carm.getUserCid())) {
+        hasErrors = true;
+        error = "User is not authorized for that position";
+
+        bindingResult.rejectValue("position", "calendar.reservation.create.error.notavailableposition", new Object[]{carm.getPosition()}, null);
+      }
     }
 
     if (!hasErrors) {
@@ -156,7 +191,7 @@ public class ATCReservationsController extends Base {
         if (carm.getTraineeCid().equals(carm.getUserCid())) {
           hasErrors = true;
           error = "You cannot train yourself.";
-          
+
           bindingResult.rejectValue("traineeCid", "calendar.reservation.create.error.traineecidmatchusercid");
         }
       }

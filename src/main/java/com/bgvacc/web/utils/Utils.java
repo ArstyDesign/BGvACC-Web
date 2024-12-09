@@ -1,5 +1,6 @@
 package com.bgvacc.web.utils;
 
+import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.CalendarEvent;
 import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.responses.events.EventResponse;
@@ -7,13 +8,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.context.MessageSource;
 
 /**
  *
  * @author Atanas Yordanov Arshinkov
  * @since 1.0.0
  */
-public class Utils {
+public class Utils extends Base {
 
   public static String getIpAddress(HttpServletRequest request) {
 
@@ -33,11 +35,11 @@ public class Utils {
             .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
   }
 
-  public static List<CalendarEvent> convertATCReservationsToCalendarEvents(List<ATCReservationResponse> atcReservations) {
-    return convertATCReservationsToCalendarEvents(atcReservations, "atc-reservations");
+  public static List<CalendarEvent> convertATCReservationsToCalendarEvents(List<ATCReservationResponse> atcReservations, MessageSource messageSource) {
+    return convertATCReservationsToCalendarEvents(atcReservations, "atc-reservations", messageSource);
   }
 
-  public static List<CalendarEvent> convertATCReservationsToCalendarEvents(List<ATCReservationResponse> atcReservations, String urlPrefix) {
+  public static List<CalendarEvent> convertATCReservationsToCalendarEvents(List<ATCReservationResponse> atcReservations, String urlPrefix, MessageSource messageSource) {
 
     List<CalendarEvent> calendarEvents = new ArrayList<>();
 
@@ -49,6 +51,7 @@ public class Utils {
 
       if (atcr.getReservationType().equalsIgnoreCase("training")) {
         // Training session
+//        String message = messageSource.getMessage("");
         ce.setTitle(atcr.getPosition() + " Training session, trainee " + atcr.getTraineeNames().getFullName() + " (" + atcr.getTraineeCid() + ")");
 
         ce.setBackgroundColor("#ff9300");

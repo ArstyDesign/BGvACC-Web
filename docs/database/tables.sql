@@ -220,7 +220,7 @@ CREATE TABLE atc_reservations (
 	reservation_type varchar(40) not null references atc_reservation_types(reservation_type) on delete restrict,
 	position_id varchar(30) not null references positions(position_id),
 	user_cid varchar(30) not null references users(cid) on delete cascade,
-	trainee_cid varchar(30) references users(cid) on delete set null,
+	trainee_cid varchar(30) references users(cid) on delete cascade,
 	is_canceled boolean not null default false,
 	from_time timestamp not null,
 	to_time timestamp not null,

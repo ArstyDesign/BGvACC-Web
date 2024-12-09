@@ -26,6 +26,10 @@ public class Base {
   @Autowired
   private SystemService systemService;
 
+  public MessageSource getMessageSource() {
+    return messageSource;
+  }
+
   protected LoggedUser getLoggedUser() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     try {

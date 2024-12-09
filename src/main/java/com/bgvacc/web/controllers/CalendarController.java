@@ -38,7 +38,7 @@ public class CalendarController extends Base {
     List<ATCReservationResponse> allFutureATCReservations = atcReservationService.getAllFutureATCReservations();
 
     List<CalendarEvent> calendarEvents = convertEventsToCalendarEvents(events, "events");
-    calendarEvents.addAll(convertATCReservationsToCalendarEvents(allFutureATCReservations, "atc-reservations"));
+    calendarEvents.addAll(convertATCReservationsToCalendarEvents(allFutureATCReservations, "atc-reservations", getMessageSource()));
     
     model.addAttribute("ces", calendarEvents);
 

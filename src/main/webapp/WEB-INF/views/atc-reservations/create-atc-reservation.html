@@ -56,7 +56,7 @@
                 <span class="invalid-feedback" th:errors="*{position}">Error</span>
               </div>
 
-              <div class="col-12 col-md-6 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
+              <div class="col-12 mb-3" id="typeDiv" sec:authorize="hasRole('STAFF_TRAINING')" th:classappend="${carm.type ne null and carm.type eq 't'} ? 'col-md-6'">
                 <label for="typeInput" class="form-label required" th:text="#{calendar.reservation.create.type}">Type</label>
                 <select id="typeInput" class="form-control"
                         th:field="*{type}">
@@ -66,11 +66,12 @@
                 <!--<span class="invalid-feedback">Error</span>-->
               </div>
 
-              <div class="col-12 col-md-6 mb-3" sec:authorize="hasRole('STAFF_TRAINING')">
+              <div class="col-12 col-md-6 mb-3" id="traineeCidDiv" sec:authorize="hasRole('STAFF_TRAINING')" th:classappend="${carm.type ne null and carm.type eq 't'} ? '' : 'd-none'">
                 <label for="traineeCidInput" class="form-label required" th:text="#{calendar.reservation.create.traineecid}">Trainee CID</label>
-                <input id="traineeCidInput" type="text" class="form-control"
+                <input id="traineeCidInput" type="text" pattern="\d*" maxlength="7" class="form-control"
                        th:field="*{traineeCid}" th:classappend="${#fields.hasErrors('traineeCid')} ? 'is-invalid'"/>
-                <span class="invalid-feedback" th:errors="*{traineeCid}">Error</span>
+                <span class="invalid-feedback mt-0" th:errors="*{traineeCid}">Error</span>
+                <div id="traineeCidValue" class="form-text">-</div>
               </div>
 
               <div class="col-12 mb-3">
@@ -124,7 +125,59 @@
 
         $("#flatpickFromDateTimeInput").flatpickr(configFromDateTime);
         $("#flatpickToDateTimeInput").flatpickr(configToDateTime);
+
       </script>
+
+      <script type="text/javascript" th:inline="javascript" sec:authorize="hasRole('STAFF_TRAINING')">
+        /*<![CDATA[*/
+        let searchTraineeByCidUrl = /*[[@{/atc-reservations/search-trainee/}]]*/;
+        let traineeNotFound = /*[[#{calendar.reservation.create.error.traineenotfound}]]*/;
+        /*]]>*/
+        $('#typeInput').on('change', function () {
+          const type = $(this).val();
+
+          if (type === 't') {
+            $('#traineeCidDiv').removeClass("d-none");
+            $('#typeDiv').addClass("col-md-6");
+          } else {
+            $('#traineeCidDiv').addClass("d-none");
+            $('#typeDiv').removeClass("col-md-6");
+          }
+          console.log("Selected value: " + selectedValue);
+        });
+
+        $('#traineeCidInput').on('input', function () {
+
+          const inputValue = $(this).val().replace(/[^0-9]/g, '');
+          $(this).val(inputValue);
+
+          const tci = $(this).val();
+
+          if (tci.length >= 3 && tci.length <= 7) {
+
+            $.ajax({
+              url: searchTraineeByCidUrl + tci,
+              type: 'get',
+              success: function (data)
+              {
+                console.log("here: " + data);
+                if (data === null || data === undefined || data === "") {
+                  $('#traineeCidValue').empty().append(traineeNotFound);
+                } else {
+                  $('#traineeCidValue').empty().append(data);
+                }
+              },
+              error: function (xhr, status, error)
+              {
+                //                    alert("fail");
+              }
+            });
+
+          }
+        });
+
+      </script>
+      
     </div>
   </body>
 </html>

@@ -94,8 +94,10 @@ public class ATCReservationServiceImpl implements ATCReservationService {
         createNewATCReservationPstmt.setString(2, carm.getPosition());
         createNewATCReservationPstmt.setString(3, carm.getUserCid());
 
-        if (carm.getTraineeCid() == null || carm.getTraineeCid().trim().isEmpty()) {
+        if (carm.getTraineeCid() != null && !carm.getTraineeCid().trim().isEmpty()) {
           createNewATCReservationPstmt.setString(4, carm.getTraineeCid());
+        } else {
+          createNewATCReservationPstmt.setString(4, null);
         }
 
         createNewATCReservationPstmt.setTimestamp(5, Timestamp.valueOf(carm.getStartTime()));
