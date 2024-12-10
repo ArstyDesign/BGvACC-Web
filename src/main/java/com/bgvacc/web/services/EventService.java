@@ -25,6 +25,8 @@ public interface EventService {
   EventResponse getEvent(Long eventId);
 
   List<EventPositionsResponse> getEventPositions(Long eventId);
+  
+  boolean addEventPosition(Long eventId, String position, Integer minimumRating);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
 
