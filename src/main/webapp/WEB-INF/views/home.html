@@ -25,7 +25,7 @@
 
           <div class="row">
             <div class="col-12 col-xl-4 mb-3" th:each="e : ${upcomingEvents}">
-              <article class="card shadow-sm hover-lift hover-shadow-lg rounded-3 h-100">
+              <article class="card shadow-sm hover-lift hover-shadow-lg rounded-3 h-100" th:classappend="${e.isCurrentlyActive()} ? 'border border-sucess'">
                 <a href="#" th:href="@{/events/} + ${e.eventId}" class="d-block overflow-hidden">
                   <img src="#" th:src="${e.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
                 </a>

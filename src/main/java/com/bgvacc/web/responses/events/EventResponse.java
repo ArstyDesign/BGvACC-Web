@@ -2,8 +2,7 @@ package com.bgvacc.web.responses.events;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import lombok.*;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -39,6 +38,22 @@ public class EventResponse implements Serializable {
   private Timestamp endAtTimestamp;
   private Timestamp createdAt;
   private Timestamp updatedAt;
+
+  public boolean isCurrentlyActive() {
+
+    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+
+//    ZonedDateTime startAtUTC = new ZonedDateTime(startAt);
+    boolean resultAfter = now.isAfter(startAt);
+
+    System.out.println("now:  " + now);
+    System.out.println("start: " + startAt);
+    System.out.println("end: " + endAt);
+
+    boolean resultBefore = now.isBefore(endAt);
+
+    return resultAfter && resultBefore;
+  }
 
   public void setStartAt(ZonedDateTime startAt) {
     this.startAt = startAt;
