@@ -1,7 +1,11 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.enums.AuthenticationError;
+import com.bgvacc.web.models.authentication.LoginModel;
+import com.bgvacc.web.responses.authentication.AuthAttemptResponse;
 import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
+import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.utils.Utils;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -44,6 +48,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final JdbcTemplate jdbcTemplate;
 
   private final PasswordEncoder passwordEncoder;
+
+  @Override
+  public AuthAttemptResponse authenticate(LoginModel login) {
+
+    UserResponse user = userService.getUser(login.getCidEmail());
+
+    AuthAttemptResponse response = new AuthAttemptResponse();
+
+    response.setUser(null);
+
+    if (user == null) {
+      response.setError(AuthenticationError.USER_NOT_FOUND);
+
+      return response;
+    }
+
+    if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
+
+      response.setError(AuthenticationError.BAD_CREDENTIALS);
+
+      return response;
+    }
+
+    response.setUser(user);
+    response.setError(null);
+
+    return response;
+  }
 
   @Override
   public AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

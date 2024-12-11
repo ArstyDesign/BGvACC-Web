@@ -1,10 +1,10 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.enums.AuthenticationError;
 import com.bgvacc.web.exceptions.GeneralErrorException;
 import com.bgvacc.web.models.authentication.*;
-import com.bgvacc.web.responses.authentication.AuthenticationResponse;
-import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
+import com.bgvacc.web.responses.authentication.*;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.services.*;
 import java.io.IOException;
@@ -58,6 +58,25 @@ public class AuthenticationController extends Base {
   public String login(@ModelAttribute("lm") @Valid LoginModel login, BindingResult bindingResult, HttpServletRequest req, HttpServletResponse res, RedirectAttributes redirectAttributes, Model model) throws IOException, ServletException, Exception {
 
     log.debug(login.toString());
+
+    if (bindingResult.hasErrors()) {
+
+      model.addAttribute("page", "login");
+
+      return "authentication/login";
+    }
+
+    AuthAttemptResponse authAttempt = authenticationService.authenticate(login);
+
+    if (authAttempt.hasErrors()) {
+
+      if (authAttempt.getError() == AuthenticationError.BAD_CREDENTIALS) {
+        bindingResult.rejectValue("password", "login.error.badcredentials");
+        
+      } else if (authAttempt.getError() == AuthenticationError.USER_NOT_FOUND) {
+        bindingResult.rejectValue("cidEmail", "login.error.usernotfound");
+      }
+    }
 
     if (bindingResult.hasErrors()) {
 

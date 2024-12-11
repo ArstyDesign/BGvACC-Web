@@ -1,5 +1,7 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.models.authentication.LoginModel;
+import com.bgvacc.web.responses.authentication.AuthAttemptResponse;
 import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import java.io.IOException;
@@ -17,6 +19,8 @@ import org.springframework.security.core.GrantedAuthority;
  * @since 1.0.0
  */
 public interface AuthenticationService {
+  
+  AuthAttemptResponse authenticate(LoginModel login);
 
   AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException;
 
