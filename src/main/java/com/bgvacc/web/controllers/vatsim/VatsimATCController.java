@@ -3,6 +3,7 @@ package com.bgvacc.web.controllers.vatsim;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.ATCApplicationModel;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
+import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.services.MailService;
 import com.bgvacc.web.utils.Breadcrumb;
 import java.util.ArrayList;
@@ -35,11 +36,24 @@ public class VatsimATCController extends Base {
   private final MailService mailService;
 
   @GetMapping("/atc/career-application")
-  public String prepareATCCareerApplication(Model model) {
+  public String prepareATCCareerApplication(Model model, HttpServletRequest request) {
 
     model.addAttribute("pageTitle", getMessage("atc.application.title"));
 
-    model.addAttribute("aam", new ATCApplicationModel());
+    ATCApplicationModel atcApplicationModel = new ATCApplicationModel();
+
+    LoggedUser loggedUser = getLoggedUser(request);
+
+    model.addAttribute("isLoggedIn", loggedUser != null);
+
+    if (loggedUser != null) {
+      atcApplicationModel.setFirstName(loggedUser.getNames().getFirstName());
+      atcApplicationModel.setLastName(loggedUser.getNames().getLastName());
+      atcApplicationModel.setEmail(loggedUser.getEmail());
+      atcApplicationModel.setCid(loggedUser.getCid());
+    }
+
+    model.addAttribute("aam", atcApplicationModel);
 
     model.addAttribute("page", "atc");
     model.addAttribute("subpage", "application");

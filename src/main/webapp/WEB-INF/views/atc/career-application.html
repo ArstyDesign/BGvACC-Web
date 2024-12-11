@@ -31,7 +31,7 @@
             <div class="col-12 col-md-6 mb-3">
               <label for="vatsimCIDInput" class="form-label required"
                      th:text="#{atc.application.form.vatsimcid}">VATSIM CID</label>
-              <input type="text" class="form-control" id="vatsimCIDInput"
+              <input type="text" class="form-control" id="vatsimCIDInput" th:disabled="${isLoggedIn}"
                      th:field="*{cid}" th:classappend="${#fields.hasErrors('cid')} ? 'is-invalid'"/>
               <span class="invalid-feedback" th:errors="*{cid}">Error</span>
             </div>
@@ -66,7 +66,10 @@
             </div>
             <div class="col-12 mb-3">
               <!--<button type="submit" class="btn btn-accent" th:text="#{atc.application.form.submit}">Submit</button>-->
-              <button type="submit" class="btn btn-primary" th:text="#{atc.application.form.submit}">Submit</button>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send me-1"></i>
+                <span th:text="#{atc.application.form.submit}">Submit</span>
+              </button>
             </div>
           </form>
         </div>

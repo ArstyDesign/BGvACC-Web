@@ -40,11 +40,25 @@ public class Base {
   }
 
   protected String getLoggedUserCid(HttpServletRequest request) {
-    return getLoggedUser(request).getCid();
+
+    LoggedUser loggedUser = getLoggedUser(request);
+
+    if (loggedUser != null) {
+      return loggedUser.getCid();
+    }
+
+    return null;
   }
 
   protected String getLoggedUserName(HttpServletRequest request) {
-    return getLoggedUser(request).getNames().getFullName();
+
+    LoggedUser loggedUser = getLoggedUser(request);
+
+    if (loggedUser != null) {
+      return loggedUser.getNames().getFullName();
+    }
+
+    return null;
   }
 
   protected LoggedUser getLoggedUser(HttpServletRequest request) {

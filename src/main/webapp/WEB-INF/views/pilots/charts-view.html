@@ -40,7 +40,7 @@
               <div class="col-12 mb-4">
                 <h2 class="h4 mb-3">
                   <i class="fa-solid fa-road me-2"></i>
-                  <span th:text="#{pilots.charts.view.taxi}">Taxi &amp; parking Charts</span>
+                  <span th:utext="#{pilots.charts.view.taxi}">Taxi &amp; parking Charts</span>
                 </h2>
                 <div class="" th:if="${charts.taxi eq null}" th:text="#{pilots.charts.view.nochartsfound}">No charts found</div>
                 <div class="card" th:if="${charts.taxi ne null}">
