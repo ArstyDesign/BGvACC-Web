@@ -2,6 +2,7 @@ package com.bgvacc.web.services;
 
 import com.bgvacc.web.domains.MailDomain;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
+import com.bgvacc.web.utils.Names;
 
 /**
  *
@@ -11,6 +12,8 @@ import com.bgvacc.web.requests.atc.ATCApplicationRequest;
 public interface MailService {
 
   boolean sendNewATCTrainingApplicationMail(ATCApplicationRequest atcApplication);
+  
+  boolean sendForgottenPasswordMail(Names names, String email, String passwordResetToken);
 
   MailDomain createMail(String sender, String subject, String content, String... recipients);
 

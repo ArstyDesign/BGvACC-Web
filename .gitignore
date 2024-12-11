@@ -34,3 +34,4 @@ build/
 nb-configuration.xml
 package-lock.json
 node_modules/
+catalina.home_IS_UNDEFINED/

@@ -15,8 +15,12 @@ public interface UserService {
   List<UserResponse> getUsers();
 
   UserResponse getUser(String cidEmail);
+  
+  UserResponse getUserByPasswordResetToken(String passwordResetToken);
 
   boolean doUserExist(String cid);
+  
+  boolean doUserExistByEmail(String email);
 
   boolean createUser(UserCreateModel ucm);
 

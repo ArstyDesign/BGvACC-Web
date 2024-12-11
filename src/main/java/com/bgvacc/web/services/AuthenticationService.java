@@ -1,6 +1,5 @@
 package com.bgvacc.web.services;
 
-import com.bgvacc.web.responses.authentication.AuthenticationResponse;
 import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import java.io.IOException;
@@ -23,4 +22,7 @@ public interface AuthenticationService {
 
   List<RoleResponse> getBaseRoles(Collection<GrantedAuthority> authorities);
 
+  String forgotPassword(String email);
+  
+  boolean resetPassword(String newPassword, String passwordResetToken);
 }

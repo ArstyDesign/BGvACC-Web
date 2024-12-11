@@ -1,8 +1,10 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.MailDomain;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
 import com.bgvacc.web.tasks.MailSender;
+import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.utils.Translator;
 import java.sql.*;
 import java.util.*;
@@ -22,7 +24,7 @@ import org.thymeleaf.context.Context;
  */
 @Service
 @RequiredArgsConstructor
-public class MailServiceImpl implements MailService {
+public class MailServiceImpl extends Base implements MailService {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -31,7 +33,7 @@ public class MailServiceImpl implements MailService {
   private final TemplateEngine templateEngine;
 
   private final MailSender mailSender;
-  
+
   private final Translator translator;
 
   @Override
@@ -39,9 +41,9 @@ public class MailServiceImpl implements MailService {
 
     try {
       Context ctx = new Context();
-      
+
       atcApplication.setCurrentRating(translator.toLanguage("atc.application.form.currentrating." + atcApplication.getCurrentRating().toLowerCase(), "en"));
-      
+
       ctx.setVariable("atcApplication", atcApplication);
 
       String htmlContent = templateEngine.process("atc-application-mail.html", ctx);
@@ -52,7 +54,32 @@ public class MailServiceImpl implements MailService {
       mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
 
       return true;
-      
+
+    } catch (NoSuchMessageException e) {
+      log.error("Sending failed!", e);
+      return false;
+    }
+  }
+
+  @Override
+  public boolean sendForgottenPasswordMail(Names names, String email, String passwordResetToken) {
+
+    try {
+      Context ctx = new Context();
+
+      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("names", names);
+      ctx.setVariable("email", email);
+      ctx.setVariable("passwordResetToken", passwordResetToken);
+
+      String htmlContent = templateEngine.process("forgotten-password-mail.html", ctx);
+
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "Forgotten password", htmlContent, "a.arshinkov97@gmail.com");
+
+      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+
+      return true;
+
     } catch (NoSuchMessageException e) {
       log.error("Sending failed!", e);
       return false;

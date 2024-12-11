@@ -28,7 +28,7 @@
               </div>
               <div class="d-flex align-items-center me-3">
                 <div class="h5 mb-0" th:text="#{portal.events.event.roster.administration}">Event roster administration</div>
-                <div class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#addEventPositionModal">
+                <div class="btn btn-success btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addEventPositionModal">
                   <span class="material-symbols-rounded me-1">add_circle</span>
                   <span th:text="#{portal.events.event.roster.addposition}">Add event position</span>
                 </div>
@@ -48,8 +48,14 @@
                   <small th:text="#{portal.events.event.position.min(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}"></small>
                 </div>
 
-                <div class="mb-3 text-muted" th:if="${#lists.isEmpty(ep.slots)}">
+                <div class="mb-2 text-muted" th:if="${#lists.isEmpty(ep.slots)}">
                   <small th:text="#{portal.events.event.noavailableslots}">No slots available</small>
+                </div>
+                
+                <div th:classappend="${!iterStat.last} ? 'mb-4'">
+                  <a href="#" class="btn btn-info text-light btn-sm">
+                    <span>Set slots</span>
+                  </a>
                 </div>
 
                 <div class="mb-2 text-muted" th:if="${!#lists.isEmpty(ep.slots)}">

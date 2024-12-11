@@ -2,10 +2,11 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.exceptions.GeneralErrorException;
-import com.bgvacc.web.models.authentication.LoginModel;
+import com.bgvacc.web.models.authentication.*;
 import com.bgvacc.web.responses.authentication.AuthenticationResponse;
 import com.bgvacc.web.responses.authentication.AuthenticationSuccessResponse;
-import com.bgvacc.web.services.AuthenticationService;
+import com.bgvacc.web.responses.users.UserResponse;
+import com.bgvacc.web.services.*;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +22,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -40,6 +39,10 @@ public class AuthenticationController extends Base {
   private final AuthenticationService authenticationService;
 
   private final AuthenticationManager authenticationManager;
+
+  private final UserService userService;
+
+  private final MailService mailService;
 
   @GetMapping("/login")
   public String prepareLogin(Model model) {
@@ -88,5 +91,101 @@ public class AuthenticationController extends Base {
   public String vatsimAuthCallback(Model model) {
 
     return "authentication/vatsim/callback";
+  }
+
+  @GetMapping("/forgot-password")
+  public String prepareForgotPassword(Model model) {
+
+    model.addAttribute("fpm", new ForgotPasswordModel());
+
+    return "authentication/forgot-password";
+  }
+
+  @PostMapping("/forgot-password")
+  public String forgotPassword(@ModelAttribute("fpm") @Valid ForgotPasswordModel fpm, BindingResult bindingResult, Model model) {
+
+    if (bindingResult.hasErrors()) {
+
+      return "authentication/forgot-password";
+    }
+
+    if (!userService.doUserExistByEmail(fpm.getEmail())) {
+
+      bindingResult.rejectValue("email", "forgotpassword.usernoexist");
+    }
+
+    if (bindingResult.hasErrors()) {
+
+      return "authentication/forgot-password";
+    }
+
+    log.debug("Sending forgotten password email to '" + fpm.getEmail() + "'.");
+
+    String passwordResetToken = authenticationService.forgotPassword(fpm.getEmail());
+
+    if (passwordResetToken != null) {
+      UserResponse user = userService.getUser(fpm.getEmail());
+      mailService.sendForgottenPasswordMail(user.getNames(), fpm.getEmail(), passwordResetToken);
+    }
+
+    return "redirect:/login";
+  }
+
+  @GetMapping("/reset-password/{passwordResetToken}")
+  public String prepareResetPassword(@PathVariable("passwordResetToken") String passwordResetToken, Model model) {
+
+    UserResponse user = userService.getUserByPasswordResetToken(passwordResetToken);
+
+    if (user == null) {
+      return "redirect:/login";
+    }
+
+    model.addAttribute("user", user);
+
+    ResetPasswordModel rpm = new ResetPasswordModel();
+
+    model.addAttribute("rpm", rpm);
+    model.addAttribute("passwordResetToken", passwordResetToken);
+
+    return "authentication/reset-password";
+  }
+
+  @PostMapping("/reset-password/{passwordResetToken}")
+  public String resetPassword(@PathVariable("passwordResetToken") String passwordResetToken, @ModelAttribute("rpm") @Valid ResetPasswordModel rpm, BindingResult bindingResult, Model model) {
+
+    UserResponse user = userService.getUserByPasswordResetToken(passwordResetToken);
+
+    if (user == null) {
+
+      model.addAttribute("passwordResetToken", passwordResetToken);
+
+      return "redirect:/login";
+    }
+
+    model.addAttribute("user", user);
+
+    if (bindingResult.hasErrors()) {
+
+      model.addAttribute("passwordResetToken", passwordResetToken);
+
+      return "authentication/reset-password";
+    }
+
+    if (!rpm.getNewPassword().equals(rpm.getConfirmPassword())) {
+
+      bindingResult.rejectValue("newPassword", "resetpassword.passwordsnomatch");
+      bindingResult.rejectValue("confirmPassword", "resetpassword.passwordsnomatch");
+    }
+
+    if (bindingResult.hasErrors()) {
+
+      model.addAttribute("passwordResetToken", passwordResetToken);
+
+      return "authentication/reset-password";
+    }
+
+    boolean isPasswordReset = authenticationService.resetPassword(rpm.getNewPassword(), passwordResetToken);
+
+    return "redirect:/login";
   }
 }

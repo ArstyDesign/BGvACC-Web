@@ -139,6 +139,60 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserResponse getUserByPasswordResetToken(String passwordResetToken) {
+
+    final String userSql = "SELECT * FROM users WHERE password_reset_token = ?";
+    final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement userPstmt = conn.prepareStatement(userSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        userPstmt.setString(1, passwordResetToken);
+
+        ResultSet userRset = userPstmt.executeQuery();
+
+        if (userRset.next()) {
+
+          UserResponse user = getUserResponseFromResultSet(userRset);
+
+          userRolesPstmt.setString(1, user.getCid());
+
+          ResultSet userRolesRset = userRolesPstmt.executeQuery();
+
+          List<RoleResponse> roles = new ArrayList<>();
+
+          while (userRolesRset.next()) {
+            RoleResponse role = new RoleResponse(userRolesRset.getString("rolename"));
+            roles.add(role);
+          }
+
+          user.setRoles(roles);
+
+          return user;
+
+        } else {
+          log.info("No user found.");
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting user", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting user", e);
+    }
+
+    return null;
+  }
+
+  @Override
   public boolean doUserExist(String cid) {
 
     final String doUserExistSql = "SELECT EXISTS (SELECT 1 FROM users WHERE cid = ?)";
@@ -170,6 +224,43 @@ public class UserServiceImpl implements UserService {
       }
     } catch (Exception e) {
       log.error("Error checking if user with CID '" + cid + "' exists", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean doUserExistByEmail(String email) {
+
+    final String doUserExistByEmailSql = "SELECT EXISTS (SELECT 1 FROM users WHERE email = ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        doUserExistByEmailPstmt.setString(1, email);
+
+        ResultSet doUserExistRset = doUserExistByEmailPstmt.executeQuery();
+
+        if (doUserExistRset.next()) {
+          if (doUserExistRset.getBoolean(1)) {
+            return true;
+          }
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user with email '" + email + "' exists", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user with email '" + email + "' exists", e);
     }
 
     return false;
@@ -371,7 +462,7 @@ public class UserServiceImpl implements UserService {
         addUserRolePstmt.setString(2, role);
 
         int rows = addUserRolePstmt.executeUpdate();
-        
+
         conn.commit();
 
         return rows > 0;
@@ -405,7 +496,7 @@ public class UserServiceImpl implements UserService {
         removeUserRolePstmt.setString(2, role);
 
         int rows = removeUserRolePstmt.executeUpdate();
-        
+
         conn.commit();
 
         return rows > 0;
@@ -560,6 +651,8 @@ public class UserServiceImpl implements UserService {
     user.setLastLogin(rset.getTimestamp("last_login"));
     user.setCreatedOn(rset.getTimestamp("created_on"));
     user.setEditedOn(rset.getTimestamp("edited_on"));
+    user.setHighestControllerRating(rset.getInt("highest_controller_rating"));
+    user.setPasswordResetToken(rset.getString("password_reset_token"));
     return user;
   }
 }

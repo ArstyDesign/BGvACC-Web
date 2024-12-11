@@ -27,5 +27,11 @@ public class UserResponse implements Serializable {
   private Timestamp lastLogin;
   private Timestamp createdOn;
   private Timestamp editedOn;
+  private Integer highestControllerRating;
+  private String passwordResetToken;
   private List<RoleResponse> roles;
+
+  public boolean isUserPasswordReset() {
+    return passwordResetToken != null && !passwordResetToken.trim().isEmpty();
+  }
 }

@@ -13,11 +13,13 @@ import javax.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import org.springframework.security.web.savedrequest.*;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final SessionRegistry sessionRegistry;
 
   private final UserService userService;
+
+  private final JdbcTemplate jdbcTemplate;
+
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public AuthenticationSuccessResponse saveAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -111,5 +117,75 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     return roles;
+  }
+
+  @Override
+  public String forgotPassword(String email) {
+
+    final String forgotPasswordSql = "UPDATE users SET password_reset_token = ? WHERE email = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement forgotPasswordPstmt = conn.prepareStatement(forgotPasswordSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        String passwordResetToken = UUID.randomUUID().toString();
+
+        forgotPasswordPstmt.setString(1, passwordResetToken);
+        forgotPasswordPstmt.setString(2, email);
+
+        int rows = forgotPasswordPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0 ? passwordResetToken : null;
+
+      } catch (SQLException ex) {
+        log.error("Error marking password as forgotten for user with email '" + email + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error marking password as forgotten for user with email '" + email + "'.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public boolean resetPassword(String newPassword, String passwordResetToken) {
+
+    final String resetPasswordSql = "UPDATE users SET password = ?, password_reset_token = null WHERE password_reset_token = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement resetPasswordPstmt = conn.prepareStatement(resetPasswordSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        resetPasswordPstmt.setString(1, passwordEncoder.encode(newPassword));
+        resetPasswordPstmt.setString(2, passwordResetToken);
+
+        int rows = resetPasswordPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error resetting password for user with password reset token '" + passwordResetToken + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error resetting password for user with password reset token '" + passwordResetToken + "'.", e);
+    }
+
+    return false;
   }
 }

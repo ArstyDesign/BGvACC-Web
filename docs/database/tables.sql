@@ -9,7 +9,8 @@ CREATE TABLE users(
 	last_login timestamp,
 	created_on timestamp not null default NOW(),
 	edited_on timestamp,
-	highest_controller_rating int not null default 1
+	highest_controller_rating int not null default 1,
+	password_reset_token varchar(100)
 );
 
 INSERT INTO users VALUES ('1720051', 'aarshinkov9705@gmail.com', 'aarshinkov9705@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Atanas', 'Arshinkov', true, null, NOW(), null);
