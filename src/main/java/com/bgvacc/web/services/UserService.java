@@ -21,6 +21,8 @@ public interface UserService {
   boolean doUserExist(String cid);
   
   boolean doUserExistByEmail(String email);
+  
+  boolean doPasswordMatch(String cid, String password);
 
   boolean createUser(UserCreateModel ucm);
 
@@ -39,4 +41,6 @@ public interface UserService {
   Long getUsersCountByRoles(UserRoles... userRole);
   
   UsersCount getUsersCount();
+  
+  boolean changePassword(String cid, String password);
 }

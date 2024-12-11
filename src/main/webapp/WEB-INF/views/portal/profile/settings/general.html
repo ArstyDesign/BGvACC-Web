@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card card-body mb-3 mb-lg-5">
+            <div class="row align-items-center">
+              <div class="col-2 col-md-auto">
+                <div class="size-50 d-flex align-items-center justify-content-center bg-primary text-white rounded-pill shadow">
+                  <span class="align-middle material-symbols-rounded">
+                    <i class="bi bi-shield-lock"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="col-10 ps-5 ps-md-3 col-md">
+                <div class="row align-items-center">
+                  <div class="col-lg-7 mb-3 mb-md-0">
+                    <h5 class="mb-1" th:text="#{portal.profile.settings.option.changepassword.title}">Change password</h5>
+                    <p class="mb-0 text-truncate text-muted" th:text="#{portal.profile.settings.option.changepassword.header}">Secure your account with a new password</p>
+                  </div>
+
+                  <div class="col-auto ms-md-auto">
+                    <a href="#" th:href="@{/portal/profile/settings/change-password}" class="btn btn-primary d-inline-flex align-items-center">
+                      <i class="bi bi-shield-lock me-2"></i>
+                      <span th:text="#{portal.profile.settings.option.changepassword.action}">Change password</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

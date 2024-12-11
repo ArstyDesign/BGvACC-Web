@@ -267,6 +267,20 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public boolean doPasswordMatch(String cid, String password) {
+
+    boolean doPasswordMatch = false;
+
+    UserResponse user = getUser(cid);
+
+    if (user != null) {
+      return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    return doPasswordMatch;
+  }
+
+  @Override
   public boolean createUser(UserCreateModel ucm) {
 
     final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)";
@@ -636,6 +650,40 @@ public class UserServiceImpl implements UserService {
     }
 
     return new UsersCount(0L, 0L);
+  }
+
+  @Override
+  public boolean changePassword(String cid, String password) {
+
+    final String changePasswordSql = "UPDATE users SET password = ? WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        changePasswordPstmt.setString(1, passwordEncoder.encode(password));
+        changePasswordPstmt.setString(2, cid);
+
+        int rows = changePasswordPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error changing password for user with CID '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error changing password for user with CID '" + cid + "'.", e);
+    }
+
+    return false;
   }
 
   private UserResponse getUserResponseFromResultSet(ResultSet rset) throws SQLException {

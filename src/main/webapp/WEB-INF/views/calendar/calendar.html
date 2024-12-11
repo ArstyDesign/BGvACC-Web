@@ -38,6 +38,7 @@
                 let dayText = /*[[#{calendar.day}]]*/;
                 let listText = /*[[#{calendar.list}]]*/;
 
+        let currentLanguage = /*[[#{language.current}]]*/;
         let calendarEvents = /*[[${ces}]]*/;
                 let aux = /*[[@{/}]]*/;
         /*]]>*/
@@ -70,7 +71,7 @@
           },
           themeSystem: 'bootstrap',
           bootstrapFontAwesome: false,
-          locale: 'bg',
+          locale: currentLanguage,
           firstDay: 1,
           nowIndicator: true,
           weekNumbers: true,
