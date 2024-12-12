@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <head>
+    <title th:text="#{app.title(#{activateuseraccount.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 my-5">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-md-8 col-md-6 col-lg-5 z-2">
+
+              <h1 class="h4 mb-4" th:text="#{activateuseraccount.title}">Activate user account</h1>
+              <p class="mb-4 text-body-secondary" th:text="#{activateuseraccount.header(${user.names.fullName})}">Hello</p>
+              <div class="position-relative">
+                <div>
+                  <form class="needs-validation" th:action="@{/activate-user-account(token=${token})}" method="post" th:object="${auam}">
+                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('newPassword')} ? 'mb-3'">
+                      <span class="input-icon">
+                        <i class="bi bi-unlock"></i>
+                      </span>
+                      <input type="password" class="form-control" th:field="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'"
+                             th:placeholder="#{activateuseraccount.newpassword}"/>
+                    </div>
+                    <div class="invalid-feedback d-block mb-3" th:errors="*{newPassword}">Error</div>
+
+                    <div class="input-icon-group" th:classappend="${!#fields.hasErrors('confirmPassword')} ? 'mb-3'">
+                      <span class="input-icon">
+                        <i class="bi bi-unlock"></i>
+                      </span>
+                      <input type="password" class="form-control" th:field="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                             th:placeholder="#{activateuseraccount.confirmpassword}"/>
+                    </div>
+                    <div class="invalid-feedback d-block mb-3" th:errors="*{confirmPassword}">Error</div>
+
+                    <div class="d-grid">
+                      <button class="btn btn-success text-light" type="submit">
+                        <i class="bi bi-unlock me-1"></i>
+                        <span th:text="#{activateuseraccount.activateaccount}">Activate account</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

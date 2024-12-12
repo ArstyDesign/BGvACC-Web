@@ -23,8 +23,10 @@ public interface UserService {
   boolean doUserExistByEmail(String email);
   
   boolean doPasswordMatch(String cid, String password);
+  
+  boolean isUserActive(String cid);
 
-  boolean createUser(UserCreateModel ucm);
+  String createUser(UserCreateModel ucm);
 
   void updateLastLogin(String cid);
 
@@ -43,4 +45,6 @@ public interface UserService {
   UsersCount getUsersCount();
   
   boolean changePassword(String cid, String password);
+  
+  boolean activateUserAccount(String cid, String password);
 }

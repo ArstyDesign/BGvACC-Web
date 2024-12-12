@@ -9,6 +9,7 @@ CREATE TABLE users(
 	last_login timestamp,
 	created_on timestamp not null default NOW(),
 	edited_on timestamp,
+	activated_on timestamp,
 	highest_controller_rating int not null default 1,
 	password_reset_token varchar(100)
 );

@@ -1,5 +1,6 @@
 package com.bgvacc.web;
 
+import com.aarshinkov.random.Randomy;
 import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
@@ -77,6 +78,11 @@ public class BGvACCApplication {
   @Bean
   public Utils utils() {
     return new Utils();
+  }
+  
+  @Bean
+  public Randomy randomy() {
+    return Randomy.Builder.build();
   }
 
   @Bean

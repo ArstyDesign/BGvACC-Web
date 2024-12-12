@@ -87,6 +87,32 @@ public class MailServiceImpl extends Base implements MailService {
   }
 
   @Override
+  public boolean sendUserCreatedMail(Names names, String cid, String email, String temporaryPassword) {
+
+    try {
+      Context ctx = new Context();
+
+      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("cid", cid);
+      ctx.setVariable("email", email);
+      ctx.setVariable("names", names);
+      ctx.setVariable("temporaryPassword", temporaryPassword);
+
+      String htmlContent = templateEngine.process("user-created-mail.html", ctx);
+
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "User account created", htmlContent, "a.arshinkov97@gmail.com");
+
+      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+
+      return true;
+
+    } catch (NoSuchMessageException e) {
+      log.error("Sending failed!", e);
+      return false;
+    }
+  }
+
+  @Override
   public MailDomain createMail(String sender, String subject, String content, String... recipients) {
 
     StringBuilder to = new StringBuilder();
@@ -99,7 +125,7 @@ public class MailServiceImpl extends Base implements MailService {
     final String createMailSql = "INSERT INTO mailbox (mail_id, sender, receivers, subject, content) VALUES (?, ?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement createMailPstmt = conn.prepareStatement(createMailSql)) {
+         PreparedStatement createMailPstmt = conn.prepareStatement(createMailSql)) {
 
       try {
 

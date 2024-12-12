@@ -13,6 +13,7 @@ import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_CONNECTIONS_COUNT;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_PARTICIPATION_EVENTS_COUNT;
 import com.bgvacc.web.utils.Breadcrumb;
+import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,8 @@ public class UsersController extends Base {
   private final VatEudCoreApi vatEudCoreApi;
 
   private final UserATCAuthorizedPositionsService userATCAuthorizedPositionsService;
+
+  private final MailService mailService;
 
   @GetMapping("/portal/users")
   public String getUsers(Model model) {
@@ -278,6 +281,8 @@ public class UsersController extends Base {
 
     log.info("Creating user with CID '" + cid + "'");
 
+    Names names = Names.builder().firstName(member.getData().getFirstName()).lastName(member.getData().getLastName()).build();
+
     UserCreateModel ucm = new UserCreateModel();
     ucm.setCid(member.getData().getCid());
     ucm.setEmail(member.getData().getEmail());
@@ -286,7 +291,9 @@ public class UsersController extends Base {
     ucm.setLastName(member.getData().getLastName());
     ucm.setCurrentRating(member.getData().getRating());
 
-    boolean isCreated = userService.createUser(ucm);
+    String generatedUserPassword = userService.createUser(ucm);
+
+    mailService.sendUserCreatedMail(names, member.getData().getCid(), member.getData().getEmail(), generatedUserPassword);
 
     return "redirect:/portal/users";
   }

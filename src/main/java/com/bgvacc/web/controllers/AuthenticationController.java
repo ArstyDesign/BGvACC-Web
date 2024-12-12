@@ -72,7 +72,7 @@ public class AuthenticationController extends Base {
 
       if (authAttempt.getError() == AuthenticationError.BAD_CREDENTIALS) {
         bindingResult.rejectValue("password", "login.error.badcredentials");
-        
+
       } else if (authAttempt.getError() == AuthenticationError.USER_NOT_FOUND) {
         bindingResult.rejectValue("cidEmail", "login.error.usernotfound");
       }
@@ -83,6 +83,12 @@ public class AuthenticationController extends Base {
       model.addAttribute("page", "login");
 
       return "authentication/login";
+    }
+
+    UserResponse user = userService.getUser(login.getCidEmail());
+
+    if (!user.getIsActive()) {
+      return "redirect:/activate-user-account?token=" + user.getPasswordResetToken();
     }
 
     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
@@ -204,6 +210,57 @@ public class AuthenticationController extends Base {
     }
 
     boolean isPasswordReset = authenticationService.resetPassword(rpm.getNewPassword(), passwordResetToken);
+
+    return "redirect:/login";
+  }
+
+  @GetMapping(value = "/activate-user-account", params = {"token"})
+  public String prepareActivateUserAccount(@RequestParam(name = "token", required = true) String token, Model model) {
+
+    UserResponse user = userService.getUserByPasswordResetToken(token);
+
+    if (user == null) {
+      return "redirect:/";
+    }
+
+    model.addAttribute("token", token);
+    model.addAttribute("user", user);
+    model.addAttribute("auam", new ActivateUserAccountModel());
+
+    return "authentication/activate-user-account";
+  }
+
+  @PostMapping(value = "/activate-user-account", params = {"token"})
+  public String activateUserAccount(@RequestParam(name = "token", required = true) String token, @ModelAttribute("auam") @Valid ActivateUserAccountModel auam, BindingResult bindingResult, Model model) {
+
+    UserResponse user = userService.getUserByPasswordResetToken(token);
+
+    if (user == null) {
+      return "redirect:/";
+    }
+
+    if (bindingResult.hasErrors()) {
+
+      model.addAttribute("token", token);
+      model.addAttribute("user", user);
+      
+      return "authentication/activate-user-account";
+    }
+
+    if (!auam.getNewPassword().equals(auam.getConfirmPassword())) {
+      bindingResult.rejectValue("newPassword", "activateuseraccount.passwordsnomatch");
+      bindingResult.rejectValue("confirmPassword", "activateuseraccount.passwordsnomatch");
+    }
+
+    if (bindingResult.hasErrors()) {
+
+      model.addAttribute("token", token);
+      model.addAttribute("user", user);
+      
+      return "authentication/activate-user-account";
+    }
+
+    boolean isActivated = userService.activateUserAccount(user.getCid(), auam.getNewPassword());
 
     return "redirect:/login";
   }

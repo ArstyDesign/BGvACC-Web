@@ -1,5 +1,6 @@
 package com.bgvacc.web.services;
 
+import com.aarshinkov.random.Randomy;
 import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.responses.users.*;
@@ -29,6 +30,8 @@ public class UserServiceImpl implements UserService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private final Randomy randomy;
+
   @Override
   public List<UserResponse> getUsers() {
 
@@ -36,8 +39,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
-            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+         PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
+         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -89,8 +92,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement userPstmt = conn.prepareStatement(userSql);
-            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+         PreparedStatement userPstmt = conn.prepareStatement(userSql);
+         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -145,8 +148,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement userPstmt = conn.prepareStatement(userSql);
-            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+         PreparedStatement userPstmt = conn.prepareStatement(userSql);
+         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -198,7 +201,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistSql = "SELECT EXISTS (SELECT 1 FROM users WHERE cid = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
+         PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
 
       try {
 
@@ -235,7 +238,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistByEmailSql = "SELECT EXISTS (SELECT 1 FROM users WHERE email = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
+         PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
 
       try {
 
@@ -281,14 +284,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public boolean createUser(UserCreateModel ucm) {
+  public boolean isUserActive(String cid) {
+    return getUser(cid).getIsActive();
+  }
 
-    final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)";
+  @Override
+  public String createUser(UserCreateModel ucm) {
+
+    final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name, password_reset_token) VALUES (?, ?, ?, ?, ?, ?, ?)";
     final String addDefaultRoleSql = "INSERT INTO user_roles (cid, rolename) VALUES (?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
-            PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
+         PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
+         PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
 
       try {
 
@@ -298,11 +306,14 @@ public class UserServiceImpl implements UserService {
         createUserPstmt.setString(2, ucm.getEmail());
         createUserPstmt.setString(3, ucm.getEmailVatsim());
 
-        String password = "Test-1234";
+        String generatedPassword = randomy.generateRandomString(6, true, true, true);
 
-        createUserPstmt.setString(4, passwordEncoder.encode(password));
+        log.debug("Generated password: " + generatedPassword);
+
+        createUserPstmt.setString(4, passwordEncoder.encode(generatedPassword));
         createUserPstmt.setString(5, ucm.getFirstName());
         createUserPstmt.setString(6, ucm.getLastName());
+        createUserPstmt.setString(7, UUID.randomUUID().toString());
 
         createUserPstmt.executeUpdate();
 
@@ -311,14 +322,18 @@ public class UserServiceImpl implements UserService {
 
         addDefaultRolePstmt.executeUpdate();
 
-        addDefaultRolePstmt.setString(1, ucm.getCid());
-        addDefaultRolePstmt.setString(2, VatsimRatingUtils.getRatingNumberToUserRole(ucm.getCurrentRating()));
+        String ratingNumberToUserRole = VatsimRatingUtils.getRatingNumberToUserRole(ucm.getCurrentRating());
 
-        addDefaultRolePstmt.executeUpdate();
+        if (ratingNumberToUserRole != null) {
+          addDefaultRolePstmt.setString(1, ucm.getCid());
+          addDefaultRolePstmt.setString(2, VatsimRatingUtils.getRatingNumberToUserRole(ucm.getCurrentRating()));
+
+          addDefaultRolePstmt.executeUpdate();
+        }
 
         conn.commit();
 
-        return true;
+        return generatedPassword;
 
       } catch (SQLException ex) {
         log.error("Error creating user with CID - '" + ucm.getCid() + "'", ex);
@@ -330,7 +345,7 @@ public class UserServiceImpl implements UserService {
       log.error("Error creating user with CID - '" + ucm.getCid() + "'", e);
     }
 
-    return false;
+    return null;
   }
 
   @Override
@@ -339,7 +354,7 @@ public class UserServiceImpl implements UserService {
     final String updateUserLastLoginSql = "UPDATE users SET last_login = NOW() WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
+         PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
 
       try {
 
@@ -368,7 +383,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT * FROM roles";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -407,7 +422,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT r.rolename FROM roles r LEFT JOIN user_roles ur ON r.rolename = ur.rolename AND ur.cid = ? WHERE ur.rolename IS NULL;";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -449,8 +464,8 @@ public class UserServiceImpl implements UserService {
     final String checkIfUserRoleForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_roles WHERE cid = ? AND rolename = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
-            PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql)) {
+         PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
+         PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql)) {
 
       try {
 
@@ -500,7 +515,7 @@ public class UserServiceImpl implements UserService {
     final String removeUserRoleSql = "DELETE FROM user_roles WHERE cid = ? AND rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
+         PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
 
       try {
 
@@ -534,7 +549,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -577,7 +592,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename IN (" + placeholders + ")";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -614,8 +629,8 @@ public class UserServiceImpl implements UserService {
     final String getActiveUsersCountSql = "SELECT COUNT(1) active_users_count FROM users WHERE is_active = true";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
-            PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
+         PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
+         PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
 
       try {
 
@@ -658,7 +673,7 @@ public class UserServiceImpl implements UserService {
     final String changePasswordSql = "UPDATE users SET password = ? WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
+         PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
 
       try {
 
@@ -681,6 +696,40 @@ public class UserServiceImpl implements UserService {
       }
     } catch (Exception e) {
       log.error("Error changing password for user with CID '" + cid + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean activateUserAccount(String cid, String password) {
+
+    final String activateUserAccountSql = "UPDATE users SET password = ?, is_active = true, password_reset_token = null, activated_on = NOW() WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement activateUserAccountPstmt = conn.prepareStatement(activateUserAccountSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        activateUserAccountPstmt.setString(1, passwordEncoder.encode(password));
+        activateUserAccountPstmt.setString(2, cid);
+
+        int rows = activateUserAccountPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error activating user account for user with CID '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error activating user account for user with CID '" + cid + "'.", e);
     }
 
     return false;

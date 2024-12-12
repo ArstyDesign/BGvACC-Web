@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>New Account Created</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #dddddd;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background-color: #00ACF1;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+        padding-bottom: 0px;
+        color: #333333;
+      }
+      .content h2 {
+        color: #00ACF1;
+      }
+      .button {
+        display: inline-block;
+        background-color: #00ACF1;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      .button:hover {
+        background-color: #007AB8;
+      }
+      .visible-link {
+        margin-top: 15px;
+        font-size: 12px; /* Reduced font size */
+        color: #666666;
+      }
+      .visible-link a {
+        color: #00ACF1; /* Match primary color */
+        text-decoration: none;
+        font-size: 12px; /* Reduced font size */
+      }
+      .visible-link a:hover {
+        text-decoration: underline;
+      }
+      .footer {
+        padding: 10px;
+        background-color: #f4f4f4;
+        color: #666666;
+        text-align: center;
+        font-size: 12px;
+      }
+      .note {
+        font-size: 10px;
+        color: #999999;
+        margin: 15px 0;
+        padding: 0;
+        text-align: left;
+        margin-left: 20px;
+      }
+      @media only screen and (max-width: 600px) {
+        .content {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        New user account created
+      </div>
+      <div class="content">
+        <h2>Welcome to <span th:text="#{app.name}">App name</span></h2>
+
+        <h3 style="margin-bottom: 15px;" th:text="${names.fullName}">John Doe</h3>
+        <p style="margin-top: 0px;">Your account has been successfully created. To log in, please use the following credentials to log in. Use your CID and temporary password, shown below:</p>
+
+        <dl>
+          <dt style="font-weight: bold;">CID</dt>
+          <dd style="margin-left: 0; margin-bottom: 10px;" th:text="${cid}">CID</dd>
+          <dt style="font-weight: bold;">Temporary password</dt>
+          <dd style="margin-left: 0; margin-bottom: 10px;" th:text="${temporaryPassword}">Temporary password</dd>
+        </dl>
+
+        <p>To access your account, simply log in using the above credentials. After logging in, you will be prompted to change your password. Please make sure to choose a strong password to keep your account secure.</p>        
+        <a class="button" th:href="${appUrl} + '/login'">Login to your account</a>
+
+        <p class="visible-link">
+          If the button doesn't work, copy and paste this link into your browser:
+          <a th:text="${appUrl} + '/login'" th:href="${appUrl} + '/login'">Login Link</a>
+        </p>
+
+        <p class="visible-link">This email was sent to <strong th:text="${email}">john.doe@gmail.com</strong>.</p>
+
+        <p>If you did not create an account, please ignore this email.</p>
+      </div>
+      <div class="note">Please do not reply to this email as it is a system-generated message.</div>
+      <div class="footer">
+        <span>&copy;</span>
+        <span th:text="${#dates.year(#dates.createNow())}">2024</span>
+        <span th:text="#{app.name}">App name</span>
+      </div>
+    </div>
+  </body>
+</html>

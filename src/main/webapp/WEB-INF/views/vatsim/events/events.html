@@ -39,11 +39,11 @@
                   </div>
                 </div>
 
-                <div class="fw-bold" th:text="#{events.datetime}">Date &amp; time</div>
+                <div class="fw-bold" th:utext="#{events.datetime}">Date &amp; time</div>
                 <div class="text-body-secondary">
                   <!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
                                     <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
-                  <span th:text="${#dates.format(e.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(e.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(e.endAtTimestamp, 'HH:mm')} + 'z'">Mar 12, 2021</span>
+                  <span th:text="${e.getFormattedStartDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${e.getFormattedEndDateTime('HH:mm')} + 'z'">Mar 12, 2021</span>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ package com.bgvacc.web.responses.events;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import lombok.*;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -42,17 +43,20 @@ public class EventResponse implements Serializable {
   public boolean isCurrentlyActive() {
 
     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-
-//    ZonedDateTime startAtUTC = new ZonedDateTime(startAt);
     boolean resultAfter = now.isAfter(startAt);
-
-    System.out.println("now:  " + now);
-    System.out.println("start: " + startAt);
-    System.out.println("end: " + endAt);
-
     boolean resultBefore = now.isBefore(endAt);
 
     return resultAfter && resultBefore;
+  }
+
+  public String getFormattedStartDateTime(String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+    return startAt.format(formatter);
+  }
+
+  public String getFormattedEndDateTime(String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+    return endAt.format(formatter);
   }
 
   public void setStartAt(ZonedDateTime startAt) {
