@@ -97,7 +97,7 @@ CREATE TABLE event_types (
 INSERT INTO event_types (type) VALUES ('event'), ('cpt'), ('vasops');
 
 CREATE TABLE events (
-    event_id int primary key not null,
+    event_id int not null primary key,
     name varchar(255) not null,
     type varchar(10) not null references event_types(type),
 	priority int not null default 1,
@@ -111,8 +111,16 @@ CREATE TABLE events (
     image_url varchar(255),
     start_at timestamp not null,
     end_at timestamp not null,
-    created_at timestamptz not null,
+    created_at timestamptz not null default NOW(),
     updated_at timestamptz
+);
+
+CREATE TABLE event_connections (
+	event_connection_id varchar(100) not null primary key default gen_random_uuid(),
+	event_one_id int not null references events(event_id) on delete cascade,
+    event_two_id int not null references events(event_id) on delete cascade,
+    created_at timstamp not null default NOW(),
+    constraint unique_event_connection unique (least(event_one_id, event_two_id), greatest(event_one_id, event_two_id))
 );
 
 CREATE TABLE sections (

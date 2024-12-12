@@ -1,6 +1,5 @@
 package com.bgvacc.web.controllers;
 
-import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
-
-  private final EventApi eventApi;
 
   private final EventService eventService;
 

@@ -16,192 +16,8 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
-        <div class="col-12 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="text-muted mb-3">
-                <small>
-                  <span class="material-symbols-rounded me-1">lock_person</span>
-                  <span th:utext="#{portal.events.event.roster.cardonlyvisible}">This card is only visible for Staff director, Events staff and system administrators.</span>
-                </small>
-              </div>
-              <div class="d-flex align-items-center me-3">
-                <div class="h5 mb-0" th:text="#{portal.events.event.roster.administration}">Event roster administration</div>
-                <div class="btn btn-success btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addEventPositionModal">
-                  <span class="material-symbols-rounded me-1">add_circle</span>
-                  <span th:text="#{portal.events.event.roster.addposition}">Add event position</span>
-                </div>
-              </div>
-
-              <hr class="my-3"/>
-
-              <div th:each="ep, iterStat : ${eventPositions}" th:remove="tag">
-
-                <div class="d-flex align-items-center">
-                  <div class="h4 text-primary mb-0" th:text="${iterStat.count} + '. ' + #{positions. + ${#strings.toLowerCase(ep.positionId)}}">LBSR_CTR - Sofia Control</div>
-                  <a href="#" class="text-danger ms-3">
-                    <span class="material-symbols-rounded">delete</span>
-                  </a>
-                </div>
-                <div class="text-muted mb-2" th:with="minRating=${@vatsimRatingUtils.getATCRatingSymbol(ep.minimumRating)}">
-                  <small th:text="#{portal.events.event.position.min(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}"></small>
-                </div>
-
-                <div class="mb-2 text-muted" th:if="${#lists.isEmpty(ep.slots)}">
-                  <small th:text="#{portal.events.event.noavailableslots}">No slots available</small>
-                </div>
-                
-                <div th:classappend="${!iterStat.last} ? 'mb-4'">
-                  <a href="#" class="btn btn-info text-light btn-sm">
-                    <span>Set slots</span>
-                  </a>
-                </div>
-
-                <div class="mb-2 text-muted" th:if="${!#lists.isEmpty(ep.slots)}">
-                  <small th:text="${#lists.size(ep.slots)} + ' slot/s'">2 slots</small>
-                </div>
-
-                <div th:each="es, iterStat : ${ep.slots}" th:if="${!#lists.isEmpty(ep.slots)}">
-                  <div class="h5 mb-0" th:with="isSameDay=${(es.startTime.year eq es.endTime.year) and (es.startTime.month eq es.endTime.month) and (es.startTime.date eq es.endTime.date)}">
-                    <div th:if="${isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">Same day</div>
-                    <div th:if="${!isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'dd.MM.yyyy, HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'dd.MM.yyy, HH:mm')} + 'z'">Same day</div>
-                  </div>
-
-                  <div class="mb-5 text-muted" th:if="${#lists.isEmpty(es.userEventApplications)}">
-                    <span>No applications yet.</span>
-                  </div>
-
-                  <table class="table table-hover mb-5" th:if="${!#lists.isEmpty(es.userEventApplications)}">
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">CID &amp; Name</td>
-                        <td class="fw-bold">Current rating</td>
-                        <td class="fw-bold">Applied on</td>
-                        <td class="fw-bold">Status</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr th:each="uea : ${es.userEventApplications}" th:with="isStatusPending=${uea.status eq null}">
-                        <td th:text="${uea.user.cid} + ' - ' + ${uea.user.names}"
-                            th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
-                        <td th:with="ratingSymbol=${@vatsimRatingUtils.getATCRatingSymbol(uea.user.highestControllerRating)}"
-                            th:text="#{members.member.atc. + ${#strings.toLowerCase(ratingSymbol)}}"
-                            th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
-                        <td th:text="${#dates.format(uea.appliedAt, 'dd.MM.yyyy, HH:mm:ss')}"
-                            th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
-                        <td th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">
-                          <span th:if="${isStatusPending}" class="badge bg-secondary">Pending</span>
-                          <span th:if="${!isStatusPending and uea.status}" class="badge bg-success">Approved</span>
-                          <span th:if="${!isStatusPending and !uea.status}" class="badge bg-danger">Rejected</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  <!--<div th:text="${es.startTime} + ' - ' + ${es.endTime}"></div>-->
-                </div>
-
-                <!--                <table class="table table-hover mb-5">
-                                  <thead>
-                                    <tr>
-                                      <td class="fw-bold">Slot</td>
-                                      <td class="fw-bold">CID &amp; Name</td>
-                                      <td class="fw-bold">Current rating</td>
-                                      <td class="fw-bold">Applied on</td>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr th:each="es : ${ep.slots}">
-                                      <td class="fw-bold">1. 17:00-18:00z</td>
-                                      <div th:if="${es.user ne null}" th:remove="tag">
-                                        <td th:text="${es.user.cid} + ' - ' + ${es.user.names}">1604267 - Andrei Tzenov</td>
-                                        <td>C1 - Enroute controller</td>
-                                        <td>22.10.2024, 12:12:09</td>
-                                      </div>
-                                      <div th:if="${es.user eq null}" th:remove="tag">
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                      </div>
-                                    </tr>
-                                                        <tr>
-                                                          <td class="fw-bold">2. 18:00-19:00z</td>
-                                                          <td>1664545 - Emil Ivanov</td>
-                                                          <td>C1 - Enroute controller</td>
-                                                          <td>23.10.2024, 16:39:30</td>
-                                                        </tr>
-                                  </tbody>
-                                </table>-->
-
-                <!--<hr class="my-3"/>-->
-              </div>
-
-              <!--              <table class="table table-hover">
-                              <thead>
-                                <tr>
-                                  <th scope="col" class="fw-bold">#</th>
-                                  <th scope="col" class="fw-bold">Position / CID</th>
-                                  <th scope="col" class="fw-bold">Minimum rating required / Name</th>
-                                  <th scope="col" class="fw-bold">Applications / Current rating</th>
-                                  <th scope="col" class="fw-bold">Applied on</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td class="bg-secondary-subtle fw-bold">1</td>
-                                  <td class="bg-secondary-subtle fw-bold">LBSF_APP</td>
-                                  <td class="bg-secondary-subtle fw-bold">S3 - TMA controller</td>
-                                  <td colspan="2" class="bg-secondary-subtle fw-bold">2</td>
-                                </tr>
-                                <tr>
-                                  <td>1.</td>
-                                  <td>1672684</td>
-                                  <td>Atanas Arshinkov</td>
-                                  <td>S3 - TMA Controller</td>
-                                  <td>22.10.2024, 12:12:09</td>
-                                </tr>
-                                <tr>
-                                  <td>2.</td>
-                                  <td>1704000</td>
-                                  <td>Lyudmil Lyudmilov</td>
-                                  <td>S3 - TMA controller</td>
-                                  <td>23.10.2024, 16:39:30</td>
-                                </tr>
-              
-                                <tr>
-                                  <td class="bg-secondary-subtle fw-bold">2</td>
-                                  <td class="bg-secondary-subtle fw-bold">LBSF_TWR</td>
-                                  <td class="bg-secondary-subtle fw-bold">S1 - Tower trainee</td>
-                                  <td colspan="2" class="bg-secondary-subtle fw-bold">2</td>
-                                </tr>
-                                                  <tr>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                  </tr>
-                                <tr>
-                                  <td>1.</td>
-                                  <td>1672684</td>
-                                  <td>Tsvetan Mitov</td>
-                                  <td>S2 - Tower controller</td>
-                                </tr>
-                                <tr>
-                                  <td>2.</td>
-                                  <td>1773453</td>
-                                  <td>Kristiyan Hristov</td>
-                                  <td>S2 - Tower controller</td>
-                                </tr>
-                              </tbody>
-                            </table>-->
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 mb-3">
           <!--Card-->
           <div class="card shadow border-0">
             <div class="d-flex flex-lg-row flex-column overflow-hidden ">
@@ -212,7 +28,7 @@
               <div class="card-body h-100 p-0 m-4 flex-grow-1">
                 <div class="mb-4">
                   <h1 class="h4 mb-2" th:text="${event.name}">Title</h1>
-                  <div class="d-block lh-1 text-body-secondary" th:text="${#dates.format(event.startAt.toInstant, 'dd.MM.yy')} + ', ' + ${#dates.format(event.startAtTimestamp, 'HH:mm')} + ' - ' + ${#dates.format(event.endAtTimestamp, 'HH:mm')} + 'z'">Date time</div>
+                  <div class="d-block lh-1 text-body-secondary" th:text="${event.getFormattedStartDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${event.getFormattedEndDateTime('HH:mm')} + 'z'">Date time</div>
                 </div>
                 <div class="fs-5" th:text="${event.shortDescription}">Short description</div>
               </div>
@@ -224,7 +40,201 @@
         </div>
       </div>
 
-      <div class="modal fade" id="addEventPositionModal" tabindex="-1" aria-labelledby="addEventPositionModalLabel" style="display: none;" aria-hidden="true">
+      <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="text-muted" th:if="${event.isCpt}">
+                <small>
+                  <span class="material-symbols-rounded me-1">lock_person</span>
+                  <span th:utext="#{portal.events.event.roster.cptnoroster}">The CPT events do not have a roster, as they are always connected to an event.</span>
+                </small>
+              </div>
+
+              <div th:if="${!event.isCpt}" th:remove="tag">
+                <div class="text-muted mb-3">
+                  <small>
+                    <span class="material-symbols-rounded me-1">lock_person</span>
+                    <span th:utext="#{portal.events.event.roster.cardonlyvisible}">This card is only visible for Staff director, Events staff and system administrators.</span>
+                  </small>
+                </div>
+                <div class="d-flex align-items-center me-3">
+                  <div class="h5 mb-0" th:text="#{portal.events.event.roster.administration}">Event roster administration</div>
+                  <div class="btn btn-success btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addEventPositionModal">
+                    <span class="material-symbols-rounded me-1">add_circle</span>
+                    <span th:text="#{portal.events.event.roster.addposition}">Add event position</span>
+                  </div>
+                </div>
+
+                <hr class="my-3"/>
+
+                <div th:each="ep, iterStat : ${eventPositions}" th:remove="tag">
+
+                  <div class="d-flex align-items-center">
+                    <div class="h4 text-primary mb-0" th:text="${iterStat.count} + '. ' + #{positions. + ${#strings.toLowerCase(ep.positionId)}}">LBSR_CTR - Sofia Control</div>
+                    <a href="#" class="text-danger ms-3">
+                      <span class="material-symbols-rounded">delete</span>
+                    </a>
+                  </div>
+                  <div class="text-muted mb-2" th:with="minRating=${@vatsimRatingUtils.getATCRatingSymbol(ep.minimumRating)}">
+                    <small th:text="#{portal.events.event.position.min(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}"></small>
+                  </div>
+
+                  <div class="mb-2 text-muted" th:if="${#lists.isEmpty(ep.slots)}">
+                    <small th:text="#{portal.events.event.noavailableslots}">No slots available</small>
+                  </div>
+
+                  <div th:classappend="${!iterStat.last} ? 'mb-4'">
+                    <a href="#" class="btn btn-info text-light btn-sm">
+                      <span>Set slots</span>
+                    </a>
+                  </div>
+
+                  <div class="mb-2 text-muted" th:if="${!#lists.isEmpty(ep.slots)}">
+                    <small th:text="${#lists.size(ep.slots)} + ' slot/s'">2 slots</small>
+                  </div>
+
+                  <div th:each="es, iterStat : ${ep.slots}" th:if="${!#lists.isEmpty(ep.slots)}">
+                    <div class="h5 mb-0" th:with="isSameDay=${(es.startTime.year eq es.endTime.year) and (es.startTime.month eq es.endTime.month) and (es.startTime.date eq es.endTime.date)}">
+                      <div th:if="${isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">Same day</div>
+                      <div th:if="${!isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'dd.MM.yyyy, HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'dd.MM.yyy, HH:mm')} + 'z'">Same day</div>
+                    </div>
+
+                    <div class="mb-5 text-muted" th:if="${#lists.isEmpty(es.userEventApplications)}">
+                      <span>No applications yet.</span>
+                    </div>
+
+                    <table class="table table-hover mb-5" th:if="${!#lists.isEmpty(es.userEventApplications)}">
+                      <thead>
+                        <tr>
+                          <td class="fw-bold">CID &amp; Name</td>
+                          <td class="fw-bold">Current rating</td>
+                          <td class="fw-bold">Applied on</td>
+                          <td class="fw-bold">Status</td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="uea : ${es.userEventApplications}" th:with="isStatusPending=${uea.status eq null}">
+                          <td th:text="${uea.user.cid} + ' - ' + ${uea.user.names}"
+                              th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
+                          <td th:with="ratingSymbol=${@vatsimRatingUtils.getATCRatingSymbol(uea.user.highestControllerRating)}"
+                              th:text="#{members.member.atc. + ${#strings.toLowerCase(ratingSymbol)}}"
+                              th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
+                          <td th:text="${#dates.format(uea.appliedAt, 'dd.MM.yyyy, HH:mm:ss')}"
+                              th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
+                          <td th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">
+                            <span th:if="${isStatusPending}" class="badge bg-secondary">Pending</span>
+                            <span th:if="${!isStatusPending and uea.status}" class="badge bg-success">Approved</span>
+                            <span th:if="${!isStatusPending and !uea.status}" class="badge bg-danger">Rejected</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <!--<div th:text="${es.startTime} + ' - ' + ${es.endTime}"></div>-->
+                  </div>
+
+                  <!--                <table class="table table-hover mb-5">
+                                    <thead>
+                                      <tr>
+                                        <td class="fw-bold">Slot</td>
+                                        <td class="fw-bold">CID &amp; Name</td>
+                                        <td class="fw-bold">Current rating</td>
+                                        <td class="fw-bold">Applied on</td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr th:each="es : ${ep.slots}">
+                                        <td class="fw-bold">1. 17:00-18:00z</td>
+                                        <div th:if="${es.user ne null}" th:remove="tag">
+                                          <td th:text="${es.user.cid} + ' - ' + ${es.user.names}">1604267 - Andrei Tzenov</td>
+                                          <td>C1 - Enroute controller</td>
+                                          <td>22.10.2024, 12:12:09</td>
+                                        </div>
+                                        <div th:if="${es.user eq null}" th:remove="tag">
+                                          <td>-</td>
+                                          <td>-</td>
+                                          <td>-</td>
+                                        </div>
+                                      </tr>
+                                                          <tr>
+                                                            <td class="fw-bold">2. 18:00-19:00z</td>
+                                                            <td>1664545 - Emil Ivanov</td>
+                                                            <td>C1 - Enroute controller</td>
+                                                            <td>23.10.2024, 16:39:30</td>
+                                                          </tr>
+                                    </tbody>
+                                  </table>-->
+
+                  <!--<hr class="my-3"/>-->
+                </div>
+
+                <!--              <table class="table table-hover">
+                                <thead>
+                                  <tr>
+                                    <th scope="col" class="fw-bold">#</th>
+                                    <th scope="col" class="fw-bold">Position / CID</th>
+                                    <th scope="col" class="fw-bold">Minimum rating required / Name</th>
+                                    <th scope="col" class="fw-bold">Applications / Current rating</th>
+                                    <th scope="col" class="fw-bold">Applied on</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td class="bg-secondary-subtle fw-bold">1</td>
+                                    <td class="bg-secondary-subtle fw-bold">LBSF_APP</td>
+                                    <td class="bg-secondary-subtle fw-bold">S3 - TMA controller</td>
+                                    <td colspan="2" class="bg-secondary-subtle fw-bold">2</td>
+                                  </tr>
+                                  <tr>
+                                    <td>1.</td>
+                                    <td>1672684</td>
+                                    <td>Atanas Arshinkov</td>
+                                    <td>S3 - TMA Controller</td>
+                                    <td>22.10.2024, 12:12:09</td>
+                                  </tr>
+                                  <tr>
+                                    <td>2.</td>
+                                    <td>1704000</td>
+                                    <td>Lyudmil Lyudmilov</td>
+                                    <td>S3 - TMA controller</td>
+                                    <td>23.10.2024, 16:39:30</td>
+                                  </tr>
+                
+                                  <tr>
+                                    <td class="bg-secondary-subtle fw-bold">2</td>
+                                    <td class="bg-secondary-subtle fw-bold">LBSF_TWR</td>
+                                    <td class="bg-secondary-subtle fw-bold">S1 - Tower trainee</td>
+                                    <td colspan="2" class="bg-secondary-subtle fw-bold">2</td>
+                                  </tr>
+                                                    <tr>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                    </tr>
+                                  <tr>
+                                    <td>1.</td>
+                                    <td>1672684</td>
+                                    <td>Tsvetan Mitov</td>
+                                    <td>S2 - Tower controller</td>
+                                  </tr>
+                                  <tr>
+                                    <td>2.</td>
+                                    <td>1773453</td>
+                                    <td>Kristiyan Hristov</td>
+                                    <td>S2 - Tower controller</td>
+                                  </tr>
+                                </tbody>
+                              </table>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="addEventPositionModal" tabindex="-1" aria-labelledby="addEventPositionModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         <form th:action="@{/portal/events/} + ${eventId} + '/positions/add'" method="post">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
