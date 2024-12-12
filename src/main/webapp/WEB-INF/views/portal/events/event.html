@@ -69,11 +69,15 @@
 
                 <hr class="my-3"/>
 
+                <div class="mb-2 text-muted" th:if="${#lists.isEmpty(eventPositions)}">
+                  <small th:text="#{portal.events.event.nopositionsavailable}">No positions available</small>
+                </div>
+
                 <div th:each="ep, iterStat : ${eventPositions}" th:remove="tag">
 
                   <div class="d-flex align-items-center">
                     <div class="h4 text-primary mb-0" th:text="${iterStat.count} + '. ' + #{positions. + ${#strings.toLowerCase(ep.positionId)}}">LBSR_CTR - Sofia Control</div>
-                    <a href="#" class="text-danger ms-3">
+                    <a href="#" class="text-danger ms-3" data-bs-toggle="modal" data-bs-target="#removeEventPositionModal" th:data-event-position-id="${ep.eventPositionId}" th:data-remove-event-position-msg="#{portal.events.event.roster.removeposition.modal.message(#{positions. + ${#strings.toLowerCase(ep.positionId)}})}">
                       <span class="material-symbols-rounded">delete</span>
                     </a>
                   </div>
@@ -188,6 +192,62 @@
           </div>
         </form>
       </div>
+      
+      <div class="modal fade" id="addPositionSlotModal" tabindex="-1" aria-labelledby="addPositionSlotModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
+        <form id="addPositionSlotModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addPositionSlotModalLabel" th:text="#{portal.events.event.roster.removeposition.modal.title}">Remove position from event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.removeposition.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-danger" th:text="#{portal.events.event.roster.removeposition.modal.removeposition}">Remove position</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal fade" id="removeEventPositionModal" tabindex="-1" aria-labelledby="removeEventPositionModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
+        <form id="removeEventPositionModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="removeEventPositionModalLabel" th:text="#{portal.events.event.roster.removeposition.modal.title}">Remove position from event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div id="removeEventPositionMessage"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.removeposition.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-danger" th:text="#{portal.events.event.roster.removeposition.modal.removeposition}">Remove position</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <script type="text/javascript" th:inline="javascript" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
+        /*<![CDATA[*/
+        let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions/remove']]*/;
+                let aux2 = /*[[@{/}]]*/;
+        /*]]>*/
+
+        document.getElementById('removeEventPositionModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let eventPositionId = modal.data('event-position-id');
+          let removeEventPositionMsg = modal.data('remove-event-position-msg');
+
+          $("#removeEventPositionMessage").empty().append(removeEventPositionMsg);
+
+          $('#removeEventPositionModalForm').attr('action', removeEventPositionUrl + '/' + eventPositionId);
+        });
+      </script>
     </div>
   </body>
 </html>

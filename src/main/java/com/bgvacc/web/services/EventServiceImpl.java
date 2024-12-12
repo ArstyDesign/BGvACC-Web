@@ -34,7 +34,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsSql = "SELECT * FROM events";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
 
       try {
 
@@ -70,7 +70,7 @@ public class EventServiceImpl implements EventService {
           if (endAtTimestamp != null) {
             ZonedDateTime endAtZonedDateTime = endAtTimestamp.toInstant()
                     .atZone(ZoneId.of("UTC"));
-            
+
             ved.setEndAt(endAtZonedDateTime);
           }
 
@@ -118,7 +118,7 @@ public class EventServiceImpl implements EventService {
   public List<EventResponse> getEventsBeforeAfterNow(String sql) {
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
 
       try {
 
@@ -159,7 +159,7 @@ public class EventServiceImpl implements EventService {
     final String getUpcomingEventsAfterDaysSql = "SELECT * FROM events WHERE DATE(start_at) = CURRENT_DATE + INTERVAL '" + days + " days' ORDER BY priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
+            PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
 
       try {
 
@@ -199,7 +199,7 @@ public class EventServiceImpl implements EventService {
     final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
+            PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
 
       try {
 
@@ -241,9 +241,9 @@ public class EventServiceImpl implements EventService {
     final String getUserEventApplicationsSql = "SELECT uea.application_id, uea.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, u.highest_controller_rating, uea.slot_id, uea.status, uea.applied_at FROM user_event_applications uea JOIN users u ON uea.user_cid = u.cid WHERE uea.slot_id = ? ORDER BY uea.applied_at";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
-         PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
-         PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+            PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
+            PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
+            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
 
       try {
 
@@ -362,7 +362,7 @@ public class EventServiceImpl implements EventService {
     final String addEventPositionSql = "INSERT INTO event_positions (event_id, position_id, minimum_rating) VALUES (?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
+            PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
 
       try {
 
@@ -392,6 +392,40 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public boolean removeEventPosition(Long eventId, String eventPositionId) {
+
+    final String removeEventPositionSql = "DELETE FROM event_positions WHERE event_position_id = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+//        removeEventPositionPstmt.setLong(1, eventId);
+        removeEventPositionPstmt.setString(1, eventPositionId);
+
+        int rows = removeEventPositionPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error removing event position with ID '" + eventPositionId + "' for event with ID '" + eventId + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error removing event position with ID '" + eventPositionId + "' for event with ID '" + eventId + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data) {
 
     final String checkIfEventExistsInDatabaseSql = "SELECT EXISTS (SELECT 1 FROM events WHERE event_id = ?)";
@@ -401,8 +435,8 @@ public class EventServiceImpl implements EventService {
 //      log.debug("ved: " + ved.getStart());
 //    }
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
-         PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
+            PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
+            PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
 
       try {
 
@@ -523,7 +557,7 @@ public class EventServiceImpl implements EventService {
     final String getTotalUserEventApplicationsSql = "SELECT COUNT(1) total_user_events_applications FROM user_event_applications where user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
+            PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
 
       try {
 
@@ -558,7 +592,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsYearlyReportForYearSql = "SELECT month_series.month, ? AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? AND type = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
+            PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
 
       try {
 

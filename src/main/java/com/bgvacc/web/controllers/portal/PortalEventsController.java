@@ -143,7 +143,17 @@ public class PortalEventsController extends Base {
 
     log.debug("Adding position '" + position + "' to event with ID '" + eventId + "'");
 
-    boolean addEventPosition = eventService.addEventPosition(eventId, position, minimumRating);
+    boolean isEventPositionAdded = eventService.addEventPosition(eventId, position, minimumRating);
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
+  @PostMapping("/portal/events/{eventId}/positions/remove/{eventPositionId}")
+  public String remmovePositionFromEvent(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId) {
+
+    log.debug("Removing event position with ID '" + eventPositionId + "' from event with ID '" + eventId + "'");
+
+    boolean isEventPositionRemoved = eventService.removeEventPosition(eventId, eventPositionId);
 
     return "redirect:/portal/events/" + eventId;
   }

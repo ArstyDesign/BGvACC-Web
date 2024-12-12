@@ -25,7 +25,8 @@ public class Version extends Base {
 
   public synchronized String getVersion() {
     if (CURRENT_VERSION != null) {
-      CURRENT_VERSION = getMessage("footer.progress");
+//      CURRENT_VERSION = getMessage("footer.progress");
+      CURRENT_VERSION = getMessage("footer.beta");
     }
 
     try {
@@ -42,7 +43,8 @@ public class Version extends Base {
         CURRENT_VERSION = "v" + props.get("Implementation-Version") + " " + getMessage("footer.from") + " " + fromFormat.format(from);
       }
     } catch (Exception e) {
-      CURRENT_VERSION = getMessage("footer.progress");
+//      CURRENT_VERSION = getMessage("footer.progress");
+      CURRENT_VERSION = getMessage("footer.beta");
 //      CURRENT_VERSION = "Work in progress...";
     }
 
