@@ -33,24 +33,12 @@
         </div>
         <div class="eventDescription mx-4 mb-4 mt-0 mt-lg-4">
           <div th:utext="${event.htmlDescription}">Description</div>
-
-          <!--<div th:text="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">test</div>-->
-
-<!--          <div sec:authorize="isAuthenticated()" th:if="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">
-            <a href="#" class="btn btn-primary btn-sm mt-3">Apply for controlling</a>
-          </div>-->
         </div>
       </div>
-
-      <!--      <div th:text="${eventPositions[0].slots}"></div>-->
 
       <div class="card">
         <div class="card-body">
           <div class="h5 mb-3">Event roster</div>
-          
-          <!--<div th:text="${eventPositions}"></div>-->
-
-          <!--<div th:text="${@slotsGenerator.generateSlots(event.startAt.toLocalDateTime(), event.endAt.toLocalDateTime(), mostSlots)}"></div>-->
           
           <div th:if="${!doAllPositionsHaveSlots}" class="text-muted">
             <small class="bi bi-info-circle me-1"></small>
@@ -68,72 +56,17 @@
             <tbody>
               <tr th:each="ep : ${eventPositions}">
                 <td th:text="#{positions. + ${#strings.toLowerCase(ep.positionId)}}"></td>
-                <!--<td th:text="'mostSlots: ' + ${mostSlots} + ', ep.slots.size: ' + ${#lists.size(ep.slots)}"></td>-->
 
                 <td th:colspan="${mostSlots / #lists.size(ep.slots)}" class="text-center"
                     th:each="sl, iterStat : ${ep.slots}">
                   <a href="#" th:if="${!sl.isApproved}" class="btn btn-primary btn-sm">Apply for slot</a>
                   <span th:if="${sl.isApproved}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
                 </td>
-
-                <!--<td th:if="${#lists.size(ep.slots) eq 0}" class="text-center">-</td>-->
-
-                <!--                 Добавяне на стойности по подразбиране в останалите колони, ако няма достатъчно елементи в ep.slots 
-                                <td th:each="i : ${#numbers.sequence(1, mostSlots - #lists.size(ep.slots) + 1)}" class="text-center">
-                                  Default
-                                </td>-->
               </tr>
             </tbody>
           </table>
-
-          <!--          <div th:each="ep, iterStat : ${eventPositions}" th:remove="tag">
-          
-                      <table class="table table-hover table-striped" style="table-layout: fixed; width: 100%;">
-                        <thead>
-                          <tr>
-                            <th scope="col" class="fw-bold" th:text="${iterStat.first} ? 'Position'">Position</th>
-                            <th scope="col" class="fw-bold text-end text-md-start" th:each="s : ${ep.slots}" th:text="${s.getFormattedStartDateTime('HH:mm')} + ' - ' + ${s.getFormattedEndDateTime('HH:mm')} + 'z'"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td th:text="#{positions. + ${#strings.toLowerCase(ep.positionId)}}">Position</td>
-                            <td th:each="s : ${ep.slots}" th:text="${s.user.names.fullName}">-</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>-->
         </div>
       </div>
-
-
-      <!--      <div class="card mb-3">
-              <div class="row g-0">
-                <div class="col-md-5">
-                  <img src="#" th:src="${event.banner}" class="img-fluid rounded-start" alt="#" th:alt="${event.name}"/>
-                </div>
-                <div class="col-md-7">
-                  <div class="card-body">
-                    <h5 class="card-title" th:text="${event.name}">Card title</h5>
-                    <p class="card-text" th:text="${event.description}">Description</p>
-                    <div class="row">
-                      <dl class="col-12 col-md-6 mb-3">
-                        <dt>Start time</dt>
-                        <dd th:text="${event.startTimeFormatted}">-</dd>
-                      </dl>
-                      <dl class="col-12 col-md-6 mb-0 mb-md-3">
-                        <dt>End time</dt>
-                        <dd th:text="${event.endTimeFormatted}">-</dd>
-                      </dl>
-                    </div>
-                    <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                    <div class="">
-                      <a href="#" th:href="${event.link}" class="btn btn-primary" target="_blank">Link to event</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>-->
     </div>
   </body>
 </html>
