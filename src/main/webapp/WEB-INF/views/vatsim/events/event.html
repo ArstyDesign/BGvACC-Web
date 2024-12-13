@@ -39,7 +39,7 @@
       <div class="card">
         <div class="card-body">
           <div class="h5 mb-3">Event roster</div>
-          
+
           <div th:if="${!doAllPositionsHaveSlots}" class="text-muted">
             <small class="bi bi-info-circle me-1"></small>
             <small>The event roster is currently being configured. It will soon be available for booking.</small>
@@ -59,8 +59,13 @@
 
                 <td th:colspan="${mostSlots / #lists.size(ep.slots)}" class="text-center"
                     th:each="sl, iterStat : ${ep.slots}">
-                  <a href="#" th:if="${!sl.isApproved}" class="btn btn-primary btn-sm">Apply for slot</a>
-                  <span th:if="${sl.isApproved}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                  <div sec:authorize="isAuthenticated()" th:remove="tag">
+                    <a href="#" th:if="${!sl.isApproved}" class="btn btn-primary btn-sm">Apply for slot</a>
+                    <span th:if="${sl.isApproved}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                  </div>
+                  <div sec:authorize="!isAuthenticated()" th:remove="tag">
+                    <span th:text="${sl.isApproved} ? sl.user.names.fullName : '-'"></span>
+                  </div>
                 </td>
               </tr>
             </tbody>
