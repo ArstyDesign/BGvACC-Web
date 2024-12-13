@@ -24,7 +24,7 @@
                         <i class="bi bi-unlock"></i>
                       </span>
                       <input type="password" class="form-control" th:field="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'"
-                             th:placeholder="#{activateuseraccount.newpassword}"/>
+                             th:placeholder="#{activateuseraccount.newpassword}" autofocus="autofocus"/>
                     </div>
                     <div class="invalid-feedback d-block mb-3" th:errors="*{newPassword}">Error</div>
 
