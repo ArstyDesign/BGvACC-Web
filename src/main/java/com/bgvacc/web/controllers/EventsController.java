@@ -7,8 +7,8 @@ import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.MathsUtils;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,33 +53,50 @@ public class EventsController extends Base {
   }
 
   @GetMapping("/events/{eventId}")
-  public String getEvent(@PathVariable("eventId") Long eventId, Model model) {
+  public String getEvent(@PathVariable("eventId") Long eventId, Model model, HttpServletRequest request) {
 
     EventResponse event = eventService.getEvent(eventId);
     model.addAttribute("event", event);
 
     List<EventPositionsResponse> eventPositions = eventService.getEventPositions(eventId);
 
-    int[] slotsCount = new int[eventPositions.size()];
+    String loggedUserCid = getLoggedUserCid(request);
 
-    for (int i = 0; i < eventPositions.size(); i++) {
-      slotsCount[i] = eventPositions.get(i).getSlots().size();
-    }
-
-    int mostSlots = 1;
-
-    boolean doAllPositionsHaveSlots = true;
-
-    for (int i : slotsCount) {
-      if (i == 0) {
-        doAllPositionsHaveSlots = false;
+    if (loggedUserCid != null) {
+      for (EventPositionsResponse ep : eventPositions) {
+        boolean canUserApply = eventService.canUserApplyForPosition(loggedUserCid, ep.getEventPositionId());
+        ep.setCanUserApplyForPosition(canUserApply);
       }
     }
 
-    if (doAllPositionsHaveSlots) {
-      mostSlots = mathsUtils.lcmOfArray(slotsCount);
+    boolean doAllPositionsHaveSlots = true;
+    int mostSlots = 1;
+
+    int[] slotsCount;
+
+    if (!eventPositions.isEmpty()) {
+
+      slotsCount = new int[eventPositions.size()];
+
+      for (int i = 0; i < eventPositions.size(); i++) {
+        slotsCount[i] = eventPositions.get(i).getSlots().size();
+      }
+
+      doAllPositionsHaveSlots = true;
+
+      for (int i : slotsCount) {
+        if (i == 0) {
+          doAllPositionsHaveSlots = false;
+        }
+      }
+
+      if (doAllPositionsHaveSlots) {
+        mostSlots = mathsUtils.lcmOfArray(slotsCount);
+      }
+    } else {
+      doAllPositionsHaveSlots = false;
     }
-    
+
     model.addAttribute("doAllPositionsHaveSlots", doAllPositionsHaveSlots);
 
     model.addAttribute("mostSlots", mostSlots);

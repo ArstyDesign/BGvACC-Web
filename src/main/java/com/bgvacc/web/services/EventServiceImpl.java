@@ -38,7 +38,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsSql = "SELECT * FROM events";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
 
       try {
 
@@ -122,7 +122,7 @@ public class EventServiceImpl implements EventService {
   public List<EventResponse> getEventsBeforeAfterNow(String sql) {
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
 
       try {
 
@@ -163,7 +163,7 @@ public class EventServiceImpl implements EventService {
     final String getUpcomingEventsAfterDaysSql = "SELECT * FROM events WHERE DATE(start_at) = CURRENT_DATE + INTERVAL '" + days + " days' ORDER BY priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
+            PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
 
       try {
 
@@ -203,7 +203,7 @@ public class EventServiceImpl implements EventService {
     final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
+            PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
 
       try {
 
@@ -245,9 +245,9 @@ public class EventServiceImpl implements EventService {
     final String getUserEventApplicationsSql = "SELECT uea.application_id, uea.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, u.highest_controller_rating, uea.slot_id, uea.status, uea.applied_at FROM user_event_applications uea JOIN users u ON uea.user_cid = u.cid WHERE uea.slot_id = ? ORDER BY uea.applied_at";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
-         PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
-         PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+            PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
+            PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
+            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
 
       try {
 
@@ -367,7 +367,7 @@ public class EventServiceImpl implements EventService {
     final String addEventPositionSql = "INSERT INTO event_positions (event_id, position_id, minimum_rating, can_trainees_apply) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
+            PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
 
       try {
 
@@ -403,7 +403,7 @@ public class EventServiceImpl implements EventService {
     final String removeEventPositionSql = "DELETE FROM event_positions WHERE event_position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
+            PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
 
       try {
 
@@ -437,7 +437,7 @@ public class EventServiceImpl implements EventService {
     final String addSlotsToPositionSql = "INSERT INTO slots (event_position_id, start_time, end_time) VALUES (?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
+            PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
 
       try {
 
@@ -487,8 +487,8 @@ public class EventServiceImpl implements EventService {
 //      log.debug("ved: " + ved.getStart());
 //    }
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
-         PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
+            PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
+            PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
 
       try {
 
@@ -609,7 +609,7 @@ public class EventServiceImpl implements EventService {
     final String getTotalUserEventApplicationsSql = "SELECT COUNT(1) total_user_events_applications FROM user_event_applications where user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
+            PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
 
       try {
 
@@ -644,7 +644,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsYearlyReportForYearSql = "SELECT month_series.month, ? AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? AND type = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
+            PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
 
       try {
 
@@ -681,6 +681,101 @@ public class EventServiceImpl implements EventService {
     }
 
     return null;
+  }
+
+  @Override
+  public boolean canUserApplyForPosition(String cid, String eventPositionId) {
+
+    final String getEventPositionSql = "SELECT * FROM event_positions WHERE event_position_id = ?";
+    final String checkIfPositionForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
+    final String getHighestControllerRatingSql = "SELECT highest_controller_rating FROM users WHERE cid = ?";
+    final String checkIfUserHasTraineeRoleSql = "SELECT EXISTS (SELECT 1 FROM user_roles WHERE cid = ? AND rolename = 'ATC_TRAINING')";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getEventPositionPstmt = conn.prepareStatement(getEventPositionSql);
+            PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql);
+            PreparedStatement getHighestControllerRatingPstmt = conn.prepareStatement(getHighestControllerRatingSql);
+            PreparedStatement checkIfUserHasTraineeRolePstmt = conn.prepareStatement(checkIfUserHasTraineeRoleSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getEventPositionPstmt.setString(1, eventPositionId);
+
+        ResultSet getEventPositionRset = getEventPositionPstmt.executeQuery();
+
+        if (getEventPositionRset.next()) {
+          boolean isPositionAlreadyApproved = getEventPositionRset.getBoolean("is_approved");
+
+          if (!isPositionAlreadyApproved) {
+
+            final String position = getEventPositionRset.getString("position_id");
+
+            checkIfPositionForUserExistsPstmt.setString(1, cid);
+            checkIfPositionForUserExistsPstmt.setString(2, position);
+
+            ResultSet checkIfUserRoleForUserExistsRset = checkIfPositionForUserExistsPstmt.executeQuery();
+
+            log.info("Checking if position '" + position + "' exists for user with CID '" + cid + "'");
+
+            if (checkIfUserRoleForUserExistsRset.next()) {
+              if (checkIfUserRoleForUserExistsRset.getBoolean(1)) {
+                log.info("The position '" + position + "' is authorized for user with CID '" + cid + "'");
+
+                getHighestControllerRatingPstmt.setString(1, cid);
+
+                ResultSet getHighestControllerRatingRset = getHighestControllerRatingPstmt.executeQuery();
+
+                if (getHighestControllerRatingRset.next()) {
+
+                  int highestControllerRating = getHighestControllerRatingRset.getInt("highest_controller_rating");
+
+                  int minimumRatingForPosition = getEventPositionRset.getInt("minimum_rating");
+
+                  if (highestControllerRating < minimumRatingForPosition) {
+
+                    log.info("User with CID '" + cid + "' has lower rating than necessary. Minimum (" + minimumRatingForPosition + " - " + VatsimRatingUtils.getRatingNumberToUserRole(minimumRatingForPosition) + "), user ATC rating (" + highestControllerRating + " - " + VatsimRatingUtils.getRatingNumberToUserRole(highestControllerRating) + ").");
+
+//                    log.info("Checking if user is a trainee for position.");
+                    final boolean canTraineesApply = getEventPositionRset.getBoolean("can_trainees_apply");
+
+                    if (canTraineesApply) {
+
+                      checkIfUserHasTraineeRolePstmt.setString(1, cid);
+
+                      ResultSet checkIfUserHasTraineeRoleRset = checkIfUserHasTraineeRolePstmt.executeQuery();
+
+                      if (checkIfUserHasTraineeRoleRset.next()) {
+                        if (checkIfUserHasTraineeRoleRset.getBoolean(1)) {
+                          // User has a trainee role
+                          return true;
+                        }
+                      }
+                    }
+
+                  } else {
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error checking if user with CID '" + cid + "' can apply for position with ID '" + eventPositionId + "'.", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error checking if user with CID '" + cid + "' can apply for position with ID '" + eventPositionId + "'.", e);
+    }
+
+    return false;
   }
 
   private List<EventYearlyReportResponse> getEventsCount(PreparedStatement pstmt, Integer year, String type) throws SQLException {

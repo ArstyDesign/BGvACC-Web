@@ -18,6 +18,11 @@ public class MathsUtils {
 
   // Метод за намиране на LCM (най-малко общо кратно) на неограничен брой числа
   public int lcmOfArray(int... numbers) {
+    
+    if (numbers.length == 0) {
+      return 0;
+    }
+    
     int lcm = numbers[0]; // Започваме с първото число от масива
     for (int i = 1; i < numbers.length; i++) {
       lcm = lcm(lcm, numbers[i]); // Изчисляваме LCM на текущия резултат с следващото число

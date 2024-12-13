@@ -40,9 +40,14 @@
         <div class="card-body">
           <div class="h5 mb-3">Event roster</div>
 
-          <div th:if="${!doAllPositionsHaveSlots}" class="text-muted">
+          <div th:if="${!event.isCpt and !doAllPositionsHaveSlots}" class="text-muted">
             <small class="bi bi-info-circle me-1"></small>
             <small>The event roster is currently being configured. It will soon be available for booking.</small>
+          </div>
+
+          <div th:if="${event.isCpt}" class="text-muted">
+            <small class="bi bi-info-circle me-1"></small>
+            <small>The CPT events don't have a roster as they are connected to a parent event.</small>
           </div>
 
           <table class="table table-hover table-striped table-bordered" th:if="${doAllPositionsHaveSlots}">
@@ -59,9 +64,18 @@
 
                 <td th:colspan="${mostSlots / #lists.size(ep.slots)}" class="text-center"
                     th:each="sl, iterStat : ${ep.slots}">
+
+                  <!--<div th:text="${ep.canUserApplyForPosition}"></div>-->
                   <div sec:authorize="isAuthenticated()" th:remove="tag">
-                    <a href="#" th:if="${!sl.isApproved}" class="btn btn-primary btn-sm">Apply for slot</a>
-                    <span th:if="${sl.isApproved}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+
+                    <div th:if="${sl.isApproved}" th:remove="tag">
+                      <span th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                    </div>
+
+                    <div th:if="${!sl.isApproved}" th:remove="tag">
+                      <a href="#" th:if="${ep.canUserApplyForPosition}" class="btn btn-primary btn-sm">Apply for slot</a>
+                      <span th:if="${!ep.canUserApplyForPosition}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                    </div>
                   </div>
                   <div sec:authorize="!isAuthenticated()" th:remove="tag">
                     <span th:text="${sl.isApproved} ? sl.user.names.fullName : '-'"></span>

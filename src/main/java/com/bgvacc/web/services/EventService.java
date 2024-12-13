@@ -37,4 +37,6 @@ public interface EventService {
   Long getTotalUserEventApplications(String cid);
 
   EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
+  
+  boolean canUserApplyForPosition(String cid, String eventPositionId);
 }

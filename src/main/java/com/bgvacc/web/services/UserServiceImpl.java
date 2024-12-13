@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -92,8 +92,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement userPstmt = conn.prepareStatement(userSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement userPstmt = conn.prepareStatement(userSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement userPstmt = conn.prepareStatement(userSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement userPstmt = conn.prepareStatement(userSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistSql = "SELECT EXISTS (SELECT 1 FROM users WHERE cid = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
+            PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
 
       try {
 
@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistByEmailSql = "SELECT EXISTS (SELECT 1 FROM users WHERE email = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
+            PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
 
       try {
 
@@ -291,12 +291,12 @@ public class UserServiceImpl implements UserService {
   @Override
   public String createUser(UserCreateModel ucm) {
 
-    final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name, password_reset_token) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    final String createUserSql = "INSERT INTO users (cid, email, email_vatsim, password, first_name, last_name, highest_controller_rating, password_reset_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     final String addDefaultRoleSql = "INSERT INTO user_roles (cid, rolename) VALUES (?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
-         PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
+            PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
+            PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
 
       try {
 
@@ -313,7 +313,8 @@ public class UserServiceImpl implements UserService {
         createUserPstmt.setString(4, passwordEncoder.encode(generatedPassword));
         createUserPstmt.setString(5, ucm.getFirstName());
         createUserPstmt.setString(6, ucm.getLastName());
-        createUserPstmt.setString(7, UUID.randomUUID().toString());
+        createUserPstmt.setInt(7, ucm.getCurrentRating());
+        createUserPstmt.setString(8, UUID.randomUUID().toString());
 
         createUserPstmt.executeUpdate();
 
@@ -354,7 +355,7 @@ public class UserServiceImpl implements UserService {
     final String updateUserLastLoginSql = "UPDATE users SET last_login = NOW() WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
+            PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
 
       try {
 
@@ -383,7 +384,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT * FROM roles";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -422,7 +423,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT r.rolename FROM roles r LEFT JOIN user_roles ur ON r.rolename = ur.rolename AND ur.cid = ? WHERE ur.rolename IS NULL;";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -460,12 +461,17 @@ public class UserServiceImpl implements UserService {
   @Override
   public boolean addUserRole(String cid, String role) {
 
+    // TODO implement reversing user role to update highest_controller_rating column in USERS table
     final String addUserRoleSql = "INSERT INTO user_roles (cid, rolename) VALUES (?, ?)";
     final String checkIfUserRoleForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_roles WHERE cid = ? AND rolename = ?)";
+    final String checkForHigherControllerRatingSql = "SELECT highest_controller_rating FROM users WHERE cid = ?";
+    final String updateHighestControllerRatingSql = "UPDATE users SET highest_controller_rating = ? WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
-         PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql)) {
+            PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
+            PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql);
+            PreparedStatement checkForHigherControllerRatingPstmt = conn.prepareStatement(checkForHigherControllerRatingSql);
+            PreparedStatement updateHighestControllerRatingPstmt = conn.prepareStatement(updateHighestControllerRatingSql)) {
 
       try {
 
@@ -490,11 +496,42 @@ public class UserServiceImpl implements UserService {
         addUserRolePstmt.setString(1, cid);
         addUserRolePstmt.setString(2, role);
 
-        int rows = addUserRolePstmt.executeUpdate();
+        boolean userRolesInsertResult = addUserRolePstmt.executeUpdate() > 0;
 
-        conn.commit();
+        checkForHigherControllerRatingPstmt.setString(1, cid);
 
-        return rows > 0;
+        ResultSet checkForHigherControllerRatingRset = checkForHigherControllerRatingPstmt.executeQuery();
+
+        if (checkForHigherControllerRatingRset.next()) {
+
+          int currentHighestControllerRating = checkForHigherControllerRatingRset.getInt("highest_controller_rating");
+
+          Integer newHighestControllerRating = VatsimRatingUtils.getUserRoleToNumber(role);
+
+          if (newHighestControllerRating != null) {
+            if (currentHighestControllerRating < newHighestControllerRating) {
+
+              updateHighestControllerRatingPstmt.setInt(1, newHighestControllerRating);
+              updateHighestControllerRatingPstmt.setString(2, cid);
+
+              boolean updateHighestControllerRatingResult = updateHighestControllerRatingPstmt.executeUpdate() > 0;
+
+              if (userRolesInsertResult && updateHighestControllerRatingResult) {
+                conn.commit();
+                return true;
+              } else {
+                log.error("Error adding user role for user with CID '" + cid + "' and role '" + role + "'");
+                conn.rollback();
+                return false;
+              }
+            }
+          }
+
+        } else {
+          log.error("Error adding user role for user with CID '" + cid + "' and role '" + role + "'");
+          conn.rollback();
+          return false;
+        }
 
       } catch (SQLException ex) {
         log.error("Error adding user role for user with CID '" + cid + "' and role '" + role + "'", ex);
@@ -515,7 +552,7 @@ public class UserServiceImpl implements UserService {
     final String removeUserRoleSql = "DELETE FROM user_roles WHERE cid = ? AND rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
+            PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
 
       try {
 
@@ -549,7 +586,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -592,7 +629,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename IN (" + placeholders + ")";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -629,8 +666,8 @@ public class UserServiceImpl implements UserService {
     final String getActiveUsersCountSql = "SELECT COUNT(1) active_users_count FROM users WHERE is_active = true";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
-         PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
+            PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
+            PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
 
       try {
 
@@ -673,7 +710,7 @@ public class UserServiceImpl implements UserService {
     final String changePasswordSql = "UPDATE users SET password = ? WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
+            PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
 
       try {
 
@@ -707,7 +744,7 @@ public class UserServiceImpl implements UserService {
     final String activateUserAccountSql = "UPDATE users SET password = ?, is_active = true, password_reset_token = null, activated_on = NOW() WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement activateUserAccountPstmt = conn.prepareStatement(activateUserAccountSql)) {
+            PreparedStatement activateUserAccountPstmt = conn.prepareStatement(activateUserAccountSql)) {
 
       try {
 

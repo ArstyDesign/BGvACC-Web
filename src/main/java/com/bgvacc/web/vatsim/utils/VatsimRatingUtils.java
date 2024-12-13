@@ -10,6 +10,46 @@ import org.springframework.stereotype.Component;
 @Component
 public class VatsimRatingUtils {
 
+  public static Integer getUserRoleToNumber(String rating) {
+
+    if (rating == null) {
+      return null;
+    }
+
+    switch (rating) {
+//        case "INA":
+//      return -1;
+//        case "SUS":
+//      return 0;
+//        case "OBS":
+//      return 1;
+      case "ATC_S1":
+        return 2;
+      case "ATC_S2":
+        return 3;
+      case "ATC_S3":
+        return 4;
+      case "ATC_C1":
+        return 5;
+//        case "C2":
+//      return 6;
+      case "ATC_C3":
+        return 7;
+      case "ATC_I1":
+        return 8;
+//        case "I2":
+//      return 9;
+      case "ATC_I3":
+        return 10;
+//        case "SUP":
+//      return 11;
+//        case "ADM":
+//      return 12;
+      default:
+        return null;
+    }
+  }
+
   public static String getRatingNumberToUserRole(Integer rating) {
 
     if (rating == null) {

@@ -23,6 +23,8 @@ public class EventPositionsResponse implements Serializable {
   private Integer minimumRating;
   private Boolean canTraineesApply;
   private Boolean isApproved;
+  
+  private Boolean canUserApplyForPosition = false;
 
   private List<EventSlotResponse> slots;
 }
