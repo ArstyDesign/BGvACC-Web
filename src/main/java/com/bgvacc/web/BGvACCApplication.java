@@ -6,6 +6,7 @@ import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
 import com.bgvacc.web.api.discord.DiscordNotifyApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
+import com.bgvacc.web.beans.SlotsGenerator;
 import com.bgvacc.web.beans.Version;
 import com.bgvacc.web.utils.*;
 import java.nio.charset.StandardCharsets;
@@ -79,10 +80,20 @@ public class BGvACCApplication {
   public Utils utils() {
     return new Utils();
   }
-  
+
   @Bean
   public Randomy randomy() {
     return Randomy.Builder.build();
+  }
+
+  @Bean
+  public SlotsGenerator slotsGenerator() {
+    return new SlotsGenerator();
+  }
+
+  @Bean
+  public MathsUtils mathsUtils() {
+    return new MathsUtils();
   }
 
   @Bean

@@ -36,29 +36,73 @@
 
           <!--<div th:text="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">test</div>-->
 
-          <div sec:authorize="isAuthenticated()" th:if="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">
+<!--          <div sec:authorize="isAuthenticated()" th:if="${!session.roles.?[roleName.contains('ATC')].isEmpty()}">
             <a href="#" class="btn btn-primary btn-sm mt-3">Apply for controlling</a>
-          </div>
+          </div>-->
         </div>
       </div>
 
+      <!--      <div th:text="${eventPositions[0].slots}"></div>-->
+
       <div class="card">
         <div class="card-body">
-          <div class="h6 mb-0">Event roster</div>
-          <table class="table table-hover table-striped">
+          <div class="h5 mb-3">Event roster</div>
+          
+          <!--<div th:text="${eventPositions}"></div>-->
+
+          <!--<div th:text="${@slotsGenerator.generateSlots(event.startAt.toLocalDateTime(), event.endAt.toLocalDateTime(), mostSlots)}"></div>-->
+          
+          <div th:if="${!doAllPositionsHaveSlots}" class="text-muted">
+            <small class="bi bi-info-circle me-1"></small>
+            <small>The event roster is currently being configured. It will soon be available for booking.</small>
+          </div>
+
+          <table class="table table-hover table-striped table-bordered" th:if="${doAllPositionsHaveSlots}">
             <thead>
               <tr>
-                <th scope="col" class="fw-bold">1</th>
-                <th scope="col" class="fw-bold text-end text-md-start">2</th>
+                <th scope="col" class="fw-bold">Position / Slot</th>
+                <th scope="col" class="fw-bold text-center" th:each="sl : ${@slotsGenerator.generateSlots(event.startAt.toLocalDateTime(), event.endAt.toLocalDateTime(), mostSlots)}"
+                    th:text="${sl.getFormattedStartDateTime('HH:mm')} + ' - ' + ${sl.getFormattedEndDateTime('HH:mm')} + 'z'"></th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>2</td>
+              <tr th:each="ep : ${eventPositions}">
+                <td th:text="#{positions. + ${#strings.toLowerCase(ep.positionId)}}"></td>
+                <!--<td th:text="'mostSlots: ' + ${mostSlots} + ', ep.slots.size: ' + ${#lists.size(ep.slots)}"></td>-->
+
+                <td th:colspan="${mostSlots / #lists.size(ep.slots)}" class="text-center"
+                    th:each="sl, iterStat : ${ep.slots}">
+                  <a href="#" th:if="${!sl.isApproved}" class="btn btn-primary btn-sm">Apply for slot</a>
+                  <span th:if="${sl.isApproved}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                </td>
+
+                <!--<td th:if="${#lists.size(ep.slots) eq 0}" class="text-center">-</td>-->
+
+                <!--                 Добавяне на стойности по подразбиране в останалите колони, ако няма достатъчно елементи в ep.slots 
+                                <td th:each="i : ${#numbers.sequence(1, mostSlots - #lists.size(ep.slots) + 1)}" class="text-center">
+                                  Default
+                                </td>-->
               </tr>
             </tbody>
           </table>
+
+          <!--          <div th:each="ep, iterStat : ${eventPositions}" th:remove="tag">
+          
+                      <table class="table table-hover table-striped" style="table-layout: fixed; width: 100%;">
+                        <thead>
+                          <tr>
+                            <th scope="col" class="fw-bold" th:text="${iterStat.first} ? 'Position'">Position</th>
+                            <th scope="col" class="fw-bold text-end text-md-start" th:each="s : ${ep.slots}" th:text="${s.getFormattedStartDateTime('HH:mm')} + ' - ' + ${s.getFormattedEndDateTime('HH:mm')} + 'z'"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td th:text="#{positions. + ${#strings.toLowerCase(ep.positionId)}}">Position</td>
+                            <td th:each="s : ${ep.slots}" th:text="${s.user.names.fullName}">-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>-->
         </div>
       </div>
 

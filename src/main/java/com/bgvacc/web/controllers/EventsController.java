@@ -1,10 +1,13 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.events.EventPositionsResponse;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
+import com.bgvacc.web.utils.MathsUtils;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,6 +30,8 @@ public class EventsController extends Base {
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final EventService eventService;
+
+  private final MathsUtils mathsUtils;
 
   @GetMapping("/events")
   public String getEventsInBulgaria(Model model) {
@@ -51,9 +56,35 @@ public class EventsController extends Base {
   public String getEvent(@PathVariable("eventId") Long eventId, Model model) {
 
     EventResponse event = eventService.getEvent(eventId);
-
     model.addAttribute("event", event);
-//
+
+    List<EventPositionsResponse> eventPositions = eventService.getEventPositions(eventId);
+
+    int[] slotsCount = new int[eventPositions.size()];
+
+    for (int i = 0; i < eventPositions.size(); i++) {
+      slotsCount[i] = eventPositions.get(i).getSlots().size();
+    }
+
+    int mostSlots = 1;
+
+    boolean doAllPositionsHaveSlots = true;
+
+    for (int i : slotsCount) {
+      if (i == 0) {
+        doAllPositionsHaveSlots = false;
+      }
+    }
+
+    if (doAllPositionsHaveSlots) {
+      mostSlots = mathsUtils.lcmOfArray(slotsCount);
+    }
+    
+    model.addAttribute("doAllPositionsHaveSlots", doAllPositionsHaveSlots);
+
+    model.addAttribute("mostSlots", mostSlots);
+    model.addAttribute("eventPositions", eventPositions);
+
     model.addAttribute("pageTitle", getMessage("event.title", event.getName()));
     model.addAttribute("page", "events");
 

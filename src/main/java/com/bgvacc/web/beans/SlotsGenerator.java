@@ -47,4 +47,8 @@ public class SlotsGenerator {
 
     return slots;
   }
+  
+  public String test(int slotsCount) {
+    return "Hello: " + slotsCount;
+  }
 }

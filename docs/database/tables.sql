@@ -186,7 +186,8 @@ CREATE TABLE event_positions (
     event_id int not null references events(event_id),
     position_id varchar(30) not null references positions(position_id),
 	minimum_rating int,
-    is_approved boolean default false,
+	can_trainees_apply boolean not null default false,
+    is_approved boolean not null default false,
     unique (event_id, position_id)
 );
 

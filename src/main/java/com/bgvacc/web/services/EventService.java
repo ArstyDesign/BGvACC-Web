@@ -26,9 +26,11 @@ public interface EventService {
 
   List<EventPositionsResponse> getEventPositions(Long eventId);
 
-  boolean addEventPosition(Long eventId, String position, Integer minimumRating);
+  boolean addEventPosition(Long eventId, String position, Integer minimumRating, boolean canTraineesApply);
 
   boolean removeEventPosition(Long eventId, String eventPositionId);
+  
+  boolean addSlotsToPosition(Long eventId, String eventPositionId, Integer slotsCount);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
 

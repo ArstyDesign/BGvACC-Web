@@ -82,21 +82,23 @@
                     </a>
                   </div>
                   <div class="text-muted mb-2" th:with="minRating=${@vatsimRatingUtils.getATCRatingSymbol(ep.minimumRating)}">
-                    <small th:text="#{portal.events.event.position.min(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}"></small>
+                    <small th:utext="#{portal.events.event.position.min(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}" th:if="${!ep.canTraineesApply}"></small>
+                    <small th:utext="#{portal.events.event.position.minandtrainees(#{members.member.atc. + ${#strings.toLowerCase(minRating)}})}" th:if="${ep.canTraineesApply}"></small>
                   </div>
 
                   <div class="mb-2 text-muted" th:if="${#lists.isEmpty(ep.slots)}">
                     <small th:text="#{portal.events.event.noavailableslots}">No slots available</small>
                   </div>
 
-                  <div th:classappend="${!iterStat.last} ? 'mb-4'">
-                    <a href="#" class="btn btn-info text-light btn-sm">
-                      <span>Set slots</span>
+                  <div th:classappend="${!iterStat.last or !#lists.isEmpty(ep.slots)} ? 'mb-4'" th:if="${#lists.isEmpty(ep.slots)}">
+                    <a href="#" class="btn btn-info text-light btn-sm" data-bs-toggle="modal" data-bs-target="#addPositionSlotModal" th:data-event-position-id="${ep.eventPositionId}" th:data-add-event-position-slot-msg="#{portal.events.event.roster.addpositionslots.modal.message(#{positions. + ${#strings.toLowerCase(ep.positionId)}})}">
+                      <span th:text="#{portal.events.event.setslots}">Set slots</span>
                     </a>
                   </div>
 
-                  <div class="mb-2 text-muted" th:if="${!#lists.isEmpty(ep.slots)}">
-                    <small th:text="${#lists.size(ep.slots)} + ' slot/s'">2 slots</small>
+                  <div class="mb-2 text-muted" th:if="${!#lists.isEmpty(ep.slots)}" th:with="slotsCount=${#lists.size(ep.slots)}">
+                    <small th:if="${slotsCount eq 1}" th:text="#{portal.events.event.slots.1}">1 slot</small>
+                    <small th:if="${slotsCount gt 1}" th:text="#{portal.events.event.slots.n(${slotsCount})}">1 slot</small>
                   </div>
 
                   <div th:each="es, iterStat : ${ep.slots}" th:if="${!#lists.isEmpty(ep.slots)}">
@@ -106,7 +108,7 @@
                     </div>
 
                     <div class="mb-5 text-muted" th:if="${#lists.isEmpty(es.userEventApplications)}">
-                      <span>No applications yet.</span>
+                      <span th:text="#{portal.events.event.noapplications}">No applications yet.</span>
                     </div>
 
                     <table class="table table-hover mb-5" th:if="${!#lists.isEmpty(es.userEventApplications)}">
@@ -182,6 +184,13 @@
                       <option value="2" th:text="#{members.member.atc.s1}">S1</option>
                     </select>
                   </div>
+
+                  <div class="col-12 mb-2">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="canTraineesApplyInput" name="canTraineesApply"/>
+                      <label class="form-check-label" for="canTraineesApplyInput" th:text="#{portal.events.event.roster.addposition.modal.cantraineesapply}">Can trainees apply</label>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="modal-footer">
@@ -192,26 +201,37 @@
           </div>
         </form>
       </div>
-      
+
       <div class="modal fade" id="addPositionSlotModal" tabindex="-1" aria-labelledby="addPositionSlotModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         <form id="addPositionSlotModalForm" method="post">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="addPositionSlotModalLabel" th:text="#{portal.events.event.roster.removeposition.modal.title}">Remove position from event</h5>
+                <h5 class="modal-title" id="addPositionSlotModalLabel" th:text="#{portal.events.event.roster.addpositionslots.modal.title}">Add slot to event position</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
+                <div class="row">
+                  <div class="col-12 mb-2">
+                    <div id="addPositionSlotMessage"></div>
+                  </div>
+                  <div class="col-12 mb-2">
+                    <label for="slotsCountInput" class="form-label required" th:text="#{portal.events.event.roster.addpositionslots.modal.slotscount}">Slots count</label>
+                    <select id="slotsCountInput" class="form-control" data-choices='{"searchEnabled":false, "itemSelectText":""}' name="slotsCount">
+                      <option th:each="i : ${#numbers.sequence(1, 4)}" th:value="${i}" th:text="${i}">1</option>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.removeposition.modal.cancel}">Cancel</button>
-                <button type="submit" class="btn btn-danger" th:text="#{portal.events.event.roster.removeposition.modal.removeposition}">Remove position</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.addpositionslots.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{portal.events.event.roster.addpositionslots.modal.addslots}">Add slots</button>
               </div>
             </div>
           </div>
         </form>
       </div>
-      
+
       <div class="modal fade" id="removeEventPositionModal" tabindex="-1" aria-labelledby="removeEventPositionModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         <form id="removeEventPositionModalForm" method="post">
           <div class="modal-dialog modal-lg">
@@ -235,8 +255,19 @@
       <script type="text/javascript" th:inline="javascript" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         /*<![CDATA[*/
         let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions/remove']]*/;
+                let addPositionSlotUrl = /*[[@{/portal/events/} + ${eventId} + '/positions']]*/;
                 let aux2 = /*[[@{/}]]*/;
         /*]]>*/
+
+        document.getElementById('addPositionSlotModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let eventPositionId = modal.data("event-position-id");
+          let addEventPositionSlotMsg = modal.data('add-event-position-slot-msg');
+
+          $("#addPositionSlotMessage").empty().append(addEventPositionSlotMsg);
+
+          $('#addPositionSlotModalForm').attr('action', addPositionSlotUrl + '/' + eventPositionId + '/slots/add');
+        });
 
         document.getElementById('removeEventPositionModal').addEventListener('show.bs.modal', function (event) {
           let modal = $(event.relatedTarget);
