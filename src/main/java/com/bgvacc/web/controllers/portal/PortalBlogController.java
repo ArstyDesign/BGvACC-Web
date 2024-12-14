@@ -5,9 +5,9 @@ import com.bgvacc.web.models.portal.blog.posts.PostEditModel;
 import com.bgvacc.web.responses.blog.PostResponse;
 import com.bgvacc.web.services.BlogService;
 import com.bgvacc.web.utils.Breadcrumb;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class PortalBlogController extends Base {
   public String editPost(@PathVariable("postId") String postId, @Valid @ModelAttribute("pem") PostEditModel pem, BindingResult bindingResult, Model model) {
 
     if (bindingResult.hasErrors()) {
-      
+
       log.debug("Form has erros: " + bindingResult.toString());
 
       model.addAttribute("pageTitle", getMessage("portal.blog.posts.edit.title"));

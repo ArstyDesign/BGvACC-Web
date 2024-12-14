@@ -1,8 +1,8 @@
 package com.bgvacc.web.models.authentication;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import lombok.*;
 
 /**

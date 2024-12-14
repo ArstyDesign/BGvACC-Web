@@ -6,9 +6,9 @@ import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.MathsUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,9 +116,9 @@ public class EventsController extends Base {
 
   @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")
   public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, HttpServletRequest request) {
-    
+
     boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId);
-    
+
     return "redirect:/events/" + eventId;
   }
 }

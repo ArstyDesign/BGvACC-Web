@@ -6,28 +6,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
-/**
- *
- * @author Atanas Yordanov Arshinkov
- * @since 1.0.0
- */
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity(prePostEnabled = true) // Заменя @EnableGlobalMethodSecurity
+public class WebSecurityConfig {
 
   @Autowired
   private AccessDeniedHandler accessDeniedHandler;
@@ -44,25 +39,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private LogoutHandler logoutHandler;
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.authenticationProvider(authenticationProvider);
-  }
-
-  @Bean(name = "authenticationManager")
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-  }
-
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    // Order of antmatchers -> specific ones first, then globals
-
-    http.csrf().disable()
-            .authorizeRequests()
+  /**
+   * Security filter chain configuration instead of
+   * WebSecurityConfigurerAdapter.
+   * @param http
+   * @return 
+   * @throws java.lang.Exception
+   */
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
             .antMatchers("/").permitAll()
-            //            .antMatchers("/login", "/signup").anonymous()
             .antMatchers("/login").anonymous()
             .antMatchers("/users/**").authenticated()
             .antMatchers("/events/**").permitAll()
@@ -74,37 +62,48 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/atc/status/**").permitAll()
             .antMatchers("/test/**").permitAll()
             .antMatchers("/**").permitAll()
-            .and()
-            .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
-            .and()
-            .logout()
+            )
+            .exceptionHandling(exception -> exception
+            .accessDeniedHandler(accessDeniedHandler)
+            .authenticationEntryPoint(authenticationEntryPoint)
+            )
+            .logout(logout -> logout
             .logoutUrl("/logout")
             .addLogoutHandler(logoutHandler)
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
             .invalidateHttpSession(true)
             .deleteCookies("JSESSIONID")
-            .and()
-            .httpBasic()
-            .authenticationEntryPoint(authenticationEntryPoint);
-
-    http.headers()
-            .frameOptions().sameOrigin();
-
-    http.sessionManagement()
+            )
+            .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             .invalidSessionUrl("/login")
             .enableSessionUrlRewriting(false)
-            .maximumSessions(5).sessionRegistry(sessionRegistry);
+            .maximumSessions(5)
+            .sessionRegistry(sessionRegistry)
+            )
+            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+
+    return http.build();
   }
 
   /**
-   * When this bean is registered the logged users list is updated.
-   * <br><br>
-   * You could see documentation for session registry.
-   * <br><br>
-   * I also updated the http.sessionManagement()... lines.
-   *
-   * @return new HttpSessionEventPublisher instance
+   * AuthenticationManager bean configuration.
+   */
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    return authConfig.getAuthenticationManager();
+  }
+
+  /**
+   * Password encoder bean for encrypting passwords.
+   */
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  /**
+   * Session event publisher for updating the logged-in users list.
    */
   @Bean
   public HttpSessionEventPublisher httpSessionEventPublisher() {

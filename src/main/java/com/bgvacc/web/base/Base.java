@@ -3,7 +3,7 @@ package com.bgvacc.web.base;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.services.SystemService;
 import com.bgvacc.web.utils.AppConstants;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;

@@ -1,11 +1,11 @@
 package com.bgvacc.web.beans;
 
 import com.bgvacc.web.base.Base;
+import jakarta.servlet.ServletContext;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import javax.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

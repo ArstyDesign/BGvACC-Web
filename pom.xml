@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.15</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <version>3.2.5</version> <!-- Актуална версия на Spring Boot -->
+    <relativePath/>
   </parent>
   <groupId>com.bgvacc</groupId>
   <artifactId>web</artifactId>
@@ -14,39 +14,20 @@
   <packaging>war</packaging>
   <name>BGvACC</name>
   <description>BGvACC web application</description>
-  
+
   <properties>
-    <java.version>1.8</java.version>
-    <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
-    <webinf.dir>${project.build.directory}/${project.build.finalName}/WEB-INF</webinf.dir>
+    <java.version>23</java.version> <!-- Задаване на JDK 23 -->
+    <maven.compiler.source>23</maven.compiler.source>
+    <maven.compiler.target>23</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <buildDate>${maven.build.timestamp}</buildDate>
     <maven.build.timestamp.format>yyyy-MM-dd-HH-mm-ss</maven.build.timestamp.format>
     <warname>BGvACC</warname>
     <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
+
   </properties>
-  
-  <repositories>
-    <repository>
-      <id>date-time-calculator</id>
-      <name>DateTimeCalculator</name>
-      <url>file://${project.basedir}/libs</url>
-    </repository>
-    <repository>
-      <id>metar-decoder</id>
-      <name>MetarDecoder</name>
-      <url>file://${project.basedir}/libs</url>
-    </repository>
-    <repository>
-      <id>word-transliterator</id>
-      <name>WordTransliterator</name>
-      <url>file://${project.basedir}/libs</url>
-    </repository>
-  </repositories>
-  
+
   <dependencies>
     
     <dependency>
@@ -89,34 +70,74 @@
     </dependency>
     
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
+        
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+        
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
     
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Thymeleaf -->
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.thymeleaf</groupId>
-      <artifactId>thymeleaf-spring5</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-java8time</artifactId>
-    </dependency>
-    
+    <!--        <dependency>
+        <groupId>org.thymeleaf.extras</groupId>
+        <artifactId>thymeleaf-extras-java8time</artifactId>
+    </dependency>-->
+        
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+      <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
     
     <dependency>
       <groupId>nz.net.ultraq.thymeleaf</groupId>
       <artifactId>thymeleaf-layout-dialect</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
+
+    <!-- Database -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- JSON & Utility -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>eu.bitwalker</groupId>
+      <artifactId>UserAgentUtils</artifactId>
+      <version>1.21</version>
     </dependency>
     
     <dependency>
@@ -132,123 +153,46 @@
     </dependency>
     
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>runtime</scope>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.17.2</version>
     </dependency>
-    
-    <dependency>
-      <groupId>eu.bitwalker</groupId>
-      <artifactId>UserAgentUtils</artifactId>
-      <version>1.21</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
-    
+
+    <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <!--<scope>runtime</scope>-->
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>1.14.3</version>
-    </dependency>
-    
-    <!--    
-    <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
-      <version>3.0.4.RELEASE</version>
-    </dependency>-->
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <!-- Spring Boot Maven Plugin -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <!-- Maven Compiler Plugin за JDK 23 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.10.1</version>
         <configuration>
-          <showDeprecation>true</showDeprecation>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
+      <!-- WAR Plugin -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.0</version>
-
+        <version>3.3.2</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-          <archive>
-            <manifestEntries>
-              <Implementation-Version>${project.version}</Implementation-Version>
-              <Implementation-Date>${buildDate}</Implementation-Date>
-            </manifestEntries>
-          </archive>
-
-          <!--          <webResources>
-            <webResource>
-              <directory>src/main/resources/mail</directory>
-              <filtering>true</filtering>
-              <includes>
-                <include>META-INF/MANIFEST.MF</include>
-                <include>META-INF/context.xml</include>
-                <include>WEB-INF/web.xml</include>
-              </includes>
-            </webResource>
-          </webResources>-->
-
-          <warName>${warname}##${maven.build.timestamp}</warName>
-          <!--<warName>${warname}-${build.profile}</warName>-->
-          <!--<warName>${warname}-v${project.version}</warName>-->
-
-          <!-- ZA ROOT NA SURVER-A -->
-          <!--<warName>ROOT##${project.version}</warName>-->
-
-          <!--          <packagingExcludes>
-            WEB-INF/classes/application-*.properties,
-            WEB-INF/classes/env-*.properties,
-            META-INF/context.xml,
-            WEB-INF/classes/logback-*.xml
-          </packagingExcludes>-->
+          <warName>${warname}</warName>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>

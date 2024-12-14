@@ -7,11 +7,11 @@ import com.bgvacc.web.models.authentication.*;
 import com.bgvacc.web.responses.authentication.*;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.services.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +243,7 @@ public class AuthenticationController extends Base {
 
       model.addAttribute("token", token);
       model.addAttribute("user", user);
-      
+
       return "authentication/activate-user-account";
     }
 
@@ -256,7 +256,7 @@ public class AuthenticationController extends Base {
 
       model.addAttribute("token", token);
       model.addAttribute("user", user);
-      
+
       return "authentication/activate-user-account";
     }
 

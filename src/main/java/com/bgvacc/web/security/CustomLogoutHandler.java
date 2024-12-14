@@ -1,9 +1,9 @@
 package com.bgvacc.web.security;
 
 import com.bgvacc.web.base.Base;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -30,7 +30,6 @@ public class CustomLogoutHandler extends Base implements LogoutHandler {
 //    } else {
 //      log.debug("Forcing logout...");
 //    }
-
     try {
       request.getSession(false).invalidate();
 

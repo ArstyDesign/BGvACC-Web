@@ -1,8 +1,8 @@
 package com.bgvacc.web.models.atcreservations;
 
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 

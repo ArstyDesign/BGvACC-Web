@@ -2,8 +2,8 @@ package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.FeedbackReportModel;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -38,7 +38,7 @@ public class FeedbackController extends Base {
 
   @PostMapping("/feedback-report")
   public String sendFeedbackReport(@ModelAttribute("frm") @Valid FeedbackReportModel frm,
-          BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
+                                   BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
 
     log.debug("Testing feedback report: " + frm);
 
