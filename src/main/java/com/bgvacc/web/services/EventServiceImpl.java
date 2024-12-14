@@ -686,96 +686,132 @@ public class EventServiceImpl implements EventService {
   @Override
   public boolean canUserApplyForPosition(String cid, String eventPositionId) {
 
-    final String getEventPositionSql = "SELECT * FROM event_positions WHERE event_position_id = ?";
-    final String checkIfPositionForUserExistsSql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
-    final String getHighestControllerRatingSql = "SELECT highest_controller_rating FROM users WHERE cid = ?";
-    final String checkIfUserHasTraineeRoleSql = "SELECT EXISTS (SELECT 1 FROM user_roles WHERE cid = ? AND rolename = 'ATC_TRAINING')";
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
+      conn.setAutoCommit(false);
+
+      if (!isPositionApproved(conn, eventPositionId)) {
+        String positionId = getPositionId(conn, eventPositionId);
+        if (positionId != null && isUserAuthorizedForPosition(conn, cid, positionId)) {
+          int highestControllerRating = getUserHighestRating(conn, cid);
+          int minimumRating = getMinimumRatingForPosition(conn, eventPositionId);
+
+          if (highestControllerRating >= minimumRating || (canTraineesApply(conn, eventPositionId) && userHasTraineeRole(conn, cid))) {
+            return true;
+          }
+        }
+      }
+
+      conn.setAutoCommit(true);
+    } catch (Exception e) {
+      log.error("Error checking if user with CID '{}' can apply for position with ID '{}'.", cid, eventPositionId, e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean applyUserForEventSlot(String cid, String slotId) {
+
+    final String applyUserForEventSlotSql = "INSERT INTO user_event_applications (user_cid, slot_id) VALUES (?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventPositionPstmt = conn.prepareStatement(getEventPositionSql);
-            PreparedStatement checkIfPositionForUserExistsPstmt = conn.prepareStatement(checkIfPositionForUserExistsSql);
-            PreparedStatement getHighestControllerRatingPstmt = conn.prepareStatement(getHighestControllerRatingSql);
-            PreparedStatement checkIfUserHasTraineeRolePstmt = conn.prepareStatement(checkIfUserHasTraineeRoleSql)) {
+            PreparedStatement applyUserForEventSlotPstmt = conn.prepareStatement(applyUserForEventSlotSql)) {
 
       try {
 
         conn.setAutoCommit(false);
 
-        getEventPositionPstmt.setString(1, eventPositionId);
+        applyUserForEventSlotPstmt.setString(1, cid);
+        applyUserForEventSlotPstmt.setString(2, slotId);
 
-        ResultSet getEventPositionRset = getEventPositionPstmt.executeQuery();
+        int rows = applyUserForEventSlotPstmt.executeUpdate();
 
-        if (getEventPositionRset.next()) {
-          boolean isPositionAlreadyApproved = getEventPositionRset.getBoolean("is_approved");
+        conn.commit();
 
-          if (!isPositionAlreadyApproved) {
-
-            final String position = getEventPositionRset.getString("position_id");
-
-            checkIfPositionForUserExistsPstmt.setString(1, cid);
-            checkIfPositionForUserExistsPstmt.setString(2, position);
-
-            ResultSet checkIfUserRoleForUserExistsRset = checkIfPositionForUserExistsPstmt.executeQuery();
-
-            log.info("Checking if position '" + position + "' exists for user with CID '" + cid + "'");
-
-            if (checkIfUserRoleForUserExistsRset.next()) {
-              if (checkIfUserRoleForUserExistsRset.getBoolean(1)) {
-                log.info("The position '" + position + "' is authorized for user with CID '" + cid + "'");
-
-                getHighestControllerRatingPstmt.setString(1, cid);
-
-                ResultSet getHighestControllerRatingRset = getHighestControllerRatingPstmt.executeQuery();
-
-                if (getHighestControllerRatingRset.next()) {
-
-                  int highestControllerRating = getHighestControllerRatingRset.getInt("highest_controller_rating");
-
-                  int minimumRatingForPosition = getEventPositionRset.getInt("minimum_rating");
-
-                  if (highestControllerRating < minimumRatingForPosition) {
-
-                    log.info("User with CID '" + cid + "' has lower rating than necessary. Minimum (" + minimumRatingForPosition + " - " + VatsimRatingUtils.getRatingNumberToUserRole(minimumRatingForPosition) + "), user ATC rating (" + highestControllerRating + " - " + VatsimRatingUtils.getRatingNumberToUserRole(highestControllerRating) + ").");
-
-//                    log.info("Checking if user is a trainee for position.");
-                    final boolean canTraineesApply = getEventPositionRset.getBoolean("can_trainees_apply");
-
-                    if (canTraineesApply) {
-
-                      checkIfUserHasTraineeRolePstmt.setString(1, cid);
-
-                      ResultSet checkIfUserHasTraineeRoleRset = checkIfUserHasTraineeRolePstmt.executeQuery();
-
-                      if (checkIfUserHasTraineeRoleRset.next()) {
-                        if (checkIfUserHasTraineeRoleRset.getBoolean(1)) {
-                          // User has a trainee role
-                          return true;
-                        }
-                      }
-                    }
-
-                  } else {
-                    return true;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        return false;
+        return rows > 0;
 
       } catch (SQLException ex) {
-        log.error("Error checking if user with CID '" + cid + "' can apply for position with ID '" + eventPositionId + "'.", ex);
-//        conn.rollback();
+        log.error("Error applying user with CID '" + cid + "' for event slot with ID '" + slotId + "'.", ex);
+        conn.rollback();
       } finally {
         conn.setAutoCommit(true);
       }
     } catch (Exception e) {
-      log.error("Error checking if user with CID '" + cid + "' can apply for position with ID '" + eventPositionId + "'.", e);
+      log.error("Error applying user with CID '" + cid + "' for event slot with ID '" + slotId + "'.", e);
     }
 
     return false;
+  }
+
+  private boolean isPositionApproved(Connection conn, String eventPositionId) throws SQLException {
+    final String sql = "SELECT is_approved FROM event_positions WHERE event_position_id = ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, eventPositionId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() && rs.getBoolean("is_approved");
+      }
+    }
+  }
+
+  private String getPositionId(Connection conn, String eventPositionId) throws SQLException {
+    final String sql = "SELECT position_id FROM event_positions WHERE event_position_id = ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, eventPositionId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() ? rs.getString("position_id") : null;
+      }
+    }
+  }
+
+  private boolean isUserAuthorizedForPosition(Connection conn, String cid, String positionId) throws SQLException {
+    final String sql = "SELECT EXISTS (SELECT 1 FROM user_atc_authorized_positions WHERE user_cid = ? AND position_id = ?)";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, cid);
+      pstmt.setString(2, positionId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() && rs.getBoolean(1);
+      }
+    }
+  }
+
+  private int getUserHighestRating(Connection conn, String cid) throws SQLException {
+    final String sql = "SELECT highest_controller_rating FROM users WHERE cid = ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, cid);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() ? rs.getInt("highest_controller_rating") : 0;
+      }
+    }
+  }
+
+  private int getMinimumRatingForPosition(Connection conn, String eventPositionId) throws SQLException {
+    final String sql = "SELECT minimum_rating FROM event_positions WHERE event_position_id = ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, eventPositionId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() ? rs.getInt("minimum_rating") : Integer.MAX_VALUE;
+      }
+    }
+  }
+
+  private boolean canTraineesApply(Connection conn, String eventPositionId) throws SQLException {
+    final String sql = "SELECT can_trainees_apply FROM event_positions WHERE event_position_id = ?";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, eventPositionId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() && rs.getBoolean("can_trainees_apply");
+      }
+    }
+  }
+
+  private boolean userHasTraineeRole(Connection conn, String cid) throws SQLException {
+    final String sql = "SELECT EXISTS (SELECT 1 FROM user_roles WHERE cid = ? AND rolename = 'ATC_TRAINING')";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, cid);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next() && rs.getBoolean(1);
+      }
+    }
   }
 
   private List<EventYearlyReportResponse> getEventsCount(PreparedStatement pstmt, Integer year, String type) throws SQLException {

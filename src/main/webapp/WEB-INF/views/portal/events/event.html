@@ -114,14 +114,15 @@
                     <table class="table table-hover mb-5" th:if="${!#lists.isEmpty(es.userEventApplications)}">
                       <thead>
                         <tr>
-                          <td class="fw-bold">CID &amp; Name</td>
-                          <td class="fw-bold">Current rating</td>
-                          <td class="fw-bold">Applied on</td>
-                          <td class="fw-bold">Status</td>
+                          <td class="fw-bold" th:utext="#{portal.events.event.cidname}">CID &amp; Name</td>
+                          <td class="fw-bold" th:text="#{portal.events.event.currentrating}">Current rating</td>
+                          <td class="fw-bold" th:text="#{portal.events.event.appliedon}">Applied on</td>
+                          <td class="fw-bold" th:text="#{portal.events.event.status}">Status</td>
+                          <td class="fw-bold text-end" th:text="#{portal.events.event.actions}">Actions</td>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr th:each="uea : ${es.userEventApplications}" th:with="isStatusPending=${uea.status eq null}">
+                        <tr class="align-middle" th:each="uea : ${es.userEventApplications}" th:with="isStatusPending=${uea.status eq null}">
                           <td th:text="${uea.user.cid} + ' - ' + ${uea.user.names}"
                               th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
                           <td th:with="ratingSymbol=${@vatsimRatingUtils.getATCRatingSymbol(uea.user.highestControllerRating)}"
@@ -130,9 +131,19 @@
                           <td th:text="${#dates.format(uea.appliedAt, 'dd.MM.yyyy, HH:mm:ss')}"
                               th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">-</td>
                           <td th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">
-                            <span th:if="${isStatusPending}" class="badge bg-secondary">Pending</span>
-                            <span th:if="${!isStatusPending and uea.status}" class="badge bg-success">Approved</span>
-                            <span th:if="${!isStatusPending and !uea.status}" class="badge bg-danger">Rejected</span>
+                            <span th:if="${isStatusPending}" class="badge bg-secondary" th:text="#{portal.events.event.status.pending}">Pending</span>
+                            <span th:if="${!isStatusPending and uea.status}" class="badge bg-success" th:text="#{portal.events.event.status.approved}">Approved</span>
+                            <span th:if="${!isStatusPending and !uea.status}" class="badge bg-danger" th:text="#{portal.events.event.status.rejected}">Rejected</span>
+                          </td>
+                          <td class="text-end">
+                            <a href="#" class="btn btn-success btn-sm">
+                              <span class="material-symbols-rounded">check_circle</span>
+                              <span th:text="#{portal.events.event.approve}">Approve</span>
+                            </a>
+                            <a href="#" class="btn btn-danger btn-sm">
+                              <span class="material-symbols-rounded">cancel</span>
+                              <span th:text="#{portal.events.event.reject}">Reject</span>
+                            </a>
                           </td>
                         </tr>
                       </tbody>

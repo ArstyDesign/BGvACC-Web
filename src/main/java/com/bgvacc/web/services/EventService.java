@@ -39,4 +39,6 @@ public interface EventService {
   EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
   
   boolean canUserApplyForPosition(String cid, String eventPositionId);
+  
+  boolean applyUserForEventSlot(String cid, String slotId);
 }

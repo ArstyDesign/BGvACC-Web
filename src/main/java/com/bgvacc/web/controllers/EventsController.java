@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -115,41 +114,11 @@ public class EventsController extends Base {
     return "vatsim/events/event";
   }
 
-//  @GetMapping("/v1/events")
-//  public String getEventsInBulgaria(Model model) {
-//
-//    VatsimEvents events = eventApi.getVatsimEventsByDivision("EUD");
-//
-//    VatsimEvents bulgariaEvents = new VatsimEvents(new ArrayList<>());
-//
-//    for (VatsimData vatsimData : events.getData()) {
-//      for (VatsimAirports airport : vatsimData.getAirports()) {
-//        if (airport.getIcao().equalsIgnoreCase("LBSF")
-//                || airport.getIcao().equalsIgnoreCase("LBBG")
-//                || airport.getIcao().equalsIgnoreCase("LBWN")
-//                || airport.getIcao().equalsIgnoreCase("LBPD")
-//                || airport.getIcao().equalsIgnoreCase("LBGO")) {
-//          bulgariaEvents.getData().add(vatsimData);
-//        }
-//      }
-//    }
-//
-//    model.addAttribute("bulgariaEvents", bulgariaEvents);
-//
-//    model.addAttribute("pageTitle", "VATSIM Events");
-//    model.addAttribute("page", "events");
-//
-//    return "vatsim/events/events";
-//  }
-//  @GetMapping("/events/{eventId}")
-//  public String getEvent(@PathVariable("eventId") String eventId, Model model) {
-//
-//    VatsimEvent vatsimEvent = eventApi.getVatsimEvent(eventId);
-//
-//    model.addAttribute("event", vatsimEvent);
-//
-//    model.addAttribute("page", "events");
-//
-//    return "vatsim/events/event";
-//  }
+  @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")
+  public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, HttpServletRequest request) {
+    
+    boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId);
+    
+    return "redirect:/events/" + eventId;
+  }
 }
