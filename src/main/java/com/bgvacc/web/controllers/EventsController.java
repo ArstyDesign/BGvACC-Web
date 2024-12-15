@@ -3,6 +3,7 @@ package com.bgvacc.web.controllers;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.responses.events.EventPositionsResponse;
 import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.responses.events.EventSlotResponse;
 import com.bgvacc.web.services.EventService;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.MathsUtils;
@@ -62,9 +63,14 @@ public class EventsController extends Base {
     String loggedUserCid = getLoggedUserCid(request);
 
     if (loggedUserCid != null) {
-      for (EventPositionsResponse ep : eventPositions) {
-        boolean canUserApply = eventService.canUserApplyForPosition(loggedUserCid, ep.getEventPositionId());
-        ep.setCanUserApplyForPosition(canUserApply);
+
+      boolean isUserApprovedForAnyPosition = isUserApprovedForAnyPosition(eventPositions, loggedUserCid);
+
+      if (!isUserApprovedForAnyPosition) {
+        for (EventPositionsResponse ep : eventPositions) {
+          boolean canUserApply = eventService.canUserApplyForPosition(loggedUserCid, ep.getEventPositionId());
+          ep.setCanUserApplyForPosition(canUserApply);
+        }
       }
     }
 
@@ -116,9 +122,24 @@ public class EventsController extends Base {
 
   @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")
   public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, HttpServletRequest request) {
-    
+
     boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId);
-    
+
     return "redirect:/events/" + eventId;
+  }
+
+  private boolean isUserApprovedForAnyPosition(List<EventPositionsResponse> eventPositions, String loggedUserCid) {
+    
+    for (EventPositionsResponse ep : eventPositions) {
+      for (EventSlotResponse slot : ep.getSlots()) {
+
+        if (slot.getUser() != null && slot.getUser().getCid() != null) {
+          if (loggedUserCid.equals(slot.getUser().getCid())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }

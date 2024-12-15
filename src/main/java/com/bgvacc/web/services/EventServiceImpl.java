@@ -38,7 +38,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsSql = "SELECT * FROM events";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
+         PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
 
       try {
 
@@ -122,7 +122,7 @@ public class EventServiceImpl implements EventService {
   public List<EventResponse> getEventsBeforeAfterNow(String sql) {
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+         PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
 
       try {
 
@@ -163,7 +163,7 @@ public class EventServiceImpl implements EventService {
     final String getUpcomingEventsAfterDaysSql = "SELECT * FROM events WHERE DATE(start_at) = CURRENT_DATE + INTERVAL '" + days + " days' ORDER BY priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
+         PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
 
       try {
 
@@ -203,7 +203,7 @@ public class EventServiceImpl implements EventService {
     final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
+         PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
 
       try {
 
@@ -245,9 +245,9 @@ public class EventServiceImpl implements EventService {
     final String getUserEventApplicationsSql = "SELECT uea.application_id, uea.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, u.highest_controller_rating, uea.slot_id, uea.status, uea.applied_at FROM user_event_applications uea JOIN users u ON uea.user_cid = u.cid WHERE uea.slot_id = ? ORDER BY uea.applied_at";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
-            PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
-            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+         PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
+         PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
+         PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
 
       try {
 
@@ -367,7 +367,7 @@ public class EventServiceImpl implements EventService {
     final String addEventPositionSql = "INSERT INTO event_positions (event_id, position_id, minimum_rating, can_trainees_apply) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
+         PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
 
       try {
 
@@ -403,7 +403,7 @@ public class EventServiceImpl implements EventService {
     final String removeEventPositionSql = "DELETE FROM event_positions WHERE event_position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
+         PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
 
       try {
 
@@ -437,7 +437,7 @@ public class EventServiceImpl implements EventService {
     final String addSlotsToPositionSql = "INSERT INTO slots (event_position_id, start_time, end_time) VALUES (?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
+         PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
 
       try {
 
@@ -487,8 +487,8 @@ public class EventServiceImpl implements EventService {
 //      log.debug("ved: " + ved.getStart());
 //    }
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
-            PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
+         PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
+         PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
 
       try {
 
@@ -609,7 +609,7 @@ public class EventServiceImpl implements EventService {
     final String getTotalUserEventApplicationsSql = "SELECT COUNT(1) total_user_events_applications FROM user_event_applications where user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
+         PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
 
       try {
 
@@ -644,7 +644,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsYearlyReportForYearSql = "SELECT month_series.month, ? AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? AND type = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
+         PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
 
       try {
 
@@ -715,7 +715,7 @@ public class EventServiceImpl implements EventService {
     final String applyUserForEventSlotSql = "INSERT INTO user_event_applications (user_cid, slot_id) VALUES (?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-            PreparedStatement applyUserForEventSlotPstmt = conn.prepareStatement(applyUserForEventSlotSql)) {
+         PreparedStatement applyUserForEventSlotPstmt = conn.prepareStatement(applyUserForEventSlotSql)) {
 
       try {
 
@@ -740,6 +740,82 @@ public class EventServiceImpl implements EventService {
       log.error("Error applying user with CID '" + cid + "' for event slot with ID '" + slotId + "'.", e);
     }
 
+    return false;
+  }
+
+  @Override
+  public boolean approveSlotApplication(Long eventId, String slotId, String applicationId) {
+
+    final String approveSlotApplicationSql = "UPDATE user_event_applications SET status = true WHERE application_id = ?";
+    final String getApprovedUserCidSql = "SELECT user_cid FROM user_event_applications WHERE application_id = ?";
+    final String setApplicationIdsAsStatusRejectedSql = "UPDATE user_event_applications uea SET status = false FROM slots s JOIN event_positions ep ON s.event_position_id = ep.event_position_id WHERE uea.slot_id = s.slot_id AND uea.user_cid = ? AND ep.event_id = ? AND uea.application_id <> ?";
+    final String setUserForSlotSql = "UPDATE slots SET user_cid = ?, is_approved = true WHERE slot_id = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+         PreparedStatement approveSlotApplicationPstmt = conn.prepareStatement(approveSlotApplicationSql);
+         PreparedStatement getApprovedUserCidPstmt = conn.prepareStatement(getApprovedUserCidSql);
+         PreparedStatement setApplicationIdsAsStatusRejectedPstmt = conn.prepareStatement(setApplicationIdsAsStatusRejectedSql);
+         PreparedStatement setUserForSlotPstmt = conn.prepareStatement(setUserForSlotSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        approveSlotApplicationPstmt.setString(1, applicationId);
+
+        int rows = approveSlotApplicationPstmt.executeUpdate();
+
+        if (rows > 0) {
+
+          getApprovedUserCidPstmt.setString(1, applicationId);
+
+          ResultSet getApprovedUserCidRset = getApprovedUserCidPstmt.executeQuery();
+
+          if (getApprovedUserCidRset.next()) {
+
+            String userCid = getApprovedUserCidRset.getString("user_cid");
+
+            setUserForSlotPstmt.setString(1, userCid);
+            setUserForSlotPstmt.setString(2, slotId);
+
+            setApplicationIdsAsStatusRejectedPstmt.setString(1, userCid);
+            setApplicationIdsAsStatusRejectedPstmt.setLong(2, eventId);
+            setApplicationIdsAsStatusRejectedPstmt.setString(3, applicationId);
+
+            setApplicationIdsAsStatusRejectedPstmt.executeUpdate();
+
+            int rows2 = setUserForSlotPstmt.executeUpdate();
+
+            if (rows2 > 0) {
+
+              conn.commit();
+
+              return true;
+            }
+
+            conn.rollback();
+
+            return false;
+          }
+        }
+
+        return false;
+
+      } catch (SQLException ex) {
+        log.error("Error approving slot application for slot with ID '" + slotId + "' and application ID '" + applicationId + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error approving slot application for slot with ID '" + slotId + "' and application ID '" + applicationId + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean rejectSlotApplication(String slotId, String applicationId, String rejectReason) {
     return false;
   }
 

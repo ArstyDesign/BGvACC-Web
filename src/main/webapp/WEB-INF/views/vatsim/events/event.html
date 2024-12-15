@@ -65,11 +65,15 @@
                 <td th:colspan="${mostSlots / #lists.size(ep.slots)}" class="text-center"
                     th:each="sl, iterStat : ${ep.slots}">
 
-                  <!--<div th:text="${ep.canUserApplyForPosition}"></div>-->
                   <div sec:authorize="isAuthenticated()" th:remove="tag">
 
                     <div th:if="${sl.isApproved}" th:remove="tag">
-                      <span th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                      <div th:if="${sl.user ne null}" th:remove="tag">
+                        <strong th:if="${session.loggedUser.cid eq sl.user.cid}" th:text="${sl.user.names.fullName}">John Doe</strong>
+                        <span th:if="${session.loggedUser.cid ne sl.user.cid}" th:text="${sl.user.names.fullName}"></span>
+                      </div>
+                      
+                      <span th:if="${sl.user eq null}">-</span>
                     </div>
 
                     <div th:if="${!sl.isApproved}" th:remove="tag">
@@ -84,7 +88,7 @@
                     </div>
                   </div>
                   <div sec:authorize="!isAuthenticated()" th:remove="tag">
-                    <span th:text="${sl.isApproved} ? sl.user.names.fullName : '-'"></span>
+                    <span th:text="${sl.isApproved} ? ${sl.user.names.fullName} : '-'"></span>
                   </div>
                 </td>
               </tr>
@@ -105,18 +109,18 @@
                 <div id="applyForSlotMessage" class="mb-3"></div>
                 <div>
                   <dl>
-                    <dt>Position</dt>
+                    <dt th:text="#{event.roster.applyforslot.modal.eventdata.position}">Position</dt>
                     <dd id="applyForSlotDataPosition"></dd>
-                    <dt>Date</dt>
+                    <dt th:text="#{event.roster.applyforslot.modal.eventdata.date}">Date</dt>
                     <dd id="applyForSlotDataDate"></dd>
-                    <dt>Time slot</dt>
+                    <dt th:text="#{event.roster.applyforslot.modal.eventdata.timeslot}">Time slot</dt>
                     <dd id="applyForSlotDataTimeSlot"></dd>
                   </dl>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Apply for slot</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{event.roster.applyforslot.modal.eventdata.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{event.roster.applyforslot.modal.eventdata.applyforslot}">Apply for slot</button>
               </div>
             </div>
           </div>

@@ -29,7 +29,7 @@ public interface EventService {
   boolean addEventPosition(Long eventId, String position, Integer minimumRating, boolean canTraineesApply);
 
   boolean removeEventPosition(Long eventId, String eventPositionId);
-  
+
   boolean addSlotsToPosition(Long eventId, String eventPositionId, Integer slotsCount);
 
   void synchroniseVatsimEventsToDatabase(List<VatsimEventData> data);
@@ -37,8 +37,12 @@ public interface EventService {
   Long getTotalUserEventApplications(String cid);
 
   EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
-  
+
   boolean canUserApplyForPosition(String cid, String eventPositionId);
-  
+
   boolean applyUserForEventSlot(String cid, String slotId);
+
+  boolean approveSlotApplication(Long eventId, String slotId, String applicationId);
+
+  boolean rejectSlotApplication(String slotId, String applicationId, String rejectReason);
 }

@@ -135,20 +135,27 @@
                             <span th:if="${!isStatusPending and uea.status}" class="badge bg-success" th:text="#{portal.events.event.status.approved}">Approved</span>
                             <span th:if="${!isStatusPending and !uea.status}" class="badge bg-danger" th:text="#{portal.events.event.status.rejected}">Rejected</span>
                           </td>
-                          <td class="text-end">
-                            <a href="#" class="btn btn-success btn-sm">
-                              <span class="material-symbols-rounded">check_circle</span>
-                              <span th:text="#{portal.events.event.approve}">Approve</span>
-                            </a>
-                            <a href="#" class="btn btn-danger btn-sm">
-                              <span class="material-symbols-rounded">cancel</span>
-                              <span th:text="#{portal.events.event.reject}">Reject</span>
-                            </a>
+                          <td class="text-end" th:classappend="${!isStatusPending and uea.status} ? 'bg-success-subtle'">
+                            <div th:if="${isStatusPending}" th:remove="tag">
+                              <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveSlotApplicationModal" th:data-application-id="${uea.applicationId}" th:data-position="#{positions. + ${#strings.toLowerCase(ep.positionId)}}" th:data-user-cid="${uea.user.cid}" th:data-user-name="${uea.user.names.fullName}"
+                                 th:data-slot-id="${es.slotId}" th:data-time-slot="${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">
+                                <span class="material-symbols-rounded">check_circle</span>
+                                <span th:text="#{portal.events.event.approve}">Approve</span>
+                              </a>
+                              <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectSlotApplicationModal" th:data-application-id="${uea.applicationId}" th:data-position="#{positions. + ${#strings.toLowerCase(ep.positionId)}}" th:data-user-cid="${uea.user.cid}" th:data-user-name="${uea.user.names.fullName}"
+                                 th:data-slot-id="${es.slotId}" th:data-time-slot="${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">
+                                <span class="material-symbols-rounded">cancel</span>
+                                <span th:text="#{portal.events.event.reject}">Reject</span>
+                              </a>
+                            </div>
+                            <span th:if="${!isStatusPending}">-</span>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
+                  
+                  <hr th:if="${!iterStat.last}" class="my-2 mb-4"/>
                 </div>
               </div>
             </div>
@@ -263,10 +270,77 @@
         </form>
       </div>
 
+      <div class="modal fade" id="approveSlotApplicationModal" tabindex="-1" aria-labelledby="approveSlotApplicationModalLabel" style="display: none;" aria-hidden="true">
+        <form id="approveSlotApplicationModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.events.event.approve.modal.title}">Approve slot application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3" th:text="#{portal.events.event.approve.modal.message}">Confirm slot application details before approving.</div>
+                <div>
+                  <dl>
+                    <dt th:text="#{portal.events.event.approve.modal.position}">Position</dt>
+                    <dd id="approveSlotApplicationDataPosition"></dd>
+                    <dt th:utext="#{portal.events.event.approve.modal.cidname}">CID &amp; name</dt>
+                    <dd id="approveSlotApplicationDataCidName"></dd>
+                    <dt th:text="#{portal.events.event.approve.modal.timeslot}">Time slot</dt>
+                    <dd id="approveSlotApplicationTimeSlot"></dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.approve.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-success" th:text="#{portal.events.event.approve.modal.approve}">Approve application</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal fade" id="rejectSlotApplicationModal" tabindex="-1" aria-labelledby="rejectSlotApplicationModalLabel" style="display: none;" aria-hidden="true">
+        <form id="rejectSlotApplicationModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.events.event.reject.modal.title}">Reject slot application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3" th:text="#{portal.events.event.reject.modal.message}">You are about to reject slot application with those details.</div>
+                <div class="mb-3">
+                  <dl>
+                    <dt th:text="#{portal.events.event.reject.modal.position}">Position</dt>
+                    <dd id="rejectSlotApplicationDataPosition"></dd>
+                    <dt th:utext="#{portal.events.event.reject.modal.cidname}">CID &amp; name</dt>
+                    <dd id="rejectSlotApplicationDataCidName"></dd>
+                    <dt th:text="#{portal.events.event.reject.modal.timeslot}">Time slot</dt>
+                    <dd id="rejectSlotApplicationTimeSlot"></dd>
+                  </dl>
+                </div>
+
+                <div class="">
+                  <label for="rejectReasonInput" class="form-label required" th:text="#{portal.events.event.reject.modal.reason}">Reject reason</label>
+                  <textarea id="rejectReasonInput" class="form-control mb-3" name="rejectReason" rows="5" style="min-height: 150px;"
+                            th:placeholder="#{portal.events.event.reject.modal.reason.hint}"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.reject.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-danger" th:text="#{portal.events.event.reject.modal.reject}">Reject application</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
       <script type="text/javascript" th:inline="javascript" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         /*<![CDATA[*/
         let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions/remove']]*/;
                 let addPositionSlotUrl = /*[[@{/portal/events/} + ${eventId} + '/positions']]*/;
+                let approveRejectSlotApplicationUrl = /*[[@{/portal/events/} + ${eventId} + '/slots']]*/;
                 let aux2 = /*[[@{/}]]*/;
         /*]]>*/
 
@@ -288,6 +362,38 @@
           $("#removeEventPositionMessage").empty().append(removeEventPositionMsg);
 
           $('#removeEventPositionModalForm').attr('action', removeEventPositionUrl + '/' + eventPositionId);
+        });
+
+        document.getElementById('approveSlotApplicationModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let applicationId = modal.data("application-id");
+          let slotId = modal.data("slot-id");
+          let position = modal.data("position");
+          let userCid = modal.data("user-cid");
+          let userName = modal.data("user-name");
+          let timeSlot = modal.data("time-slot");
+
+          $("#approveSlotApplicationDataPosition").empty().append(position);
+          $("#approveSlotApplicationDataCidName").empty().append(userCid + " - " + userName);
+          $("#approveSlotApplicationTimeSlot").empty().append(timeSlot);
+
+          $('#approveSlotApplicationModalForm').attr('action', approveRejectSlotApplicationUrl + '/' + slotId + '/application/' + applicationId + '/approve');
+        });
+
+        document.getElementById('rejectSlotApplicationModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let applicationId = modal.data("application-id");
+          let slotId = modal.data("slot-id");
+          let position = modal.data("position");
+          let userCid = modal.data("user-cid");
+          let userName = modal.data("user-name");
+          let timeSlot = modal.data("time-slot");
+
+          $("#rejectSlotApplicationDataPosition").empty().append(position);
+          $("#rejectSlotApplicationDataCidName").empty().append(userCid + " - " + userName);
+          $("#rejectSlotApplicationTimeSlot").empty().append(timeSlot);
+
+          $('#rejectSlotApplicationModalForm').attr('action', approveRejectSlotApplicationUrl + '/' + slotId + '/application/' + applicationId + '/reject');
         });
       </script>
     </div>

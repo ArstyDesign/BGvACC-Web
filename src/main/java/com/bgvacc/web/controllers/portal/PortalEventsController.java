@@ -168,6 +168,22 @@ public class PortalEventsController extends Base {
     return "redirect:/portal/events/" + eventId;
   }
 
+  @PostMapping("/portal/events/{eventId}/slots/{slotId}/application/{applicationId}/approve")
+  public String approveSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId) {
+
+    boolean isSlotApplicationApproved = eventService.approveSlotApplication(eventId, slotId, applicationId);
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
+  @PostMapping("/portal/events/{eventId}/slots/{slotId}/application/{applicationId}/reject")
+  public String rejectSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId, @RequestParam("rejectReason") String rejectReason) {
+
+    boolean isSlotApplicationRejected = eventService.rejectSlotApplication(slotId, applicationId, rejectReason);
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
   private HasPositions getHasPositions(List<PositionResponse> unassignedPositions) {
 
     HasPositions hasPositions = new HasPositions();

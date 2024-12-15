@@ -16,16 +16,6 @@ CREATE TABLE users(
 
 INSERT INTO users VALUES ('1720051', 'aarshinkov9705@gmail.com', 'aarshinkov9705@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Atanas', 'Arshinkov', true, null, NOW(), null);
 
-INSERT INTO users VALUES ('1773453', 'kristiyan.hristov@gmail.com', 'kristiyan.hristov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Kristiyan', 'Hristov', true, null, NOW(), null);
-
-INSERT INTO users VALUES ('1008143', 'svetlin.nikolov@gmail.com', 'svetlin.nikolov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Svetlin', 'Nikolov', true, null, NOW(), null);
-
-INSERT INTO users VALUES ('1604267', 'andrei.tzenov@gmail.com', 'andrei.tzenov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Andrei', 'Tzenov', true, null, NOW(), null);
-
-INSERT INTO users VALUES ('1672684', 'tsvetan.mitov@gmail.com', 'tsvetan.mitov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Tsvetan', 'Mitov', true, null, NOW(), null);
-
-INSERT INTO users VALUES ('1664545', 'emil.ivanov@gmail.com', 'emil.ivanov@gmail.com', '$2a$12$NtFfJNxLCgGtuopIsyt0g.AHjSD0lcBnMMMqBExtXmqUm4YwEK9sO', 'Emil', 'Ivanov', true, null, NOW(), null);
-
 CREATE TABLE roles(
 	rolename varchar(70) not null primary key,
 	description varchar(200)
@@ -59,25 +49,6 @@ INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'SYS_ADMIN');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_EVENTS');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'STAFF_TRAINING');
 INSERT INTO user_roles (cid, rolename) VALUES ('1720051', 'ATC_S3');
-INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1773453', 'ATC_S2');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_DIRECTOR');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_EVENTS');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'ATC_C1');
-INSERT INTO user_roles (cid, rolename) VALUES ('1008143', 'EXAMINER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_DIRECTOR');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'ATC_C1');
-INSERT INTO user_roles (cid, rolename) VALUES ('1604267', 'EXAMINER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1672684', 'ATC_S2');
-INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'USER');
-INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'ATC_C1');
-INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'STAFF_TRAINING');
-INSERT INTO user_roles (cid, rolename) VALUES ('1664545', 'EXAMINER');
 
 CREATE TABLE mailbox(
 	mail_id varchar(100) not null primary key default gen_random_uuid(),
@@ -116,11 +87,13 @@ CREATE TABLE events (
 );
 
 CREATE TABLE event_connections (
-	event_connection_id varchar(100) not null primary key default gen_random_uuid(),
-	event_one_id int not null references events(event_id) on delete cascade,
+    event_connection_id varchar(100) not null primary key default gen_random_uuid(),
+    event_one_id int not null references events(event_id) on delete cascade,
     event_two_id int not null references events(event_id) on delete cascade,
-    created_at timstamp not null default NOW(),
-    constraint unique_event_connection unique (least(event_one_id, event_two_id), greatest(event_one_id, event_two_id))
+    created_at timestamp not null default NOW(),
+    event_one_least int GENERATED ALWAYS AS (LEAST(event_one_id, event_two_id)) STORED,
+    event_one_greatest int GENERATED ALWAYS AS (GREATEST(event_one_id, event_two_id)) STORED,
+    CONSTRAINT unique_event_connection UNIQUE (event_one_least, event_one_greatest)
 );
 
 CREATE TABLE sections (
@@ -245,3 +218,22 @@ CREATE TABLE mentor_trainees (
 	position_id varchar(30) not null references positions(position_id),
 	assigned_at timestamp not null default NOW()
 );
+
+CREATE OR REPLACE FUNCTION set_unique_status_per_user_slot()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status IS TRUE THEN
+        UPDATE user_event_applications
+        SET status = FALSE
+        WHERE slot_id = NEW.slot_id
+		AND application_id <> NEW.application_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_enforce_unique_status_per_user_slot
+AFTER INSERT OR UPDATE ON user_event_applications
+FOR EACH ROW
+EXECUTE FUNCTION set_unique_status_per_user_slot();
