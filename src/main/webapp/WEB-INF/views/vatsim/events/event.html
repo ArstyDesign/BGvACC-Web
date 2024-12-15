@@ -50,7 +50,7 @@
             <small th:text="#{event.roster.cpt}">The CPT events don't have a roster as they are connected to a parent event.</small>
           </div>
 
-          <table class="table table-hover table-striped table-bordered" th:if="${doAllPositionsHaveSlots}">
+          <table class="table table-hover table-striped table-bordered align-middle mb-0" th:if="${doAllPositionsHaveSlots}">
             <thead>
               <tr>
                 <th scope="col" class="fw-bold" th:text="#{event.roster.positionslot}">Position / Slot</th>
@@ -69,16 +69,21 @@
 
                     <div th:if="${sl.isApproved}" th:remove="tag">
                       <div th:if="${sl.user ne null}" th:remove="tag">
-                        <strong th:if="${session.loggedUser.cid eq sl.user.cid}" th:text="${sl.user.names.fullName}">John Doe</strong>
-                        <span th:if="${session.loggedUser.cid ne sl.user.cid}" th:text="${sl.user.names.fullName}"></span>
+                        <a href="#" th:href="@{/members/} + ${sl.user.cid}" target="_blank" th:if="${session.loggedUser.cid eq sl.user.cid}">
+                          <strong th:text="${sl.user.names.fullName} + ' - ' + ${sl.user.cid}">John Doe</strong>
+                        </a>
+                        <a href="#" th:href="@{/members/} + ${sl.user.cid}" target="_blank" th:if="${session.loggedUser.cid ne sl.user.cid}">
+                          <span th:text="${sl.user.names.fullName} + ' - ' + ${sl.user.cid}"></span>
+                        </a>
                       </div>
-                      
+
                       <span th:if="${sl.user eq null}">-</span>
                     </div>
 
                     <div th:if="${!sl.isApproved}" th:remove="tag">
-                      <a href="#" th:if="${ep.canUserApplyForPosition}" class="btn btn-primary btn-sm"
-                         data-bs-toggle="modal" data-bs-target="#applyForSlotModal" th:data-slot-id="${sl.slotId}" 
+                      <span th:if="${sl.hasUserAlreadyApplied}" class="fst-italic" th:text="#{event.roster.alreadyapplied}">You already applied for slot</span>
+                      <a href="#" th:if="${ep.canUserApplyForPosition and !sl.hasUserAlreadyApplied}" class="btn btn-primary btn-sm"
+                         data-bs-toggle="modal"event.roster.applyforslot data-bs-target="#applyForSlotModal" th:data-slot-id="${sl.slotId}" 
                          th:data-msg="#{event.roster.applyforslot.modal.message(${event.name})}"
                          th:data-position="${ep.positionId}"
                          th:data-date="${event.getFormattedStartDateTime('dd.MM.yyyy')}"
@@ -88,7 +93,8 @@
                     </div>
                   </div>
                   <div sec:authorize="!isAuthenticated()" th:remove="tag">
-                    <span th:text="${sl.isApproved} ? ${sl.user.names.fullName} : '-'"></span>
+                    <a href="#" th:href="@{/members/} + ${sl.user.cid}" target="_blank" th:if="${sl.isApproved}" th:text="${sl.user.names.fullName} + ' - ' + ${sl.user.cid}">John Doe</a>
+                    <span th:if="${!sl.isApproved}">-</span>
                   </div>
                 </td>
               </tr>

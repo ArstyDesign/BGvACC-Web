@@ -3,13 +3,14 @@ package com.bgvacc.web.controllers.portal;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.CalendarEvent;
 import com.bgvacc.web.domains.HasPositions;
-import com.bgvacc.web.responses.events.EventPositionsResponse;
-import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.responses.events.*;
+import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
-import com.bgvacc.web.services.EventService;
-import com.bgvacc.web.services.PositionService;
+import com.bgvacc.web.services.*;
 import com.bgvacc.web.utils.Breadcrumb;
+import com.bgvacc.web.utils.ControllerPositionUtils;
 import static com.bgvacc.web.utils.Utils.convertEventsToCalendarEvents;
+import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,10 @@ public class PortalEventsController extends Base {
   private final EventService eventService;
 
   private final PositionService positionService;
+
+  private final MailService mailService;
+
+  private final UserService userService;
 
   @GetMapping("/portal/events/calendar")
   public String getEventsCalendar(Model model) {
@@ -107,7 +112,7 @@ public class PortalEventsController extends Base {
     EventResponse event = eventService.getEvent(eventId);
     model.addAttribute("event", event);
 
-    List<EventPositionsResponse> eventPositions = eventService.getEventPositions(eventId);
+    List<EventPositionResponse> eventPositions = eventService.getEventPositions(eventId);
     model.addAttribute("eventPositions", eventPositions);
 
     List<PositionResponse> unassignedPositions = positionService.getPositionsNotAssignedForEvent(eventId);
@@ -172,6 +177,18 @@ public class PortalEventsController extends Base {
   public String approveSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId) {
 
     boolean isSlotApplicationApproved = eventService.approveSlotApplication(eventId, slotId, applicationId);
+
+    if (isSlotApplicationApproved) {
+
+      EventResponse event = eventService.getEvent(eventId);
+      EventSlotResponse slot = eventService.getEventSlot(slotId);
+      UserResponse user = userService.getUser(slot.getUser().getCid());
+      String position = eventService.getPositionFromEventPositionId(slot.getEventPositionId());
+
+      VatsimATCInfo positionInfo = ControllerPositionUtils.getPositionFrequency(position);
+
+      boolean isSent = mailService.sendEventControllerApplicationApprovedMail(user.getNames(), user.getCid(), user.getEmail(), eventId, event.getName(), positionInfo.getCallsign() + " - " + positionInfo.getName(), event.getFormattedStartDateTime("dd.MM.yyyy"), event.getFormattedStartDateTime("HH:mm") + " - " + event.getFormattedEndDateTime("HH:mm"));
+    }
 
     return "redirect:/portal/events/" + eventId;
   }

@@ -113,6 +113,36 @@ public class MailServiceImpl extends Base implements MailService {
   }
 
   @Override
+  public boolean sendEventControllerApplicationApprovedMail(Names names, String cid, String email, Long eventId, String eventName, String position, String date, String timeSlot) {
+
+    try {
+      Context ctx = new Context();
+
+      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("names", names);
+      ctx.setVariable("cid", cid);
+      ctx.setVariable("email", email);
+      ctx.setVariable("eventId", eventId);
+      ctx.setVariable("eventName", eventName);
+      ctx.setVariable("position", position);
+      ctx.setVariable("date", date);
+      ctx.setVariable("timeSlot", timeSlot);
+
+      String htmlContent = templateEngine.process("event-application-approved-mail.html", ctx);
+
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, "a.arshinkov97@gmail.com");
+
+      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+
+      return true;
+
+    } catch (NoSuchMessageException e) {
+      log.error("Sending failed!", e);
+      return false;
+    }
+  }
+
+  @Override
   public MailDomain createMail(String sender, String subject, String content, String... recipients) {
 
     StringBuilder to = new StringBuilder();
@@ -125,7 +155,7 @@ public class MailServiceImpl extends Base implements MailService {
     final String createMailSql = "INSERT INTO mailbox (mail_id, sender, receivers, subject, content) VALUES (?, ?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement createMailPstmt = conn.prepareStatement(createMailSql)) {
+            PreparedStatement createMailPstmt = conn.prepareStatement(createMailSql)) {
 
       try {
 

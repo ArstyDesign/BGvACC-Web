@@ -24,7 +24,9 @@ public interface EventService {
 
   EventResponse getEvent(Long eventId);
 
-  List<EventPositionsResponse> getEventPositions(Long eventId);
+  List<EventPositionResponse> getEventPositions(Long eventId);
+  
+  String getPositionFromEventPositionId(String eventPositionId);
 
   boolean addEventPosition(Long eventId, String position, Integer minimumRating, boolean canTraineesApply);
 
@@ -37,8 +39,12 @@ public interface EventService {
   Long getTotalUserEventApplications(String cid);
 
   EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
+  
+  EventSlotResponse getEventSlot(String slotId);
 
   boolean canUserApplyForPosition(String cid, String eventPositionId);
+
+  boolean hasUserAlreadyAppliedForSlot(String cid, String slotId);
 
   boolean applyUserForEventSlot(String cid, String slotId);
 

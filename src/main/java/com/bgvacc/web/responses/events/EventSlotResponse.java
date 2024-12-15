@@ -22,12 +22,15 @@ import lombok.*;
 public class EventSlotResponse implements Serializable {
 
   private String slotId;
+  private String eventPositionId;
   private ZonedDateTime startAt;
   private Timestamp startTime;
   private ZonedDateTime endAt;
   private Timestamp endTime;
   private EventUserResponse user;
   private Boolean isApproved;
+  
+  private boolean hasUserAlreadyApplied = false;
 
   private List<EventUserApplicationResponse> userEventApplications;
 

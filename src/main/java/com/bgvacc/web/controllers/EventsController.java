@@ -1,7 +1,7 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
-import com.bgvacc.web.responses.events.EventPositionsResponse;
+import com.bgvacc.web.responses.events.EventPositionResponse;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.EventSlotResponse;
 import com.bgvacc.web.services.EventService;
@@ -58,7 +58,7 @@ public class EventsController extends Base {
     EventResponse event = eventService.getEvent(eventId);
     model.addAttribute("event", event);
 
-    List<EventPositionsResponse> eventPositions = eventService.getEventPositions(eventId);
+    List<EventPositionResponse> eventPositions = eventService.getEventPositions(eventId);
 
     String loggedUserCid = getLoggedUserCid(request);
 
@@ -67,9 +67,15 @@ public class EventsController extends Base {
       boolean isUserApprovedForAnyPosition = isUserApprovedForAnyPosition(eventPositions, loggedUserCid);
 
       if (!isUserApprovedForAnyPosition) {
-        for (EventPositionsResponse ep : eventPositions) {
+        for (EventPositionResponse ep : eventPositions) {
           boolean canUserApply = eventService.canUserApplyForPosition(loggedUserCid, ep.getEventPositionId());
           ep.setCanUserApplyForPosition(canUserApply);
+
+          if (canUserApply) {
+            for (EventSlotResponse slot : ep.getSlots()) {
+              slot.setHasUserAlreadyApplied(eventService.hasUserAlreadyAppliedForSlot(loggedUserCid, slot.getSlotId()));
+            }
+          }
         }
       }
     }
@@ -128,9 +134,9 @@ public class EventsController extends Base {
     return "redirect:/events/" + eventId;
   }
 
-  private boolean isUserApprovedForAnyPosition(List<EventPositionsResponse> eventPositions, String loggedUserCid) {
-    
-    for (EventPositionsResponse ep : eventPositions) {
+  private boolean isUserApprovedForAnyPosition(List<EventPositionResponse> eventPositions, String loggedUserCid) {
+
+    for (EventPositionResponse ep : eventPositions) {
       for (EventSlotResponse slot : ep.getSlots()) {
 
         if (slot.getUser() != null && slot.getUser().getCid() != null) {

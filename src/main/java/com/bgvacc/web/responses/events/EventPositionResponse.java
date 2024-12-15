@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class EventPositionsResponse implements Serializable {
+public class EventPositionResponse implements Serializable {
 
   private String eventPositionId;
   private Long eventId;
