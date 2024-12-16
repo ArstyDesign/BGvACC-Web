@@ -118,9 +118,14 @@
                   </div>
 
                   <div th:each="es, iterStat : ${ep.slots}" th:if="${!#lists.isEmpty(ep.slots)}">
-                    <div class="h5 mb-0" th:with="isSameDay=${(es.startTime.year eq es.endTime.year) and (es.startTime.month eq es.endTime.month) and (es.startTime.date eq es.endTime.date)}">
-                      <div th:if="${isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">Same day</div>
-                      <div th:if="${!isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'dd.MM.yyyy, HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'dd.MM.yyy, HH:mm')} + 'z'">Same day</div>
+
+                    <div class="d-flex align-items-center">
+                      <div class="h5 mb-0" th:with="isSameDay=${(es.startTime.year eq es.endTime.year) and (es.startTime.month eq es.endTime.month) and (es.startTime.date eq es.endTime.date)}">
+                        <div th:if="${isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">Same day</div>
+                        <div th:if="${!isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'dd.MM.yyyy, HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'dd.MM.yyy, HH:mm')} + 'z'">Same day</div>
+                      </div>
+
+                      <a href="#" class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addControllerManuallyModal" th:data-slot-id="${es.slotId}">Add controller manually</a>
                     </div>
 
                     <div class="mb-5 text-muted" th:if="${#lists.isEmpty(es.userEventApplications)}">
@@ -230,6 +235,36 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.addposition.modal.cancel}">Cancel</button>
                 <button type="submit" class="btn btn-primary" th:text="#{portal.events.event.roster.addposition.modal.addposition}">Add position</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal fade" id="addControllerManuallyModal" tabindex="-1" aria-labelledby="addControllerManuallyModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
+        <form method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addControllerManuallyModalLabel">Add controller to slot manually</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-12 mb-2">
+
+
+                    <label for="userCidInput" class="form-label required">Controller CID</label>
+                    <input id="userCidInput" type="text" name="cid" class="form form-control"/>
+                    <!--                    <select id="slotsCountInput" class="form-control" data-choices='{"searchEnabled":false, "itemSelectText":""}' name="slotsCount">
+                                          <option th:each="i : ${#numbers.sequence(1, 4)}" th:value="${i}" th:text="${i}">1</option>
+                                        </select>-->
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.addpositionslots.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{portal.events.event.roster.addpositionslots.modal.addslots}">Add slots</button>
               </div>
             </div>
           </div>
@@ -410,6 +445,13 @@
           $("#rejectSlotApplicationTimeSlot").empty().append(timeSlot);
 
           $('#rejectSlotApplicationModalForm').attr('action', approveRejectSlotApplicationUrl + '/' + slotId + '/application/' + applicationId + '/reject');
+        });
+
+        document.getElementById('addControllerManuallyModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let slotId = modal.data("slot-id");
+
+
         });
       </script>
     </div>

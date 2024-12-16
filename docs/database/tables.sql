@@ -181,6 +181,8 @@ CREATE TABLE user_event_applications (
 	slot_id varchar(100) not null references slots(slot_id) on delete cascade,
     status boolean,
 	applied_at timestamp not null default NOW(),
+	is_added_by_staff boolean not null default false,
+	added_by_staff_cid varchar(30) references users(cid) on delete set null,
 	unique (user_cid, slot_id)
 );
 
