@@ -19,7 +19,9 @@ public enum UserRoles {
   ATC_I1("ATC_I1"),
   ATC_I3("ATC_I3"),
   USER("USER"),
-  ATC_TRAINING("ATC_TRAINING");
+  ATC_TRAINING("ATC_TRAINING"),
+  EXAMINER("EXAMINER"),
+  BLOG_MANAGER("BLOG_MANAGER");
 
   private String roleName;
 

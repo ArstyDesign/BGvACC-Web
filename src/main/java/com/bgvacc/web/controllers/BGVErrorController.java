@@ -1,5 +1,6 @@
 package com.bgvacc.web.controllers;
 
+import com.bgvacc.web.base.Base;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since 1.0.0
  */
 @Controller
-public class BGVErrorController implements ErrorController {
+public class BGVErrorController extends Base implements ErrorController {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -25,9 +26,15 @@ public class BGVErrorController implements ErrorController {
 
     Object originalUrl = request.getAttribute("javax.servlet.error.request_uri");
 
+    boolean isPortal = false;
+
     // Можеш да логваш или да извършиш друга логика тук
     if (originalUrl != null) {
       log.debug("Error accessing URL: " + originalUrl.toString());
+
+      if (originalUrl.toString().contains("portal")) {
+        isPortal = true;
+      }
     } else {
       log.debug("Original URL cannot be found.");
     }
@@ -39,21 +46,39 @@ public class BGVErrorController implements ErrorController {
     if (status != null) {
       int statusCode = Integer.parseInt(status.toString());
 
-      log.debug("Status code: " + statusCode);
+//      log.debug("Status code: " + statusCode);
       if (statusCode == HttpStatus.FORBIDDEN.value() || statusCode == HttpStatus.UNAUTHORIZED.value()) {
         log.debug("Not allowed!");
-//        if (isLoggedIn()) {
-//          return "redirect:/403";
-//        }
-        return "redirect:/login";
+
+        if (isLoggedIn()) {
+          if (isPortal) {
+            return "redirect:/portal/403";
+          }
+        }
+
+        return "redirect:/403";
+
       } else if (statusCode == HttpStatus.NOT_FOUND.value()) {
-//        log.debug("Page not found!");
+
+        if (isLoggedIn()) {
+          if (isPortal) {
+            return "redirect:/portal/404";
+          }
+        }
+
         return "redirect:/404";
+
       } else if (statusCode == HttpStatus.METHOD_NOT_ALLOWED.value()) {
         log.debug("Method not allowed");
         return "redirect:/";
       } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-        log.debug("Internal server error!");
+
+        if (isLoggedIn()) {
+          if (isPortal) {
+            return "redirect:/portal/500";
+          }
+        }
+
         return "redirect:/500";
       }
     }

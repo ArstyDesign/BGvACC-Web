@@ -40,7 +40,23 @@
         </div>
       </div>
 
-      <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
+      <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${event.isPast}">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="text-muted">
+                <small>
+                  <span class="material-symbols-rounded me-1">timer_off</span>
+                  <span th:utext="#{portal.events.event.roster.past}">The event has already passed.</span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isPast}">
         <div class="col-12 mb-3">
           <div class="card">
             <div class="card-body">
@@ -154,7 +170,7 @@
                       </tbody>
                     </table>
                   </div>
-                  
+
                   <hr th:if="${!iterStat.last}" class="my-2 mb-4"/>
                 </div>
               </div>

@@ -24,7 +24,7 @@ public class RulesController extends Base {
   @GetMapping("/rules/privacy-policy")
   public String getPrivacyPolicy(Model model) {
 
-    model.addAttribute("pageTitle", "Privacy Policy for VATSIM BULGARIA");
+    model.addAttribute("pageTitle", getMessage("privacypolicy.title"));
     model.addAttribute("page", "rules");
     model.addAttribute("subpage", "privacy-policy");
 

@@ -113,6 +113,17 @@ public class EventsController extends Base {
     model.addAttribute("mostSlots", mostSlots);
     model.addAttribute("eventPositions", eventPositions);
 
+    String url = request.getRequestURL().toString(); // Основният URL
+    String queryString = request.getQueryString();   // Параметри от заявката
+
+    // Ако има параметри, добавяме ги към URL
+    if (queryString != null) {
+      url += "?" + queryString;
+    }
+
+    // Добавяме целия URL в модела
+    model.addAttribute("fullUrl", url);
+
     model.addAttribute("pageTitle", getMessage("event.title", event.getName()));
     model.addAttribute("page", "events");
 

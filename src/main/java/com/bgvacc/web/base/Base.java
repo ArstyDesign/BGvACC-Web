@@ -1,6 +1,7 @@
 package com.bgvacc.web.base;
 
 import com.bgvacc.web.security.LoggedUser;
+import com.bgvacc.web.security.SecurityChecks;
 import com.bgvacc.web.services.SystemService;
 import com.bgvacc.web.utils.AppConstants;
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +27,15 @@ public class Base {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private SecurityChecks securityChecks;
+
   public MessageSource getMessageSource() {
     return messageSource;
+  }
+
+  protected boolean isLoggedIn() {
+    return securityChecks.isLoggedIn();
   }
 
   protected LoggedUser getLoggedUser() {

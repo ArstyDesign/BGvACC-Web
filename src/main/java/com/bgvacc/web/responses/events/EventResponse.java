@@ -40,6 +40,12 @@ public class EventResponse implements Serializable {
   private Timestamp createdAt;
   private Timestamp updatedAt;
 
+  public boolean isPast() {
+
+    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+    return now.isAfter(endAt);
+  }
+
   public boolean isCurrentlyActive() {
 
     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));

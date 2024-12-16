@@ -35,6 +35,7 @@ INSERT INTO roles VALUES ('ATC_I3', 'ATC rating I3');
 INSERT INTO roles VALUES ('ATC_TRAINING', 'ATC training');
 INSERT INTO roles VALUES ('EXAMINER', 'Examiner');
 INSERT INTO roles VALUES ('USER', 'Regular user');
+INSERT INTO roles VALUES ('BLOG_MANAGER', 'Manages blog events');
 
 CREATE TABLE user_roles(
 	user_role_id varchar(100) not null primary key default gen_random_uuid(),

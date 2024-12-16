@@ -6,6 +6,23 @@
   <head>
     <title th:text="#{app.title(${event.name})}">BGvACC</title>
 
+    <meta name="title" th:content="${event.name}" />
+    <meta name="description" th:content="${event.shortDescription}" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" th:content="${fullUrl}" />
+    <meta property="og:title" th:content="${event.name}" />
+    <meta property="og:description" th:content="${event.shortDescription}" />
+    <meta property="og:image" th:content="${event.imageUrl}" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" th:content="${fullUrl}" />
+    <meta property="twitter:title" th:content="${event.name}" />
+    <meta property="twitter:description" th:content="${event.shortDescription}" />
+    <meta property="twitter:image" th:content="${event.imageUrl}" />
+
     <style>
       .eventDescription a {
         color: var(--bs-primary) !important;

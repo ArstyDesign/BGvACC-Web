@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f9f9f9"/>
+
+  <!-- Circle with forbidden symbol -->
+  <g transform="translate(400, 300)">
+    <!-- Outer circle -->
+    <circle r="120" fill="#FF6B6B"/>
+    <!-- Slash -->
+    <rect x="-20" y="-120" width="40" height="240" transform="rotate(45)" fill="#ffffff"/>
+  </g>
+
+  <!-- Text -->
+  <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="48" fill="#333" text-anchor="middle">403 Forbidden</text>
+  <text x="50%" y="65%" font-family="Arial, sans-serif" font-size="24" fill="#666" text-anchor="middle">You don't have permission to access this page.</text>
+</svg>
