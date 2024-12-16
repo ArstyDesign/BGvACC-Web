@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
@@ -57,9 +58,16 @@
         <div class="card-body">
           <div class="h5 mb-3" th:text="#{event.roster.title}">Event roster</div>
 
-          <div th:if="${!event.isCpt and !doAllPositionsHaveSlots}" class="text-muted">
+          <div th:if="${event.isPast and !doAllPositionsHaveSlots}">
             <small class="bi bi-info-circle me-1"></small>
-            <small th:text="#{event.roster.configuring}">The event roster is currently being configured. It will soon be available for booking.</small>
+            <small th:text="#{event.roster.pastandnoconfig}">The event has already passed</small>
+          </div>
+
+          <div th:if="${!event.isPast}" th:remove="tag">
+            <div th:if="${!event.isCpt and !doAllPositionsHaveSlots}" class="text-muted">
+              <small class="bi bi-info-circle me-1"></small>
+              <small th:text="#{event.roster.configuring}">The event roster is currently being configured. It will soon be available for booking.</small>
+            </div>
           </div>
 
           <div th:if="${event.isCpt}" class="text-muted">

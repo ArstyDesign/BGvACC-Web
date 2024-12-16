@@ -74,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/atc/status/**").permitAll()
             .antMatchers("/atc-reservations/**").hasAnyRole("ATC_S1", "ATC_S2", "ATC_S3", "ATC_C1", "ATC_S3", "ATC_I1", "ATC_I3")
             .antMatchers("/test/**").permitAll()
+            .antMatchers("/resources/**").permitAll()
             .antMatchers("/**").permitAll()
             .and()
             .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
