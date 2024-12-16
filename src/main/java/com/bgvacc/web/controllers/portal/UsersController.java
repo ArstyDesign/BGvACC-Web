@@ -297,4 +297,10 @@ public class UsersController extends Base {
 
     return "redirect:/portal/users";
   }
+
+  @GetMapping("/users/{cid}")
+  @ResponseBody
+  public UserResponse getUserByCid(@PathVariable("cid") String cid) {
+    return userService.getUser(cid);
+  }
 }

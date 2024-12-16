@@ -140,7 +140,7 @@ public class EventsController extends Base {
   @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")
   public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, HttpServletRequest request) {
 
-    boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId);
+    boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId, false, null);
 
     return "redirect:/events/" + eventId;
   }

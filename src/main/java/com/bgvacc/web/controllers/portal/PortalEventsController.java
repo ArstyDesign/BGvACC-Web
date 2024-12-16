@@ -14,6 +14,7 @@ import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,6 +174,16 @@ public class PortalEventsController extends Base {
     return "redirect:/portal/events/" + eventId;
   }
 
+  @PostMapping("/portal/events/{eventId}/slots/{slotId}/add-manually")
+  public String addControllerManually(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @RequestParam("cid") String cid, HttpServletRequest request) {
+
+    log.debug("Adding controller with CID '" + cid + "' manually to slot with ID '" + slotId + "'.");
+
+    boolean isUserAdded = eventService.applyUserForEventSlot(cid, slotId, true, getLoggedUserCid(request));
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
   @PostMapping("/portal/events/{eventId}/slots/{slotId}/application/{applicationId}/approve")
   public String approveSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId) {
 
@@ -187,7 +198,7 @@ public class PortalEventsController extends Base {
 
       VatsimATCInfo positionInfo = ControllerPositionUtils.getPositionFrequency(position);
 
-      boolean isSent = mailService.sendEventControllerApplicationApprovedMail(user.getNames(), user.getCid(), user.getEmail(), eventId, event.getName(), positionInfo.getCallsign() + " - " + positionInfo.getName(), event.getFormattedStartDateTime("dd.MM.yyyy"), event.getFormattedStartDateTime("HH:mm") + " - " + event.getFormattedEndDateTime("HH:mm"));
+      boolean isSent = mailService.sendEventControllerApplicationApprovedMail(user.getNames(), user.getCid(), user.getEmail(), eventId, event.getName(), positionInfo.getCallsign() + " - " + positionInfo.getName(), slot.getFormattedStartDateTime("dd.MM.yyyy"), slot.getFormattedStartDateTime("HH:mm") + " - " + slot.getFormattedEndDateTime("HH:mm"));
     }
 
     return "redirect:/portal/events/" + eventId;

@@ -46,7 +46,7 @@ public interface EventService {
 
   boolean hasUserAlreadyAppliedForSlot(String cid, String slotId);
 
-  boolean applyUserForEventSlot(String cid, String slotId);
+  boolean applyUserForEventSlot(String cid, String slotId, boolean isAddedByStaff, String addedByStaffCid);
 
   boolean approveSlotApplication(Long eventId, String slotId, String applicationId);
 

@@ -125,7 +125,8 @@
                         <div th:if="${!isSameDay}" th:text="${iterStat.count} + '. ' + ${#dates.format(es.startTime, 'dd.MM.yyyy, HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'dd.MM.yyy, HH:mm')} + 'z'">Same day</div>
                       </div>
 
-                      <a href="#" class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addControllerManuallyModal" th:data-slot-id="${es.slotId}">Add controller manually</a>
+                      <a href="#" class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#addControllerManuallyModal" th:data-slot-id="${es.slotId}"
+                         th:text="#{portal.events.event.slots.addcontrollermanually}">Add controller manually</a>
                     </div>
 
                     <div class="mb-5 text-muted" th:if="${#lists.isEmpty(es.userEventApplications)}">
@@ -242,11 +243,11 @@
       </div>
 
       <div class="modal fade" id="addControllerManuallyModal" tabindex="-1" aria-labelledby="addControllerManuallyModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
-        <form method="post">
+        <form id="addControllerManuallyModalForm" method="post">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="addControllerManuallyModalLabel">Add controller to slot manually</h5>
+                <h5 class="modal-title" id="addControllerManuallyModalLabel" th:text="#{portal.events.event.addcontrollermanually.modal.title}">Add controller manually</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -254,8 +255,9 @@
                   <div class="col-12 mb-2">
 
 
-                    <label for="userCidInput" class="form-label required">Controller CID</label>
-                    <input id="userCidInput" type="text" name="cid" class="form form-control"/>
+                    <label for="userCidInput" class="form-label required" th:text="#{portal.events.event.addcontrollermanually.modal.cid}">Controller CID</label>
+                    <input id="userCidInput" type="text" name="cid" pattern="\d*" maxlength="7" class="form form-control"/>
+                    <div id="userCidValue" class="form-text">-</div>
                     <!--                    <select id="slotsCountInput" class="form-control" data-choices='{"searchEnabled":false, "itemSelectText":""}' name="slotsCount">
                                           <option th:each="i : ${#numbers.sequence(1, 4)}" th:value="${i}" th:text="${i}">1</option>
                                         </select>-->
@@ -263,8 +265,8 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.roster.addpositionslots.modal.cancel}">Cancel</button>
-                <button type="submit" class="btn btn-primary" th:text="#{portal.events.event.roster.addpositionslots.modal.addslots}">Add slots</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.addcontrollermanually.modal.cancel}">Cancel</button>
+                <button id="addControllerManuallyModalAddButton" type="submit" class="btn btn-primary" th:text="#{portal.events.event.addcontrollermanually.modal.addcontroller}">Add controller to slot</button>
               </div>
             </div>
           </div>
@@ -392,7 +394,8 @@
         let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions/remove']]*/;
                 let addPositionSlotUrl = /*[[@{/portal/events/} + ${eventId} + '/positions']]*/;
                 let approveRejectSlotApplicationUrl = /*[[@{/portal/events/} + ${eventId} + '/slots']]*/;
-                let aux2 = /*[[@{/}]]*/;
+                let getUserByCidUrl = /*[[@{/users}]]*/;
+                let addUserManuallyUrl = /*[[@{/portal/events/} + ${eventId} + '/slots']]*/;
         /*]]>*/
 
         document.getElementById('addPositionSlotModal').addEventListener('show.bs.modal', function (event) {
@@ -452,6 +455,62 @@
           let slotId = modal.data("slot-id");
 
 
+        });
+
+        let isUserFound = false;
+        let slotId = '';
+
+        document.getElementById('addControllerManuallyModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          slotId = modal.data("slot-id");
+
+          $("#userCidValue").empty().append("-");
+          $('#userCidInput').val("");
+        });
+
+        $('#userCidInput').on('input', function () {
+
+          const inputValue = $(this).val().replace(/[^0-9]/g, '');
+          $(this).val(inputValue);
+
+          const cid = $(this).val();
+
+          if (cid.length == 0) {
+            isUserFound = false;
+            $("#userCidValue").empty().append("-");
+          }
+
+          if (cid.length >= 3 && cid.length <= 7) {
+
+            $.ajax({
+              url: getUserByCidUrl + '/' + cid,
+              type: 'get',
+              success: function (data)
+              {
+                if (data === null || data === undefined || data === "") {
+                  console.log("No data");
+                  isUserFound = false;
+                  $("#userCidValue").empty().append("-");
+                } else {
+                  isUserFound = true;
+                  $("#userCidValue").empty().append(data.names.fullName + " - " + data.cid);
+                  $('#addControllerManuallyModalForm').attr('action', addUserManuallyUrl + '/' + slotId + '/add-manually');
+                }
+              },
+              error: function (xhr, status, error)
+              {
+                //                    alert("fail");
+              }
+            });
+          }
+        });
+
+        $('#addControllerManuallyModalAddButton').on('click', function (event) {
+          event.preventDefault();
+
+          if (isUserFound) {
+            $('#addControllerManuallyModalForm').submit();
+          }
         });
       </script>
     </div>
