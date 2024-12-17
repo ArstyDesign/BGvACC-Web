@@ -96,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            .invalidSessionUrl("/")
+            .invalidSessionUrl("/login")
             .enableSessionUrlRewriting(false)
             .maximumSessions(5).sessionRegistry(sessionRegistry);
   }

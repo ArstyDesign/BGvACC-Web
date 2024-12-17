@@ -39,7 +39,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/bg.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-    <script th:src="@{/resources/js/countUp.min.js}" src="../../resources/js/countUp.min.js"></script>
+    <!--<script th:src="@{/resources/js/countUp.min.js}" src="../../resources/js/countUp.min.js"></script>-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
   </head>
   <body id="mainBody" class="">
 
@@ -96,7 +100,21 @@
 
     <script>
       const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+
+    <script type="text/javascript" th:inline="javascript">
+      $(document).ready(function () {
+        let successMessage = /*[[${successMessage}]]*/ '';
+        let errorMessage = /*[[${errorMessage}]]*/ '';
+
+        if (successMessage) {
+          toastr.success(successMessage);
+        }
+        if (errorMessage) {
+          toastr.error(errorMessage);
+        }
+      });
     </script>
   </body>
 </html>

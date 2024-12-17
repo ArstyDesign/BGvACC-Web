@@ -7,6 +7,10 @@ import com.bgvacc.web.responses.events.*;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.services.*;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.ControllerPositionUtils;
 import static com.bgvacc.web.utils.Utils.convertEventsToCalendarEvents;
@@ -22,6 +26,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -145,47 +150,89 @@ public class PortalEventsController extends Base {
   }
 
   @PostMapping("/portal/events/{eventId}/positions/add")
-  public String addPositionToEvent(@PathVariable("eventId") Long eventId, @RequestParam("position") String position, @RequestParam("minimumRating") Integer minimumRating, @RequestParam(name = "canTraineesApply", defaultValue = "false") boolean canTraineesApply) {
+  public String addPositionToEvent(@PathVariable("eventId") Long eventId, @RequestParam("position") String position, @RequestParam("minimumRating") Integer minimumRating, @RequestParam(name = "canTraineesApply", defaultValue = "false") boolean canTraineesApply, RedirectAttributes redirectAttributes) {
 
     log.debug("Adding position '" + position + "' to event with ID '" + eventId + "'");
 
     boolean isEventPositionAdded = eventService.addEventPosition(eventId, position, minimumRating, canTraineesApply);
 
+    if (isEventPositionAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.roster.addposition.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.roster.addposition.modal.error"));
+    }
+
     return "redirect:/portal/events/" + eventId;
   }
 
   @PostMapping("/portal/events/{eventId}/positions/remove/{eventPositionId}")
-  public String removePositionFromEvent(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId) {
+  public String removePositionFromEvent(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId, RedirectAttributes redirectAttributes) {
 
     log.debug("Removing event position with ID '" + eventPositionId + "' from event with ID '" + eventId + "'.");
 
     boolean isEventPositionRemoved = eventService.removeEventPosition(eventId, eventPositionId);
 
+    if (isEventPositionRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.roster.removeposition.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.roster.removeposition.modal.error"));
+    }
+
     return "redirect:/portal/events/" + eventId;
   }
 
   @PostMapping("/portal/events/{eventId}/positions/{eventPositionId}/slots/add")
-  public String addSlotsForPosition(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId, @RequestParam("slotsCount") Integer slotsCount) {
+  public String addSlotsForPosition(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId, @RequestParam("slotsCount") Integer slotsCount, RedirectAttributes redirectAttributes) {
 
     log.debug("Adding slots for position with ID '" + eventPositionId + "' for event with ID '" + eventId + "'.");
 
     boolean areSlotsAdded = eventService.addSlotsToPosition(eventId, eventPositionId, slotsCount);
 
+    if (areSlotsAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+
+      if (slotsCount == 1) {
+        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.roster.addpositionslots.modal.success.1"));
+      } else {
+        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.roster.addpositionslots.modal.success.n"));
+      }
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+
+      if (slotsCount == 1) {
+        redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.roster.addpositionslots.modal.error.1"));
+      } else {
+        redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.roster.addpositionslots.modal.error.n"));
+      }
+    }
+
     return "redirect:/portal/events/" + eventId;
   }
 
   @PostMapping("/portal/events/{eventId}/slots/{slotId}/add-manually")
-  public String addControllerManually(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @RequestParam("cid") String cid, HttpServletRequest request) {
+  public String addControllerManually(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @RequestParam("cid") String cid, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 
     log.debug("Adding controller with CID '" + cid + "' manually to slot with ID '" + slotId + "'.");
 
     boolean isUserAdded = eventService.applyUserForEventSlot(cid, slotId, true, getLoggedUserCid(request));
 
+    if (isUserAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.addcontrollermanually.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.addcontrollermanually.modal.error"));
+    }
+
     return "redirect:/portal/events/" + eventId;
   }
 
   @PostMapping("/portal/events/{eventId}/slots/{slotId}/application/{applicationId}/approve")
-  public String approveSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId) {
+  public String approveSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId, RedirectAttributes redirectAttributes) {
 
     boolean isSlotApplicationApproved = eventService.approveSlotApplication(eventId, slotId, applicationId);
 
@@ -199,15 +246,31 @@ public class PortalEventsController extends Base {
       VatsimATCInfo positionInfo = ControllerPositionUtils.getPositionFrequency(position);
 
       boolean isSent = mailService.sendEventControllerApplicationApprovedMail(user.getNames(), user.getCid(), user.getEmail(), eventId, event.getName(), positionInfo.getCallsign() + " - " + positionInfo.getName(), slot.getFormattedStartDateTime("dd.MM.yyyy"), slot.getFormattedStartDateTime("HH:mm") + " - " + slot.getFormattedEndDateTime("HH:mm"));
+
+      if (isSent) {
+        redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.approve.modal.success"));
+      } else {
+        redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+        redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.approve.modal.error"));
+      }
     }
 
     return "redirect:/portal/events/" + eventId;
   }
 
   @PostMapping("/portal/events/{eventId}/slots/{slotId}/application/{applicationId}/reject")
-  public String rejectSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId, @RequestParam("rejectReason") String rejectReason) {
+  public String rejectSlotApplication(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, @PathVariable("applicationId") String applicationId, @RequestParam("rejectReason") String rejectReason, RedirectAttributes redirectAttributes) {
 
     boolean isSlotApplicationRejected = eventService.rejectSlotApplication(slotId, applicationId, rejectReason);
+
+    if (isSlotApplicationRejected) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.reject.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.reject.modal.error"));
+    }
 
     return "redirect:/portal/events/" + eventId;
   }

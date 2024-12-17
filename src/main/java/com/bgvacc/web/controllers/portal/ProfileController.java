@@ -6,6 +6,10 @@ import com.bgvacc.web.models.portal.profile.settings.ChangePasswordModel;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.services.ControllerOnlineLogService;
 import com.bgvacc.web.services.UserService;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -108,7 +113,7 @@ public class ProfileController extends Base {
   }
 
   @PostMapping("/portal/profile/settings/change-password")
-  public String changePassword(@ModelAttribute("cpm") @Valid ChangePasswordModel cpm, BindingResult bindingResult, Model model, HttpServletRequest request) {
+  public String changePassword(@ModelAttribute("cpm") @Valid ChangePasswordModel cpm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
     if (bindingResult.hasErrors()) {
 
@@ -167,6 +172,14 @@ public class ProfileController extends Base {
     log.info("Changing password for user with CID '" + loggedUser.getCid() + "'.");
 
     boolean isPasswordChanged = userService.changePassword(loggedUser.getCid(), cpm.getNewPassword());
+
+    if (isPasswordChanged) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.profile.settings.changepassword.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.profile.settings.changepassword.error"));
+    }
 
     return "redirect:/portal/profile/settings";
   }

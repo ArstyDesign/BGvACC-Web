@@ -9,6 +9,8 @@
   <body>
     <div layout:fragment="contentDiv">
 
+      <div th:replace="fragments/notify :: #notify"></div>
+
       <div class="row">
         <div class="col-12 col-lg-8 m-lg-auto mb-3">
           <div class="mb-4" th:text="#{atc.application.header}">ATC Career Application in BGvACC:</div>

@@ -4,7 +4,6 @@ import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.trainings.CreateTrainingNoteModel;
-import com.bgvacc.web.requests.portal.trainings.CreateTrainingNoteRequest;
 import com.bgvacc.web.responses.trainings.CreateTrainingNoteResponse;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.utils.Breadcrumb;

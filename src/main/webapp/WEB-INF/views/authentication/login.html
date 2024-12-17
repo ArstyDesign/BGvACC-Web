@@ -9,6 +9,8 @@
   <body>
     <div layout:fragment="contentDiv">
 
+      <div th:replace="fragments/notify :: #notify"></div>
+
       <div class="row">
         <div class="col-12 my-5">
           <div class="row align-items-center justify-content-center">
@@ -36,7 +38,7 @@
                              th:placeholder="#{login.password}"/>
                     </div>
                     <div class="invalid-feedback d-block mb-3" th:errors="*{password}">Error</div>
-                    
+
                     <div class="mb-3 d-flex justify-content-end">
                       <div>
                         <label class="text-end d-block small mb-0">
@@ -52,9 +54,9 @@
                     </div>
                   </form>
 
-<!--                  <p class="pt-4 small text-body-secondary">
-                    Don’t have an account yet? <a href="page-account-signup.html" class="ms-2 fw-semibold link-underline">Sign Up</a>
-                  </p>-->
+                  <!--                  <p class="pt-4 small text-body-secondary">
+                                      Don’t have an account yet? <a href="page-account-signup.html" class="ms-2 fw-semibold link-underline">Sign Up</a>
+                                    </p>-->
                 </div>
               </div>
             </div>

@@ -10,6 +10,8 @@
   <body>
     <div layout:fragment="contentDiv">
 
+      <div th:replace="fragments/notify :: #notify"></div>
+
       <!--      <div class="row">
               <div class="col-12 mb-3">
                 <div th:text="${user}"></div>
@@ -258,7 +260,7 @@
           </div>
         </form>
       </div>
-      
+
       <div class="modal fade" id="removeAllATCPositionModal" tabindex="-1" aria-labelledby="removeAllATCPositionModalLabel" style="display: none;" aria-hidden="true">
         <form th:action="@{/portal/users/} + ${cid} + '/position/delete/all'" method="post">
           <div class="modal-dialog modal-lg">

@@ -5,6 +5,10 @@ import com.bgvacc.web.models.ATCApplicationModel;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.services.MailService;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +104,14 @@ public class VatsimATCController extends Base {
     aar.setReason(aam.getReason());
 
     boolean isSent = mailService.sendNewATCTrainingApplicationMail(aar);
+
+    if (isSent) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("atc.application.form.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("atc.application.form.error"));
+    }
 
     return "redirect:/atc/career-application";
   }

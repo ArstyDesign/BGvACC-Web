@@ -8,6 +8,10 @@ import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
 import static com.bgvacc.web.utils.AppConstants.ATC_RESERVATION_MAX_HOURS;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -100,9 +105,7 @@ public class ATCReservationsController extends Base {
   }
 
   @PostMapping("/atc-reservations/create")
-  public String createNewATCReservation(@ModelAttribute("carm") CreateATCReservationModel carm, BindingResult bindingResult, Model model, HttpServletRequest request) {
-
-    log.debug(carm.toString());
+  public String createNewATCReservation(@ModelAttribute("carm") CreateATCReservationModel carm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
     if (bindingResult.hasErrors()) {
 
@@ -248,6 +251,14 @@ public class ATCReservationsController extends Base {
 
     log.info("All checks passed. Creating an ATC reservation");
     boolean isCreated = atcReservationService.createNewATCReservation(carm);
+
+    if (isCreated) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("calendar.reservation.create.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("calendar.reservation.create.error"));
+    }
 
     return "redirect:/calendar";
   }

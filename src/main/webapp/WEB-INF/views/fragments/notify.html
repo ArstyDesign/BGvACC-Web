@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div id="notify">
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var titleSuccess = /*[[${titleSuccess ne null ? titleSuccess : session.titleSuccess}]]*/;
+                var msgSuccess = /*[[${msgSuccess ne null ? msgSuccess : session.msgSuccess}]]*/;
+                var titleInfo = /*[[${titleInfo ne null ? titleInfo : session.titleInfo}]]*/;
+                var msgInfo = /*[[${msgInfo ne null ? msgInfo : session.msgInfo}]]*/;
+                var titleError = /*[[${titleError ne null ? titleError : session.titleError}]]*/;
+                var msgError = /*[[${msgError ne null ? msgError : session.msgError}]]*/;
+        /*]]>*/
+
+        if (msgSuccess !== null)
+        {
+          notifySuccess();
+        }
+
+        if (msgInfo !== null) {
+          notifyInfo();
+        }
+
+        if (msgError !== null)
+        {
+          notifyError();
+        }
+
+        function notifySuccessCustom(title, message) {
+
+        }
+
+        function notifySuccess()
+        {
+          toastr.options = {
+            progressBar: true,
+            timeOut: 10000,
+            extendedTimeOut: 15000,
+            newestOnTop: true
+          };
+          toastr.success(msgSuccess, titleSuccess);
+        }
+
+        function notifyInfoCustom(title, message) {
+
+        }
+
+        function notifyInfo()
+        {
+
+        }
+
+        function notifyError()
+        {
+          toastr.options = {
+            progressBar: true,
+            timeOut: 10000,
+            extendedTimeOut: 15000,
+            newestOnTop: true
+          };
+          toastr.error(msgError, titleError);
+        }
+      </script>
+    </div>
+  </body>
+</html>

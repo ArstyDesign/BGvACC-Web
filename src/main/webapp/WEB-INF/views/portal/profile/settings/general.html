@@ -5,10 +5,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/portalTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{app.portal.title(#{portal.profile.settings.title})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
+
+      <div th:replace="fragments/notify :: #notify"></div>
 
       <div class="row">
         <div class="col-12 mb-3">

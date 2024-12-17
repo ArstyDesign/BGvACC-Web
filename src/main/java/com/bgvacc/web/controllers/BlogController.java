@@ -69,24 +69,4 @@ public class BlogController extends Base {
 
     return "blog/post";
   }
-
-  @PostMapping("/portal/blog/posts/{postId}/show")
-  public String showPost(@PathVariable("postId") String postId, Model model) {
-
-    log.debug("Showing post");
-
-    boolean isChanged = blogService.changeBlogPostVisibility(postId, true);
-
-    return "redirect:/portal/blog/posts";
-  }
-
-  @PostMapping("/portal/blog/posts/{postId}/hide")
-  public String hidePost(@PathVariable("postId") String postId, Model model) {
-
-    log.debug("Hiding post");
-
-    boolean isChanged = blogService.changeBlogPostVisibility(postId, false);
-
-    return "redirect:/portal/blog/posts";
-  }
 }

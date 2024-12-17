@@ -1,7 +1,6 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
-import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;

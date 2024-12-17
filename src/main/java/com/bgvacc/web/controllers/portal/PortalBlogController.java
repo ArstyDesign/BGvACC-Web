@@ -4,6 +4,10 @@ import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.blog.posts.PostEditModel;
 import com.bgvacc.web.responses.blog.PostResponse;
 import com.bgvacc.web.services.BlogService;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -82,10 +87,10 @@ public class PortalBlogController extends Base {
   }
 
   @PostMapping("/portal/blog/posts/{postId}/edit")
-  public String editPost(@PathVariable("postId") String postId, @Valid @ModelAttribute("pem") PostEditModel pem, BindingResult bindingResult, Model model) {
+  public String editPost(@PathVariable("postId") String postId, @Valid @ModelAttribute("pem") PostEditModel pem, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
     if (bindingResult.hasErrors()) {
-      
+
       log.debug("Form has erros: " + bindingResult.toString());
 
       model.addAttribute("pageTitle", getMessage("portal.blog.posts.edit.title"));
@@ -106,6 +111,50 @@ public class PortalBlogController extends Base {
 
     log.debug("Updating blog post");
     PostResponse updatedPost = blogService.editBlogPost(pem);
+
+    if (updatedPost != null) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.blog.posts.edit.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.blog.posts.edit.error"));
+    }
+
+    return "redirect:/portal/blog/posts";
+  }
+
+  @PostMapping("/portal/blog/posts/{postId}/show")
+  public String showPost(@PathVariable("postId") String postId, RedirectAttributes redirectAttributes, Model model) {
+
+    log.debug("Showing post");
+
+    boolean isChanged = blogService.changeBlogPostVisibility(postId, true);
+
+    if (isChanged) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.blog.posts.show.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.blog.posts.show.error"));
+    }
+
+    return "redirect:/portal/blog/posts";
+  }
+
+  @PostMapping("/portal/blog/posts/{postId}/hide")
+  public String hidePost(@PathVariable("postId") String postId, RedirectAttributes redirectAttributes, Model model) {
+
+    log.debug("Hiding post");
+
+    boolean isChanged = blogService.changeBlogPostVisibility(postId, false);
+
+    if (isChanged) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.blog.posts.hide.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.blog.posts.hide.error"));
+    }
 
     return "redirect:/portal/blog/posts";
   }

@@ -9,6 +9,8 @@
   <body>
     <div layout:fragment="contentDiv">
 
+      <div th:replace="fragments/notify :: #notify"></div>
+
       <div th:if="${#lists.isEmpty(events)}" th:remove="tag">
         <h1 class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</h1>
       </div>

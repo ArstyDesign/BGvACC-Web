@@ -11,6 +11,10 @@ import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_CONNECTIONS_COUNT;
 import static com.bgvacc.web.utils.AppConstants.USER_LAST_PARTICIPATION_EVENTS_COUNT;
 import com.bgvacc.web.utils.Breadcrumb;
@@ -25,6 +29,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -128,27 +133,43 @@ public class UsersController extends Base {
   }
 
   @PostMapping("/portal/users/{cid}/roles/add")
-  public String addUserRole(@PathVariable("cid") String cid, @RequestParam("role") String role) {
+  public String addUserRole(@PathVariable("cid") String cid, @RequestParam("role") String role, RedirectAttributes redirectAttributes) {
 
     log.debug("CID: " + cid + ", Role: " + role);
 
     boolean isAdded = userService.addUserRole(cid, role);
 
+    if (isAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.user.roles.add.role.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.user.roles.add.role.error"));
+    }
+
     return "redirect:/portal/users/" + cid;
   }
 
   @PostMapping("/portal/users/{cid}/roles/delete")
-  public String deleteUserRole(@PathVariable("cid") String cid, @RequestParam("role") String role) {
+  public String deleteUserRole(@PathVariable("cid") String cid, @RequestParam("role") String role, RedirectAttributes redirectAttributes) {
 
     log.debug("CID: " + cid + ", Role: " + role);
 
     boolean isRemoved = userService.removeUserRole(cid, role);
 
+    if (isRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.user.roles.deleterole.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.user.roles.deleterole.error"));
+    }
+
     return "redirect:/portal/users/" + cid;
   }
 
   @PostMapping("/portal/users/{cid}/position/add")
-  public String addUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position) {
+  public String addUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position, RedirectAttributes redirectAttributes) {
 
     log.debug("CID: " + cid + ", Position: " + position);
 
@@ -160,23 +181,47 @@ public class UsersController extends Base {
       isAdded = userATCAuthorizedPositionsService.addUserATCPosition(cid, position);
     }
 
+    if (isAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.add.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.add.error"));
+    }
+
     return "redirect:/portal/users/" + cid;
   }
 
   @PostMapping("/portal/users/{cid}/position/delete")
-  public String deleteUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position) {
+  public String deleteUserATCPosition(@PathVariable("cid") String cid, @RequestParam("position") String position, RedirectAttributes redirectAttributes) {
 
     log.debug("CID: " + cid + ", Position: " + position);
 
     boolean isRemoved = userATCAuthorizedPositionsService.removeUserATCPosition(cid, position);
 
+    if (isRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.delete.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.delete.error"));
+    }
+
     return "redirect:/portal/users/" + cid;
   }
 
   @PostMapping("/portal/users/{cid}/position/delete/all")
-  public String deleteAllUserATCPosition(@PathVariable("cid") String cid) {
+  public String deleteAllUserATCPosition(@PathVariable("cid") String cid, RedirectAttributes redirectAttributes) {
 
     boolean areRemoved = userATCAuthorizedPositionsService.removeAllUserATCPositions(cid);
+
+    if (areRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.delete.all.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.user.authorizedpositions.delete.all.error"));
+    }
 
     return "redirect:/portal/users/" + cid;
   }
@@ -254,7 +299,7 @@ public class UsersController extends Base {
   }
 
   @PostMapping("/portal/users/new")
-  public String createUser(@RequestParam("cid") String cid, Model model) {
+  public String createUser(@RequestParam("cid") String cid, RedirectAttributes redirectAttributes, Model model) {
 
     boolean doUserExist = userService.doUserExist(cid);
 
@@ -296,7 +341,15 @@ public class UsersController extends Base {
 
     String generatedUserPassword = userService.createUser(ucm);
 
-    mailService.sendUserCreatedMail(names, member.getData().getCid(), member.getData().getEmail(), generatedUserPassword);
+    boolean isSent = mailService.sendUserCreatedMail(names, member.getData().getCid(), member.getData().getEmail(), generatedUserPassword);
+
+    if (isSent) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.create.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.create.error"));
+    }
 
     return "redirect:/portal/users";
   }

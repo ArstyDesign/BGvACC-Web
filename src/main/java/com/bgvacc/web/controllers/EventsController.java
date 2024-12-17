@@ -5,6 +5,10 @@ import com.bgvacc.web.responses.events.EventPositionResponse;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.EventSlotResponse;
 import com.bgvacc.web.services.EventService;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.MathsUtils;
 import java.util.ArrayList;
@@ -17,6 +21,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -138,9 +143,17 @@ public class EventsController extends Base {
   }
 
   @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")
-  public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, HttpServletRequest request) {
+  public String applyForControlling(@PathVariable("eventId") Long eventId, @PathVariable("slotId") String slotId, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
     boolean isApplied = eventService.applyUserForEventSlot(getLoggedUserCid(request), slotId, false, null);
+
+    if (isApplied) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("event.roster.applyforslot.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("event.roster.applyforslot.modal.error"));
+    }
 
     return "redirect:/events/" + eventId;
   }

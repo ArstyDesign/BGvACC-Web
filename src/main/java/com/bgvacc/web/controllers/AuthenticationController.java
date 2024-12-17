@@ -7,6 +7,10 @@ import com.bgvacc.web.models.authentication.*;
 import com.bgvacc.web.responses.authentication.*;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.services.*;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
+import static com.bgvacc.web.utils.AppConstants.TITLE_SUCCESS_PLACEHOLDER;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -127,7 +131,7 @@ public class AuthenticationController extends Base {
   }
 
   @PostMapping("/forgot-password")
-  public String forgotPassword(@ModelAttribute("fpm") @Valid ForgotPasswordModel fpm, BindingResult bindingResult, Model model) {
+  public String forgotPassword(@ModelAttribute("fpm") @Valid ForgotPasswordModel fpm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
     if (bindingResult.hasErrors()) {
 
@@ -151,6 +155,12 @@ public class AuthenticationController extends Base {
     if (passwordResetToken != null) {
       UserResponse user = userService.getUser(fpm.getEmail());
       mailService.sendForgottenPasswordMail(user.getNames(), fpm.getEmail(), passwordResetToken);
+
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("forgotpassword.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("forgotpassword.error"));
     }
 
     return "redirect:/login";
@@ -176,7 +186,7 @@ public class AuthenticationController extends Base {
   }
 
   @PostMapping("/reset-password/{passwordResetToken}")
-  public String resetPassword(@PathVariable("passwordResetToken") String passwordResetToken, @ModelAttribute("rpm") @Valid ResetPasswordModel rpm, BindingResult bindingResult, Model model) {
+  public String resetPassword(@PathVariable("passwordResetToken") String passwordResetToken, @ModelAttribute("rpm") @Valid ResetPasswordModel rpm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
     UserResponse user = userService.getUserByPasswordResetToken(passwordResetToken);
 
@@ -211,6 +221,14 @@ public class AuthenticationController extends Base {
 
     boolean isPasswordReset = authenticationService.resetPassword(rpm.getNewPassword(), passwordResetToken);
 
+    if (isPasswordReset) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("resetpassword.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("resetpassword.error"));
+    }
+
     return "redirect:/login";
   }
 
@@ -231,7 +249,7 @@ public class AuthenticationController extends Base {
   }
 
   @PostMapping(value = "/activate-user-account", params = {"token"})
-  public String activateUserAccount(@RequestParam(name = "token", required = true) String token, @ModelAttribute("auam") @Valid ActivateUserAccountModel auam, BindingResult bindingResult, Model model) {
+  public String activateUserAccount(@RequestParam(name = "token", required = true) String token, @ModelAttribute("auam") @Valid ActivateUserAccountModel auam, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
     UserResponse user = userService.getUserByPasswordResetToken(token);
 
@@ -243,7 +261,7 @@ public class AuthenticationController extends Base {
 
       model.addAttribute("token", token);
       model.addAttribute("user", user);
-      
+
       return "authentication/activate-user-account";
     }
 
@@ -256,11 +274,19 @@ public class AuthenticationController extends Base {
 
       model.addAttribute("token", token);
       model.addAttribute("user", user);
-      
+
       return "authentication/activate-user-account";
     }
 
     boolean isActivated = userService.activateUserAccount(user.getCid(), auam.getNewPassword());
+
+    if (isActivated) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("activateuseraccount.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("activateuseraccount.error"));
+    }
 
     return "redirect:/login";
   }
