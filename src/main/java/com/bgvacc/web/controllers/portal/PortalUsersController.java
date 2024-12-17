@@ -38,7 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequiredArgsConstructor
-public class UsersController extends Base {
+public class PortalUsersController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 

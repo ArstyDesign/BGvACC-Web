@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -123,14 +123,13 @@ public class UserServiceImpl implements UserService {
     if (search != null && search.getRole() != null && !search.getRole().trim().isEmpty()) {
       userRolesSql += " AND rolename = ?";
     }
-    
-    log.debug(userRolesSql);
-    
-    // TODO REWORK
 
+    log.debug(userRolesSql);
+
+    // TODO REWORK
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement usersPstmt = conn.prepareStatement(usersSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -201,8 +200,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement userPstmt = conn.prepareStatement(userSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement userPstmt = conn.prepareStatement(userSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -257,8 +256,8 @@ public class UserServiceImpl implements UserService {
     final String userRolesSql = "SELECT * from user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement userPstmt = conn.prepareStatement(userSql);
-         PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
+            PreparedStatement userPstmt = conn.prepareStatement(userSql);
+            PreparedStatement userRolesPstmt = conn.prepareStatement(userRolesSql)) {
 
       try {
 
@@ -310,7 +309,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistSql = "SELECT EXISTS (SELECT 1 FROM users WHERE cid = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
+            PreparedStatement doUserExistPstmt = conn.prepareStatement(doUserExistSql)) {
 
       try {
 
@@ -347,7 +346,7 @@ public class UserServiceImpl implements UserService {
     final String doUserExistByEmailSql = "SELECT EXISTS (SELECT 1 FROM users WHERE email = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
+            PreparedStatement doUserExistByEmailPstmt = conn.prepareStatement(doUserExistByEmailSql)) {
 
       try {
 
@@ -404,8 +403,8 @@ public class UserServiceImpl implements UserService {
     final String addDefaultRoleSql = "INSERT INTO user_roles (cid, rolename) VALUES (?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
-         PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
+            PreparedStatement createUserPstmt = conn.prepareStatement(createUserSql);
+            PreparedStatement addDefaultRolePstmt = conn.prepareStatement(addDefaultRoleSql)) {
 
       try {
 
@@ -464,7 +463,7 @@ public class UserServiceImpl implements UserService {
     final String updateUserLastLoginSql = "UPDATE users SET last_login = NOW() WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
+            PreparedStatement updateUserLastLoginPstmt = conn.prepareStatement(updateUserLastLoginSql)) {
 
       try {
 
@@ -493,7 +492,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT * FROM roles";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -533,7 +532,7 @@ public class UserServiceImpl implements UserService {
     final String getUserRolesSql = "SELECT r.rolename FROM roles r LEFT JOIN user_roles ur ON r.rolename = ur.rolename AND ur.cid = ? WHERE ur.rolename IS NULL;";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
+            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql);) {
 
       try {
 
@@ -578,10 +577,10 @@ public class UserServiceImpl implements UserService {
     final String updateHighestControllerRatingSql = "UPDATE users SET highest_controller_rating = ? WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
-         PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql);
-         PreparedStatement checkForHigherControllerRatingPstmt = conn.prepareStatement(checkForHigherControllerRatingSql);
-         PreparedStatement updateHighestControllerRatingPstmt = conn.prepareStatement(updateHighestControllerRatingSql)) {
+            PreparedStatement addUserRolePstmt = conn.prepareStatement(addUserRoleSql);
+            PreparedStatement checkIfUserRoleForUserExistsPstmt = conn.prepareStatement(checkIfUserRoleForUserExistsSql);
+            PreparedStatement checkForHigherControllerRatingPstmt = conn.prepareStatement(checkForHigherControllerRatingSql);
+            PreparedStatement updateHighestControllerRatingPstmt = conn.prepareStatement(updateHighestControllerRatingSql)) {
 
       try {
 
@@ -662,7 +661,7 @@ public class UserServiceImpl implements UserService {
     final String removeUserRoleSql = "DELETE FROM user_roles WHERE cid = ? AND rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
+            PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {
 
       try {
 
@@ -696,7 +695,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -739,7 +738,7 @@ public class UserServiceImpl implements UserService {
     final String getUsersCountByRoleSql = "SELECT COUNT(1) user_by_role FROM user_roles WHERE rolename IN (" + placeholders + ")";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
+            PreparedStatement getUsersCountByRolePstmt = conn.prepareStatement(getUsersCountByRoleSql)) {
 
       try {
 
@@ -776,8 +775,8 @@ public class UserServiceImpl implements UserService {
     final String getActiveUsersCountSql = "SELECT COUNT(1) active_users_count FROM users WHERE is_active = true";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
-         PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
+            PreparedStatement getTotalUsersCountPstmt = conn.prepareStatement(getTotalUsersCountSql);
+            PreparedStatement getActiveUsersCountPstmt = conn.prepareStatement(getActiveUsersCountSql)) {
 
       try {
 
@@ -820,7 +819,7 @@ public class UserServiceImpl implements UserService {
     final String changePasswordSql = "UPDATE users SET password = ? WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
+            PreparedStatement changePasswordPstmt = conn.prepareStatement(changePasswordSql)) {
 
       try {
 
@@ -854,7 +853,7 @@ public class UserServiceImpl implements UserService {
     final String activateUserAccountSql = "UPDATE users SET password = ?, is_active = true, password_reset_token = null, activated_on = NOW() WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement activateUserAccountPstmt = conn.prepareStatement(activateUserAccountSql)) {
+            PreparedStatement activateUserAccountPstmt = conn.prepareStatement(activateUserAccountSql)) {
 
       try {
 
@@ -877,6 +876,89 @@ public class UserServiceImpl implements UserService {
       }
     } catch (Exception e) {
       log.error("Error activating user account for user with CID '" + cid + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public List<SavedSearchUser> getUserSavedUserSearches(String cid) {
+
+    final String getUserSavedUserSearchesSql = "SELECT sus.id, sus.user_cid, u.email u_email, u.email_vatsim u_email_vatsim, u.first_name u_first_name, u.last_name u_last_name, sus.searched_user_cid, su.email su_email, su.email_vatsim su_email_vatsim, su.first_name su_first_name, su.last_name su_last_name, sus.added_at FROM saved_user_searches sus JOIN users u ON sus.user_cid = u.cid JOIN users su ON sus.searched_user_cid = su.cid WHERE sus.user_cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUserSavedUserSearchesPstmt = conn.prepareStatement(getUserSavedUserSearchesSql)) {
+
+      try {
+
+//        conn.setAutoCommit(false);
+
+        getUserSavedUserSearchesPstmt.setString(1, cid);
+
+        List<SavedSearchUser> savedSearches = new ArrayList<>();
+
+        ResultSet getUserSavedUserSearchesRset = getUserSavedUserSearchesPstmt.executeQuery();
+
+        while (getUserSavedUserSearchesRset.next()) {
+
+          SavedSearchUser ss = new SavedSearchUser();
+          ss.setCid(getUserSavedUserSearchesRset.getString("searched_user_cid"));
+          ss.setEmail(getUserSavedUserSearchesRset.getString("su_email"));
+          ss.setEmailVatsim(getUserSavedUserSearchesRset.getString("su_email_vatsim"));
+
+          Names names = Names.builder()
+                  .firstName(getUserSavedUserSearchesRset.getString("su_first_name"))
+                  .lastName(getUserSavedUserSearchesRset.getString("su_last_name"))
+                  .build();
+          ss.setNames(names);
+
+          savedSearches.add(ss);
+        }
+
+        return savedSearches;
+
+      } catch (SQLException ex) {
+        log.error("Error get user saved searches for user with CID '" + cid + "'.", ex);
+//        conn.rollback();
+      } finally {
+//        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error get user saved searches for user with CID '" + cid + "'.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public boolean addSavedUserSearch(String cid, String savedUserSearchCid) {
+
+    final String addSavedUserSearchSql = "INSERT INTO saved_user_searches (user_cid, searched_user_cid) VALUES (?, ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement addSavedUserSearchPstmt = conn.prepareStatement(addSavedUserSearchSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        addSavedUserSearchPstmt.setString(1, cid);
+        addSavedUserSearchPstmt.setString(2, savedUserSearchCid);
+
+        int rows = addSavedUserSearchPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error adding user saved search for user with CID '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error adding user saved search for user with CID '" + cid + "'.", e);
     }
 
     return false;

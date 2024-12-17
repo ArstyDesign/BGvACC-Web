@@ -54,7 +54,7 @@ public class EventsController extends Base {
 
     model.addAttribute("breadcrumbs", breadcrumbs);
 
-    return "vatsim/events/events";
+    return "events/events";
   }
 
   @GetMapping("/events/{eventId}")
@@ -139,7 +139,7 @@ public class EventsController extends Base {
 
     model.addAttribute("breadcrumbs", breadcrumbs);
 
-    return "vatsim/events/event";
+    return "events/event";
   }
 
   @PostMapping("/events/{eventId}/slot/{slotId}/apply-for-controlling")

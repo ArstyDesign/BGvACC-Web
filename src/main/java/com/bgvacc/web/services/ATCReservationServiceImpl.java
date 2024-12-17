@@ -38,7 +38,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 
       try {
 
-        conn.setAutoCommit(false);
+//        conn.setAutoCommit(false);
 
         List<ATCReservationResponse> atcReservations = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class ATCReservationServiceImpl implements ATCReservationService {
         log.error("Error getting all future ATC reservations.", ex);
 //        conn.rollback();
       } finally {
-        conn.setAutoCommit(true);
+//        conn.setAutoCommit(true);
       }
     } catch (Exception e) {
       log.error("Error getting all future ATC reservations.", e);

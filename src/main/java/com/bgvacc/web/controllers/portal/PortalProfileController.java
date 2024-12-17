@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequiredArgsConstructor
-public class ProfileController extends Base {
+public class PortalProfileController extends Base {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
 
