@@ -14,7 +14,7 @@
 
       <div class="row">
 
-        <div class="col-12 mb-3">
+<!--        <div class="col-12 mb-3">
           <div class="card overflow-hidden">
             <div class="card-body p-0">
               <div class="accordion accordion-flush" id="accordionExample">
@@ -56,7 +56,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
 
         <div class="col-12 mb-3">
           <div class="card table-card table-nowrap">
@@ -95,8 +95,10 @@
                           <span th:if="${u.names.lastName ne null and u.names.lastName.length gt 1}" th:text="${#strings.substring(u.names.lastName, 0, 1)}">D</span>
                         </div>
                         <div class="flex-grow-1">
-                          <h6 class="mb-0" th:text="${isMe} ? (#{portal.users.users.me(${u.names.fullName})}) : ${u.names.fullName}">John Doe</h6>
-                          <small class="text-muted" th:text="${u.email}">john.doe@gmail.com</small>
+                          <a href="#" th:href="@{/portal/users/} + ${u.cid}" style="color: inherit;">
+                            <h6 class="mb-0" th:text="${isMe} ? (#{portal.users.users.me(${u.names.fullName})}) : ${u.names.fullName}">John Doe</h6>
+                            <small class="text-muted" th:text="${u.email}">john.doe@gmail.com</small>
+                          </a>
                         </div>
                       </div>
                       <div>
@@ -116,37 +118,102 @@
                     </td>
                     <td th:classappend="${isMe} ? 'bg-success-subtle'">
                       <div class="d-flex justify-content-end align-items-center">
-                        <a href="#" th:href="@{/portal/users/} + ${u.cid}" data-tippy-content="View user">
-                          <span class="material-symbols-rounded align-middle fs-5 text-body">visibility</span>
+                        <a href="#" th:href="@{/portal/users/} + ${u.cid}" th:data-tippy-content="#{portal.users.users.viewuser}">
+                          <span class="material-symbols-rounded align-middle fs-5 text-primary fs-3">visibility</span>
                         </a>
                         <!--Divider line-->
                         <span class="border-start mx-2 d-block height-20"></span>
-                        <!--                        <a href="#" data-tippy-content="Edit user">
-                                                  <span class="material-symbols-rounded align-middle fs-5 text-body">edit</span>
-                                                </a>-->
-                        <!--Divider line-->
-                        <!--                        <span class="border-start mx-2 d-block height-20"></span>
-                                                <a href="#" data-tippy-content="Delete user">
-                                                  <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
-                                                </a>-->
+                        <a href="#" th:data-tippy-content="#{portal.users.users.saveassavedsearch}" th:if="${!u.isSavedSearch}"
+                           data-bs-toggle="modal" data-bs-target="#saveUserAsSavedSearchModal" th:data-cid-to-save="${u.cid}" th:data-confirm="#{portal.users.users.saveassavedsearch.model.confirm(${u.names.fullName}, ${u.cid})}">
+                          <span class="material-symbols-rounded align-middle fs-5 text-success fs-3">saved_search</span>
+                        </a>
+                        <a href="#" th:data-tippy-content="#{portal.users.users.removefromsavedsearch}" th:if="${u.isSavedSearch}"
+                           data-bs-toggle="modal" data-bs-target="#removeUserFromSavedSearchModal" th:data-cid-to-remove="${u.cid}" th:data-confirm="#{portal.users.users.removefromsavedseach.model.confirm(${u.names.fullName}, ${u.cid})}">
+                          <span class="material-symbols-rounded align-middle fs-5 text-danger fs-3">remove</span>
+                        </a>
                       </div>
                     </td>
                   </tr>
-                  <!--                    <tr>
-                                        <td class="" style="border-top-style: hidden !important;">
-                                          <span class="fw-bold">Roles</span>
-                                        </td>
-                                        <td class="" colspan="5" style="border-top-style: hidden !important;">
-                                          <span class="badge bg-secondary" th:each="r, iterStat : ${u.roles}" th:text="${r}" th:classappend="${!iterStat.isLast} ? 'me-1'"></span>
-                                        </td>
-                                      </tr>-->
-                  <!--</div>-->
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="saveUserAsSavedSearchModal" tabindex="-1" aria-labelledby="saveUserAsSavedSearchModalLabel" style="display: none;" aria-hidden="true">
+        <form id="saveUserAsSavedSearchModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.users.users.saveassavedsearch.modal.title}">Save user as a saved search</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+
+                <div class="mb-3" th:text="#{portal.users.users.saveassavedsearch.modal.message}">By saving the user as a saved search, it will be much easier for you to find it in other pages, where otherwise you would have to search it manually by CID.</div>
+
+                <div id="saveUserAsSavedSearchModalConfirm" class="mb-3"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.users.users.saveassavedsearch.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-success" th:text="#{portal.users.users.saveassavedsearch.modal.savesearch}">Save as saved search</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal fade" id="removeUserFromSavedSearchModal" tabindex="-1" aria-labelledby="removeUserFromSavedSearchModalLabel" style="display: none;" aria-hidden="true">
+        <form id="removeUserFromSavedSearchModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.users.users.removefromsavedseach.modal.title}">Remove user from saved search</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+
+                <div class="mb-3" th:text="#{portal.users.users.removefromsavedseach.modal.message}">By removing the user from saved searches, you will have to search for the user manually in other pages.</div>
+
+                <div id="removeUserFromSavedSearchModalConfirm" class="mb-3"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.users.users.removefromsavedseach.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-danger" th:text="#{portal.users.users.removefromsavedseach.modal.removefromsearches}">Remove from saved searches</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let saveCidToSavedSearchesUrl = /*[[@{/portal/users}]]*/;
+                let removeCidFromSavedSearchesUrl = /*[[@{/portal/users}]]*/;
+        /*]]>*/
+
+        document.getElementById('saveUserAsSavedSearchModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let cidToSave = modal.data("cid-to-save");
+          let confirmMessage = modal.data("confirm");
+
+          $("#saveUserAsSavedSearchModalConfirm").empty().append(confirmMessage);
+
+          $('#saveUserAsSavedSearchModalForm').attr('action', saveCidToSavedSearchesUrl + '/' + cidToSave + '/saved-search/add');
+        });
+
+        document.getElementById('removeUserFromSavedSearchModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let cidToRemove = modal.data("cid-to-remove");
+          let confirmMessage = modal.data("confirm");
+
+          $("#removeUserFromSavedSearchModalConfirm").empty().append(confirmMessage);
+
+          $('#removeUserFromSavedSearchModalForm').attr('action', removeCidFromSavedSearchesUrl + '/' + cidToRemove + '/saved-search/remove');
+        });
+
+      </script>
     </div>
   </body>
 </html>

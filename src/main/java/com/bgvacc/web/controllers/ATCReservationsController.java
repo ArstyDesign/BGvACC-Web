@@ -209,7 +209,7 @@ public class ATCReservationsController extends Base {
 
     if (!hasErrors) {
 
-      if (carm.getType().equals("t")) {
+      if (carm.getType() != null && carm.getType().equals("t")) {
 
         if (carm.getTraineeCid().equals(carm.getUserCid())) {
           hasErrors = true;

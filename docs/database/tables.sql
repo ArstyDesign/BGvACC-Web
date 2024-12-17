@@ -240,3 +240,10 @@ CREATE TRIGGER trg_enforce_unique_status_per_user_slot
 AFTER INSERT OR UPDATE ON user_event_applications
 FOR EACH ROW
 EXECUTE FUNCTION set_unique_status_per_user_slot();
+
+CREATE TABLE saved_user_searches (
+	id varchar(100) not null primary key default gen_random_uuid(),
+	user_cid varchar(30) not null references users(cid) on delete cascade,
+	searched_user_cid varchar(30) not null references users(cid) on delete cascade,
+	added_at timestamp not null default NOW()
+);

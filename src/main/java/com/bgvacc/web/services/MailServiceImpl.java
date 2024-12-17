@@ -67,16 +67,16 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("appUrl", "http://31.13.207.134");
       ctx.setVariable("names", names);
       ctx.setVariable("email", email);
       ctx.setVariable("passwordResetToken", passwordResetToken);
 
       String htmlContent = templateEngine.process("forgotten-password-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "Forgotten password", htmlContent, "a.arshinkov97@gmail.com");
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "Forgotten password", htmlContent, email);
 
-      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+      mailSender.sendMail(mail, email);
 
       return true;
 
@@ -92,7 +92,7 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("appUrl", "http://31.13.207.134");
       ctx.setVariable("cid", cid);
       ctx.setVariable("email", email);
       ctx.setVariable("names", names);
@@ -100,9 +100,9 @@ public class MailServiceImpl extends Base implements MailService {
 
       String htmlContent = templateEngine.process("user-created-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "User account created", htmlContent, "a.arshinkov97@gmail.com");
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "User account created", htmlContent, email);
 
-      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+      mailSender.sendMail(mail, email);
 
       return true;
 
@@ -118,7 +118,7 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://192.168.0.12:8090/BGvACC");
+      ctx.setVariable("appUrl", "http://31.13.207.134");
       ctx.setVariable("names", names);
       ctx.setVariable("cid", cid);
       ctx.setVariable("email", email);
@@ -130,9 +130,9 @@ public class MailServiceImpl extends Base implements MailService {
 
       String htmlContent = templateEngine.process("event-application-approved-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, "a.arshinkov97@gmail.com");
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, email);
 
-      mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
+      mailSender.sendMail(mail, email);
 
       return true;
 

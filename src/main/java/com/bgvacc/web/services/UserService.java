@@ -53,5 +53,7 @@ public interface UserService {
 
   List<SavedSearchUser> getUserSavedUserSearches(String cid);
 
-  boolean addSavedUserSearch(String cid, String savedUserSearchCid);
+  boolean addSavedUserSearch(String cid, String cidToAdd);
+
+  boolean removeUserFromSavedSearches(String cid, String cidToRemove);
 }

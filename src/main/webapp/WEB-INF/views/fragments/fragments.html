@@ -23,13 +23,13 @@
                       <i class="fi fi-bg me-1"></i>
                       <span th:text="#{language.bg}">Bulgarian</span>
                     </a>
-<!--                    <a href="?lang=de" class="dropdown-item" th:classappend="${lang eq 'de'} ? 'active'">
-                      <i class="fi fi-de me-1"></i>
-                      <span th:text="#{language.de}">German</span>
-                    </a>-->
+                    <!--                    <a href="?lang=de" class="dropdown-item" th:classappend="${lang eq 'de'} ? 'active'">
+                                          <i class="fi fi-de me-1"></i>
+                                          <span th:text="#{language.de}">German</span>
+                                        </a>-->
                   </div>
                 </li>
-                <li class="nav-item ms-3">
+                <li class="nav-item d-none d-md-block ms-3">
                   <div class="text-muted">
                     <span id="clock">--:--z</span>
                   </div>
@@ -84,7 +84,8 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container position-relative px-0">
           <a class="navbar-brand" href="#" th:href="@{/}">
-            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="" style="max-width: 200%; height: auto;"/>
+            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="d-block d-lg-none ms-2" style="max-width: 300%; height: auto;"/>
+            <img src="#" th:src="@{/resources/img/bgvacc_logo_color_cut.png}" alt="" class="d-none d-lg-block" style="max-width: 200%; height: auto;"/>
             <!--<img src="#" th:src="@{/resources/img/bgvacc_logo_color_no_icon_cropped.png}" alt="" class="img-fluid"/>-->
           </a>
 
@@ -111,10 +112,10 @@
                 <a class="nav-link" href="#" th:href="@{/}" th:text="#{menu.home}"
                    th:classappend="${page eq 'home'} ? 'active'">Home</a>
               </li>
-<!--              <li class="nav-item me-lg-3">
-                <a class="nav-link" href="#" th:href="@{/blog/posts}" th:text="#{menu.blog}"
-                   th:classappend="${page eq 'blog'} ? 'active'">Blog</a>
-              </li>-->
+              <!--              <li class="nav-item me-lg-3">
+                              <a class="nav-link" href="#" th:href="@{/blog/posts}" th:text="#{menu.blog}"
+                                 th:classappend="${page eq 'blog'} ? 'active'">Blog</a>
+                            </li>-->
               <li class="nav-item me-lg-3">
                 <a class="nav-link" href="#" th:href="@{/events}" th:text="#{menu.events}"
                    th:classappend="${page eq 'events'} ? 'active'">Events</a>
@@ -271,10 +272,10 @@
                 <div class="pt-3 mb-6" th:text="#{footer.moto}">Fly high, Soar Higher!</div>
 
                 <!-- Social button -->
-                <!--                <a href="#" class="d-inline-block si rounded-pill si-border si-hover-facebook">
-                                  <i class="bi bi-facebook fs-5"></i>
-                                  <i class="bi bi-facebook fs-5"></i>
-                                </a>-->
+                <a href="https://www.facebook.com/profile.php?id=100064332173674" target="_blank" class="d-inline-block si rounded-pill si-border si-hover-facebook">
+                  <i class="bi bi-facebook fs-5"></i>
+                  <i class="bi bi-facebook fs-5"></i>
+                </a>
 
                 <a href="https://instagram.com/vatsim.bulgaria" target="_blank" class="d-inline-block si rounded-pill si-border si-hover-instagram">
                   <i class="bi bi-instagram fs-5"></i>
@@ -302,14 +303,14 @@
 
                 <hr class="mb-4"/>
 
-<!--                <h6 class="small mb-3 text-white-50" th:text="#{footer.blog}">Blog</h6>
-
-                <ul class="nav flex-column mb-0">
-                  <li class="nav-item">
-                    <a class="nav-link" href="#" th:href="@{/blog/posts}"
-                       th:text="#{footer.blog.posts}">Posts</a>
-                  </li>
-                </ul>-->
+                <!--                <h6 class="small mb-3 text-white-50" th:text="#{footer.blog}">Blog</h6>
+                
+                                <ul class="nav flex-column mb-0">
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="#" th:href="@{/blog/posts}"
+                                       th:text="#{footer.blog.posts}">Posts</a>
+                                  </li>
+                                </ul>-->
               </div>
 
               <div class="col-12 col-xl-3 mb-5 mb-md-0 h-100">

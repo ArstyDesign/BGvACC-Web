@@ -40,7 +40,7 @@ public class Version extends Base {
 
         SimpleDateFormat fromFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        CURRENT_VERSION = "v" + props.get("Implementation-Version") + " " + getMessage("footer.from") + " " + fromFormat.format(from);
+        CURRENT_VERSION = "v" + props.get("Implementation-Version") + " - " + fromFormat.format(from);
       }
     } catch (Exception e) {
 //      CURRENT_VERSION = getMessage("footer.progress");

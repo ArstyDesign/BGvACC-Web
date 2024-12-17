@@ -635,6 +635,10 @@ public class UserServiceImpl implements UserService {
               }
             }
           }
+          
+//          conn.commit();
+//          
+//          return true;
 
         } else {
           log.error("Error adding user role for user with CID '" + cid + "' and role '" + role + "'");
@@ -892,7 +896,6 @@ public class UserServiceImpl implements UserService {
       try {
 
 //        conn.setAutoCommit(false);
-
         getUserSavedUserSearchesPstmt.setString(1, cid);
 
         List<SavedSearchUser> savedSearches = new ArrayList<>();
@@ -931,7 +934,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public boolean addSavedUserSearch(String cid, String savedUserSearchCid) {
+  public boolean addSavedUserSearch(String cid, String cidToAdd) {
 
     final String addSavedUserSearchSql = "INSERT INTO saved_user_searches (user_cid, searched_user_cid) VALUES (?, ?)";
 
@@ -943,7 +946,7 @@ public class UserServiceImpl implements UserService {
         conn.setAutoCommit(false);
 
         addSavedUserSearchPstmt.setString(1, cid);
-        addSavedUserSearchPstmt.setString(2, savedUserSearchCid);
+        addSavedUserSearchPstmt.setString(2, cidToAdd);
 
         int rows = addSavedUserSearchPstmt.executeUpdate();
 
@@ -959,6 +962,40 @@ public class UserServiceImpl implements UserService {
       }
     } catch (Exception e) {
       log.error("Error adding user saved search for user with CID '" + cid + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean removeUserFromSavedSearches(String cid, String cidToRemove) {
+
+    final String removeUserFromSavedSearchSql = "DELETE FROM saved_user_searches WHERE user_cid = ? AND searched_user_cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement removeUserFromSavedSearchPstmt = conn.prepareStatement(removeUserFromSavedSearchSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        removeUserFromSavedSearchPstmt.setString(1, cid);
+        removeUserFromSavedSearchPstmt.setString(2, cidToRemove);
+
+        int rows = removeUserFromSavedSearchPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error removing user from saved search for user with CID '" + cid + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error removing user from saved search for user with CID '" + cid + "'.", e);
     }
 
     return false;

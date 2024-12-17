@@ -6,8 +6,7 @@ import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
-import com.bgvacc.web.responses.users.RoleResponse;
-import com.bgvacc.web.responses.users.UserResponse;
+import com.bgvacc.web.responses.users.*;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
 import com.bgvacc.web.services.*;
@@ -22,6 +21,7 @@ import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.vateud.VatEudUser;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +53,21 @@ public class PortalUsersController extends Base {
   private final MailService mailService;
 
   @GetMapping("/portal/users")
-  public String getUsers(@ModelAttribute("search") UserSearchModel search, Model model) {
+  public String getUsers(@ModelAttribute("search") UserSearchModel search, Model model, HttpServletRequest request) {
 
     List<UserResponse> users = userService.searchUsers(search);
+
+    List<SavedSearchUser> userSavedUserSearches = userService.getUserSavedUserSearches(getLoggedUserCid(request));
+
+    if (userSavedUserSearches != null && !userSavedUserSearches.isEmpty()) {
+      for (SavedSearchUser usus : userSavedUserSearches) {
+        for (UserResponse user : users) {
+          if (usus.getCid().equals(user.getCid())) {
+            user.setIsSavedSearch(true);
+          }
+        }
+      }
+    }
 
     model.addAttribute("users", users);
 
@@ -349,6 +361,38 @@ public class PortalUsersController extends Base {
     } else {
       redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
       redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.create.error"));
+    }
+
+    return "redirect:/portal/users";
+  }
+
+  @PostMapping("/portal/users/{cidToBeSavedAsSavedSearch}/saved-search/add")
+  public String saveCidToSavedSearches(@PathVariable("cidToBeSavedAsSavedSearch") String cidToBeSavedAsSavedSearch, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+    boolean isAdded = userService.addSavedUserSearch(getLoggedUserCid(request), cidToBeSavedAsSavedSearch);
+
+    if (isAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.users.saveassavedsearch.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.users.saveassavedsearch.modal.error"));
+    }
+
+    return "redirect:/portal/users";
+  }
+
+  @PostMapping("/portal/users/{cidToRemoveFromSavedSearch}/saved-search/remove")
+  public String removeCidFromSavedSearches(@PathVariable("cidToRemoveFromSavedSearch") String cidToRemoveFromSavedSearch, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
+    boolean isRemoved = userService.removeUserFromSavedSearches(getLoggedUserCid(request), cidToRemoveFromSavedSearch);
+
+    if (isRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.users.users.removefromsavedseach.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.users.users.removefromsavedseach.modal.error"));
     }
 
     return "redirect:/portal/users";

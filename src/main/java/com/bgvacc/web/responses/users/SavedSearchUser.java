@@ -19,4 +19,6 @@ public class SavedSearchUser implements Serializable {
   private String email;
   private String emailVatsim;
   private Names names;
+
+  private Boolean isSavedSearch = false;
 }
