@@ -2,6 +2,7 @@ package com.bgvacc.web.services;
 
 import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
+import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.users.*;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import java.util.List;
 public interface UserService {
 
   List<UserResponse> getUsers();
+  
+  List<UserResponse> searchUsers(UserSearchModel search);
 
   UserResponse getUser(String cidEmail);
   

@@ -5,12 +5,59 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/portalTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{portal.users.users.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div class="row">
+
+        <!--<div th:text="${allRoles}"></div>-->
+
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-body p-0">
+              <div class="accordion accordion-flush" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="usersSearch">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#usersSearchCollapse" aria-expanded="true" aria-controls="usersSearchCollapse">
+                      Search
+                    </button>
+                  </h2>
+                  <div id="usersSearchCollapse" class="accordion-collapse collapse show" aria-labelledby="usersSearch" data-bs-parent="#accordionExample" style="">
+                    <div class="accordion-body">
+                      <form th:action="@{/portal/users}" method="get" th:object="${search}">
+                        <div class="row">
+                          <div class="col-12 col-lg-4 mb-3">
+                            <label for="cidInput" class="form-label">CID</label>
+                            <input id="cidInput" type="text" class="form-control" th:field="*{cid}"/>
+                          </div>
+                          <div class="col-12 col-lg-4 mb-3">
+                            <label for="nameInput" class="form-label">Name</label>
+                            <input id="nameInput" type="text" class="form-control" th:field="*{name}"/>
+                          </div>
+                          <div class="col-12 col-lg-4 mb-3">
+                            <label for="roleInput" class="form-label">Role</label>
+                            <select id="roleInput" class="form-control" th:field="*{role}">
+                              <option th:text="#{portal.users.users.search.role.all}" value="all">- All roles -</option>
+                              <option th:each="r : ${allRoles}" th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(r)}}" th:value="${r}">Role</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 col-lg-4 mb-0">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="col-12 mb-3">
           <div class="card table-card table-nowrap">
             <div class="card-header d-flex align-items-center">
@@ -74,9 +121,9 @@
                         </a>
                         <!--Divider line-->
                         <span class="border-start mx-2 d-block height-20"></span>
-<!--                        <a href="#" data-tippy-content="Edit user">
-                          <span class="material-symbols-rounded align-middle fs-5 text-body">edit</span>
-                        </a>-->
+                        <!--                        <a href="#" data-tippy-content="Edit user">
+                                                  <span class="material-symbols-rounded align-middle fs-5 text-body">edit</span>
+                                                </a>-->
                         <!--Divider line-->
                         <!--                        <span class="border-start mx-2 d-block height-20"></span>
                                                 <a href="#" data-tippy-content="Delete user">

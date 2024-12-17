@@ -4,6 +4,7 @@ import com.aarshinkov.datetimecalculator.domain.Time;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
+import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.RoleResponse;
 import com.bgvacc.web.responses.users.UserResponse;
@@ -47,11 +48,13 @@ public class UsersController extends Base {
   private final MailService mailService;
 
   @GetMapping("/portal/users")
-  public String getUsers(Model model) {
+  public String getUsers(@ModelAttribute("search") UserSearchModel search, Model model) {
 
-    List<UserResponse> users = userService.getUsers();
+    List<UserResponse> users = userService.searchUsers(search);
 
     model.addAttribute("users", users);
+
+    model.addAttribute("allRoles", userService.getAllUserRoles());
 
     model.addAttribute("pageTitle", getMessage("portal.users.users.title"));
     model.addAttribute("page", "users");
