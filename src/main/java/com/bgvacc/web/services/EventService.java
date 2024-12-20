@@ -27,6 +27,10 @@ public interface EventService {
   List<EventPositionResponse> getEventPositions(Long eventId);
   
   String getPositionFromEventPositionId(String eventPositionId);
+  
+  boolean addAirportToEvent(Long eventId, String airport);
+  
+  boolean removeAirportFromEvent(Long eventId, String airport);
 
   boolean addEventPosition(Long eventId, String position, Integer minimumRating, boolean canTraineesApply);
 

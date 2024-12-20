@@ -29,10 +29,27 @@
               </div>
               <div class="card-body h-100 p-0 m-4 flex-grow-1">
                 <div class="mb-4">
-                  <h1 class="h4 mb-2" th:text="${event.name}">Title</h1>
+                  <h1 class="h3 mb-2" th:text="${event.name}">Title</h1>
                   <div class="d-block lh-1 text-body-secondary" th:text="${event.getFormattedStartDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${event.getFormattedEndDateTime('HH:mm')} + 'z'">Date time</div>
                 </div>
-                <div class="fs-5" th:text="${event.shortDescription}">Short description</div>
+                <div class="fs-5" th:classappend="${!#lists.isEmpty(event.icaos) or !#lists.isEmpty(unassignedAirports)} ? 'mb-3'" th:text="${event.shortDescription}">Short description</div>
+
+                <!--<div th:text="${unassignedAirports}"></div>-->
+
+                <div th:if="${!#lists.isEmpty(event.icaos)}" th:remove="tag">
+                  <div class="h5 mb-1" th:text="#{portal.events.event.airports}">Airports</div>
+                  <!--                  <span th:each="i, iterStat : ${event.icaos}" th:text="${i.icao} + ' - ' + #{airport. + ${#strings.toLowerCase(i.icao)}} + (${!iterStat.isLast} ? ', ' : '')"></span>-->
+                  <div th:each="i, iterStat : ${event.icaos}" th:classappend="${!iterStat.isLast or !#lists.isEmpty(unassignedAirports)} ? 'mb-2'">
+                    <span th:text="${i.icao} + ' - ' + #{airport. + ${#strings.toLowerCase(i.icao)}}"></span>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#removeAirportModal" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')"
+                       th:data-airport="${i.icao}" th:data-remove-airport-msg="#{portal.events.event.airport.remove.modal.message(#{airport. + ${#strings.toLowerCase(i.icao)}})}"
+                       class="material-symbols-rounded text-danger ms-1">delete</a>
+                  </div>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(unassignedAirports) and !event.isCpt}" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#addAirportModal" th:text="#{portal.events.event.airport.add}">Add an airport</a>
+                </div>
               </div>
             </div>
             <div class="eventDescription mx-4 mb-4 mt-0 mt-lg-4">
@@ -42,214 +59,10 @@
         </div>
       </div>
 
-      <div class="col-12 mb-2" th:if="${!#lists.isEmpty(icaosData)}">
-        
-<!--        <div th:text="${#aggregates.sum(icaosData.![totalMovements])}">Here</div>-->
-        <div class="card overflow-hidden">
-          <div class="card-header">
-            <div class="h4 mb-1" th:text="#{portal.events.event.stats.title}">Statistics</div>
-            <div th:text="#{portal.events.event.stats.totalmovements(${#numbers.formatInteger(#aggregates.sum(icaosData.![totalMovements]), 0, 'WHITESPACE')})}">Total movements: 21</div>
-          </div>
-          <div class="card-body p-0">
-            <div class="accordion accordion-flush" id="statisticsAccordion">
-              <div class="accordion-item" th:each="i, iterStat : ${icaosData}">
-                <h2 class="accordion-header" th:id="'header-' + ${i.icao}">
-                  <button class="accordion-button" th:classappend="${!iterStat.isFirst} ? 'collapsed'" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse-' + ${i.icao}" th:aria-expanded="${iterStat.isFirst} ? 'true' : 'false'" th:aria-controls="'collapse-' + ${i.icao}">
-                    <div class="h4 mb-0" th:text="${i.icao} + ' - ' + #{airport. + ${#strings.toLowerCase(i.icao)}}"></div>
-                  </button>
-                </h2>
-                <div th:id="'collapse-' + ${i.icao}" class="accordion-collapse collapse" th:classappend="${iterStat.isFirst} ? 'show'" th:aria-labelledby="'header-' + ${i.icao}" data-bs-parent="#statisticsAccordion">
-                  <div class="accordion-body">
-
-                    <div class="h4 fst-italic mb-5" th:if="${#lists.isEmpty(i.departures)}" th:text="#{portal.events.event.stats.dep.notfound}">Departures not found.</div>
-
-                    <div th:if="${!#lists.isEmpty(i.departures)}" th:remove="tag">
-                      <div class="h4" th:text="#{portal.events.event.stats.dep.total(${#numbers.formatInteger(#lists.size(i.departures), 0, 'WHITESPACE')})}"></div>
-
-                      <table class="table table-hover table-striped mb-5">
-                        <thead>
-                          <tr>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.no}">No.</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.vatsimid}">Vatsim ID</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.callsign}">Callsign</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.depaturetime}">Dep. Time</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.arrivaltime}">Arr. Time</td>
-                            <!--<td class="fw-bold" th:text=#{portal.events.event.stats.departure}>Departure</td>-->
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.destination}">Destination</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.aircraft}">Aircraft</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.flightlevel}">Flight level</td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="align-middle" th:each="df, iterStat : ${i.departures}" th:with="isMe=${session.loggedUser.cid eq df.vatsimId}">
-                            <td th:text="${iterStat.count}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.vatsimId}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.callsign}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.departed ne null} ? ${df.getFormattedDepartedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.arrived ne null} ? ${df.getFormattedArrivedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <!--<td th:text="${df.departure}"></td>-->
-                            <td th:text="${df.destination}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.aircraft}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                            <td th:text="${df.altitude}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <!--<hr class="my-2"/>-->
-
-                    <div class="h4 fst-italic" th:if="${#lists.isEmpty(i.arrivals)}" th:text="#{portal.events.event.stats.arr.notfound}">Arrivals not found.</div>
-
-                    <div th:if="${!#lists.isEmpty(i.arrivals)}" th:remove="tag">
-                      <div class="h4" th:text="#{portal.events.event.stats.arr.total(${#numbers.formatInteger(#lists.size(i.arrivals), 0, 'WHITESPACE')})}"></div>
-
-                      <table class="table table-hover table-striped">
-                        <thead>
-                          <tr>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.no}">No.</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.vatsimid}">Vatsim ID</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.callsign}">Callsign</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.depaturetime}">Dep. Time</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.arrivaltime}">Arr. Time</td>
-                            <td class="fw-bold" th:text=#{portal.events.event.stats.departure}>Departure</td>
-                            <!--<td class="fw-bold" th:text="#{portal.events.event.stats.destination}">Destination</td>-->
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.aircraft}">Aircraft</td>
-                            <td class="fw-bold" th:text="#{portal.events.event.stats.flightlevel}">Flight level</td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="align-middle" th:each="af, iterStat : ${i.arrivals}" th:with="isMe=${session.loggedUser.cid eq af.vatsimId}">
-                            <td th:text="${iterStat.count}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.vatsimId}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.callsign}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.departed ne null} ? ${af.getFormattedDepartedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.arrived ne null} ? ${af.getFormattedArrivedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.departure}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <!--<td th:text="${af.destination}"></td>-->
-                            <td th:text="${af.aircraft}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                            <td th:text="${af.altitude}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!--      <div class="row" th:each="i, iterStat : ${icaosData}">
-              <div class="col-12 mb-3">
-                <div class="card overflow-hidden">
-                  <div class="card-body p-0">
-                    <div class="accordion accordion-flush" th:id="'accordion-' + ${i.icao}">
-                      <div class="accordion-item">
-                        <h2 class="accordion-header" th:id="'accordion-header-' + ${i.icao}">
-                          <button class="accordion-button" th:classappend="${!iterStat.isFirst} ? 'collapsed'" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse-' + ${i.icao}" th:aria-expanded="${iterStat.isFirst} ? 'true' : 'false'" th:aria-controls="'collapse-' + ${i.icao}">
-                            <span th:text="${i.icao} + ${iterStat.isFirst}"></span>
-                          </button>
-                        </h2>
-                        <div th:id="'collapse-' + ${i.icao}" class="accordion-collapse collapse" th:classappend="${iterStat.isFirst} ? 'show' : 'hide'" th:aria-labelledby="'accordion-header-' + ${i.icao}" th:data-bs-parent="'#accordion-' + ${i.icao}" style="">
-                          <div class="accordion-body">
-      
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>-->
-
-      <!--      <div class="row">
-              <div class="col-12 mb-3">
-                <div class="card">
-                  <div class="card-body">
-      
-                    <div class="h5" th:text="'Total departures: ' + ${#lists.size(depFlights)}"></div>
-      
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">No.</td>
-                          <td class="fw-bold">Vatsim ID</td>
-                          <td class="fw-bold">Callsign</td>
-                          <td class="fw-bold">Dep. Time</td>
-                          <td class="fw-bold">Arr. Time</td>
-                          <td class="fw-bold">Departure</td>
-                          <td class="fw-bold">Destination</td>
-                          <td class="fw-bold">Aircraft</td>
-                          <td class="fw-bold">FL</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle" th:each="df, iterStat : ${depFlights}">
-                          <td th:text="${iterStat.count}"></td>
-                          <td th:text="${df.vatsimId}"></td>
-                          <td th:text="${df.callsign}"></td>
-                          <td th:text="${df.departed}"></td>
-                          <td th:text="${df.arrived}"></td>
-                          <td th:text="${df.departed ne null} ? ${df.getFormattedDepartedDateTime('HH:mm')} : '-'"></td>
-                          <td th:text="${df.arrived ne null} ? ${df.getFormattedArrivedDateTime('HH:mm')} : '-'"></td>
-                          <td th:text="${df.departure}"></td>
-                          <td th:text="${df.destination}"></td>
-                          <td th:text="${df.aircraft}"></td>
-                          <td th:text="${df.altitude}"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-      
-            <div class="row">
-              <div class="col-12 mb-3">
-                <div class="card">
-                  <div class="card-body">
-      
-                    <div class="h5" th:text="'Total arrivals: ' + ${#lists.size(arrFlights)}"></div>
-      
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">No.</td>
-                          <td class="fw-bold">Vatsim ID</td>
-                          <td class="fw-bold">Callsign</td>
-                          <td class="fw-bold">Dep. Time</td>
-                          <td class="fw-bold">Arr. Time</td>
-                          <td class="fw-bold">Departure</td>
-                          <td class="fw-bold">Destination</td>
-                          <td class="fw-bold">Aircraft</td>
-                          <td class="fw-bold">FL</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle" th:each="af, iterStat : ${arrFlights}">
-                          <td th:text="${iterStat.count}"></td>
-                          <td th:text="${af.vatsimId}"></td>
-                          <td th:text="${af.callsign}"></td>
-                          <td th:text="${af.departed ne null} ? ${af.getFormattedDepartedDateTime('HH:mm')} : '-'"></td>
-                          <td th:text="${af.arrived ne null} ? ${af.getFormattedArrivedDateTime('HH:mm')} : '-'"></td>
-                          <td th:text="${af.departure}"></td>
-                          <td th:text="${af.destination}"></td>
-                          <td th:text="${af.aircraft}"></td>
-                          <td th:text="${af.altitude}"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>-->
-
       <div class="row" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${event.isPast}">
         <div class="col-12 mb-3">
           <div class="card">
             <div class="card-body">
-
               <div class="text-muted">
                 <small>
                   <span class="material-symbols-rounded me-1">timer_off</span>
@@ -383,6 +196,128 @@
                   </div>
 
                   <hr th:if="${!iterStat.last}" class="my-2 mb-4"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${!#lists.isEmpty(event.icaos) and !event.isPast}">
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-header">
+              <div class="h4" th:text="#{portal.events.event.stats.title}">Statistics</div>
+            </div>
+            <div class="card-body">
+              <div class="text-muted">
+                <small>
+                  <span class="material-symbols-rounded me-1">query_stats</span>
+                  <span th:text="#{portal.events.event.stats.notpast}">Statistics will be available after the event has passed.</span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${!#lists.isEmpty(event.icaos) and event.isPast}">
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-header">
+              <div class="h4" th:classappend="${#aggregates.sum(icaosData.![totalMovements]) gt 0} ? 'mb-1' : 'mb-0'" th:text="#{portal.events.event.stats.title}">Statistics</div>
+              <div th:if="${#aggregates.sum(icaosData.![totalMovements]) gt 0}" th:text="#{portal.events.event.stats.totalmovements(${#numbers.formatInteger(#aggregates.sum(icaosData.![totalMovements]), 0, 'WHITESPACE')})}">Total movements: 21</div>
+              <div th:if="${#aggregates.sum(icaosData.![totalMovements]) eq 0}" th:text="#{portal.events.event.stats.nomovements}">No movements</div>
+            </div>
+            <div class="card-body p-0">
+              <div class="accordion accordion-flush" id="statisticsAccordion">
+                <div class="accordion-item" th:each="i, iterStat : ${icaosData}">
+                  <h2 class="accordion-header" th:id="'header-' + ${i.icao}">
+                    <button class="accordion-button" th:classappend="${!iterStat.isFirst} ? 'collapsed'" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse-' + ${i.icao}" th:aria-expanded="${iterStat.isFirst} ? 'true' : 'false'" th:aria-controls="'collapse-' + ${i.icao}">
+                      <div>
+                        <div class="h4" th:classappend="${i.totalMovements gt 0} ? 'mb-1' : 'mb-0'" th:text="${i.icao} + ' - ' + #{airport. + ${#strings.toLowerCase(i.icao)}}"></div>
+                        <div th:if="${i.totalMovements gt 0}" th:text="#{portal.events.event.stats.movements(${#numbers.formatInteger(i.totalMovements, 0, 'WHITESPACE')})}"></div>
+                      </div>
+                    </button>
+                  </h2>
+                  <div th:id="'collapse-' + ${i.icao}" class="accordion-collapse collapse" th:classappend="${iterStat.isFirst} ? 'show'" th:aria-labelledby="'header-' + ${i.icao}" data-bs-parent="#statisticsAccordion">
+                    <div class="accordion-body">
+
+                      <div class="h4 fst-italic mb-5" th:if="${#lists.isEmpty(i.departures)}" th:text="#{portal.events.event.stats.dep.notfound}">Departures not found.</div>
+
+                      <div th:if="${!#lists.isEmpty(i.departures)}" th:remove="tag">
+                        <div class="h4 mb-0" th:text="#{portal.events.event.stats.dep.total(${#numbers.formatInteger(#lists.size(i.departures), 0, 'WHITESPACE')})}"></div>
+                        <div class="text-muted mb-3" th:text="#{portal.events.event.stats.timeinzulu}">All times are in UTC (Zulu) time</div>
+
+                        <table class="table table-hover table-striped mb-5">
+                          <thead>
+                            <tr>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.no}">No.</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.vatsimid}">Vatsim ID</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.callsign}">Callsign</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.depaturetime}">Dep. Time</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.arrivaltime}">Arr. Time</td>
+                              <!--<td class="fw-bold" th:text=#{portal.events.event.stats.departure}>Departure</td>-->
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.destination}">Destination</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.aircraft}">Aircraft</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.flightlevel}">Flight level</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="align-middle" th:each="df, iterStat : ${i.departures}" th:with="isMe=${session.loggedUser.cid eq df.vatsimId}">
+                              <td th:text="${iterStat.count}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.vatsimId}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.callsign}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.departed ne null} ? ${df.getFormattedDepartedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.arrived ne null} ? ${df.getFormattedArrivedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <!--<td th:text="${df.departure}"></td>-->
+                              <td th:text="${df.destination}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.aircraft}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                              <td th:text="${df.altitude}" th:classappend="${isMe} ? 'bg-info-subtle'"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!--<hr class="my-2"/>-->
+
+                      <div class="h4 fst-italic" th:if="${#lists.isEmpty(i.arrivals)}" th:text="#{portal.events.event.stats.arr.notfound}">Arrivals not found.</div>
+
+                      <div th:if="${!#lists.isEmpty(i.arrivals)}" th:remove="tag">
+                        <div class="h4 mb-0" th:text="#{portal.events.event.stats.arr.total(${#numbers.formatInteger(#lists.size(i.arrivals), 0, 'WHITESPACE')})}"></div>
+                        <div class="text-muted mb-3" th:text="#{portal.events.event.stats.timeinzulu}">All times are in UTC (Zulu) time</div>
+
+                        <table class="table table-hover table-striped">
+                          <thead>
+                            <tr>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.no}">No.</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.vatsimid}">Vatsim ID</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.callsign}">Callsign</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.depaturetime}">Dep. Time</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.arrivaltime}">Arr. Time</td>
+                              <td class="fw-bold" th:text=#{portal.events.event.stats.departure}>Departure</td>
+                              <!--<td class="fw-bold" th:text="#{portal.events.event.stats.destination}">Destination</td>-->
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.aircraft}">Aircraft</td>
+                              <td class="fw-bold" th:text="#{portal.events.event.stats.flightlevel}">Flight level</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="align-middle" th:each="af, iterStat : ${i.arrivals}" th:with="isMe=${session.loggedUser.cid eq af.vatsimId}">
+                              <td th:text="${iterStat.count}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.vatsimId}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.callsign}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.departed ne null} ? ${af.getFormattedDepartedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.arrived ne null} ? ${af.getFormattedArrivedDateTime('HH:mm')} : '-'" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.departure}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <!--<td th:text="${af.destination}"></td>-->
+                              <td th:text="${af.aircraft}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                              <td th:text="${af.altitude}" th:classappend="${isMe} ? 'bg-info-subtle fw-bold'"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -528,7 +463,55 @@
         </form>
       </div>
 
-      <div class="modal fade" id="approveSlotApplicationModal" tabindex="-1" aria-labelledby="approveSlotApplicationModalLabel" style="display: none;" aria-hidden="true">
+      <div class="modal fade" id="addAirportModal" tabindex="-1" aria-labelledby="addAirportModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
+        <form th:action="@{/portal/events/} + ${event.eventId} + '/airports/add'" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.events.event.airport.add.modal.title}">Add airport to event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3" th:text="#{portal.events.event.airport.add.modal.message}">You are about to add an airport to the event. After you add it, a statistics for the event at that airport will be available.</div>
+                <div class="row">
+                  <div class="col-12 mb-2">
+                    <label class="form-label required" th:text="#{portal.events.event.airport.add.modal.airport}">Airport</label>
+                    <select class="form-control mb-3" name="airport">
+                      <option th:each="ua : ${unassignedAirports}" th:value="${ua}" th:text="${ua} + ' - ' + #{airport. + ${#strings.toLowerCase(ua)}}"></option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.airport.add.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-success" th:text="#{portal.events.event.airport.add.modal.addairport}">Add an airport</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal fade" id="removeAirportModal" tabindex="-1" aria-labelledby="removeAirportModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
+        <form id="removeAirportModalForm" method="post">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" th:text="#{portal.events.event.airport.remove.modal.title}">Remove airport from event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div id="removeAirportModalMessage" class="mb-3"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{portal.events.event.airport.remove.modal.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-danger" th:text="#{portal.events.event.airport.remove.modal.addairport}">Remove airport</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal fade" id="approveSlotApplicationModal" tabindex="-1" aria-labelledby="approveSlotApplicationModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
         <form id="approveSlotApplicationModalForm" method="post">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -558,7 +541,7 @@
         </form>
       </div>
 
-      <div class="modal fade" id="rejectSlotApplicationModal" tabindex="-1" aria-labelledby="rejectSlotApplicationModalLabel" style="display: none;" aria-hidden="true">
+      <div class="modal fade" id="rejectSlotApplicationModal" tabindex="-1" aria-labelledby="rejectSlotApplicationModalLabel" style="display: none;" aria-hidden="true" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')">
         <form id="rejectSlotApplicationModalForm" method="post">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -596,8 +579,9 @@
 
       <script type="text/javascript" th:inline="javascript" sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'STAFF_EVENTS')" th:if="${!event.isCpt}">
         /*<![CDATA[*/
-        let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions/remove']]*/;
+        let removeEventPositionUrl = /*[[@{/portal/events/} + ${eventId} + '/positions']]*/;
                 let addPositionSlotUrl = /*[[@{/portal/events/} + ${eventId} + '/positions']]*/;
+                let removeAirportUrl = /*[[@{/portal/events/} + ${eventId} + '/airports']]*/;
                 let approveRejectSlotApplicationUrl = /*[[@{/portal/events/} + ${eventId} + '/slots']]*/;
                 let getUserByCidUrl = /*[[@{/users}]]*/;
                 let addUserManuallyUrl = /*[[@{/portal/events/} + ${eventId} + '/slots']]*/;
@@ -620,7 +604,17 @@
 
           $("#removeEventPositionMessage").empty().append(removeEventPositionMsg);
 
-          $('#removeEventPositionModalForm').attr('action', removeEventPositionUrl + '/' + eventPositionId);
+          $('#removeEventPositionModalForm').attr('action', removeEventPositionUrl + '/' + eventPositionId + '/remove');
+        });
+
+        document.getElementById('removeAirportModal').addEventListener('show.bs.modal', function (event) {
+          let modal = $(event.relatedTarget);
+          let airport = modal.data('airport');
+          let removeAirportMsg = modal.data('remove-airport-msg');
+
+          $("#removeAirportModalMessage").empty().append(removeAirportMsg);
+
+          $('#removeAirportModalForm').attr('action', removeAirportUrl + '/' + airport + '/remove');
         });
 
         document.getElementById('approveSlotApplicationModal').addEventListener('show.bs.modal', function (event) {

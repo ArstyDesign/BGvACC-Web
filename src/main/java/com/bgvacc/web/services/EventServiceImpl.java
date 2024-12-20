@@ -437,6 +437,74 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public boolean addAirportToEvent(Long eventId, String airport) {
+
+    final String addAirportToEventSql = "INSERT INTO event_icaos (event_id, icao) VALUES (?, ?)";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement addAirportToEventPstmt = conn.prepareStatement(addAirportToEventSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        addAirportToEventPstmt.setLong(1, eventId);
+        addAirportToEventPstmt.setString(2, airport);
+
+        int rows = addAirportToEventPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error adding airport '" + airport + "' for event with ID '" + eventId + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error adding airport '" + airport + "' for event with ID '" + eventId + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean removeAirportFromEvent(Long eventId, String airport) {
+
+    final String removeAirportFromEventSql = "DELETE FROM event_icaos WHERE event_id = ? AND icao = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement removeAirportFromEventPstmt = conn.prepareStatement(removeAirportFromEventSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        removeAirportFromEventPstmt.setLong(1, eventId);
+        removeAirportFromEventPstmt.setString(2, airport);
+
+        int rows = removeAirportFromEventPstmt.executeUpdate();
+
+        conn.commit();
+
+        return rows > 0;
+
+      } catch (SQLException ex) {
+        log.error("Error removing airport '" + airport + "' from event with ID '" + eventId + "'.", ex);
+        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error adding removing '" + airport + "' from event with ID '" + eventId + "'.", e);
+    }
+
+    return false;
+  }
+
+  @Override
   public boolean addEventPosition(Long eventId, String position, Integer minimumRating, boolean canTraineesApply) {
 
     final String addEventPositionSql = "INSERT INTO event_positions (event_id, position_id, minimum_rating, can_trainees_apply) VALUES (?, ?, ?, ?)";

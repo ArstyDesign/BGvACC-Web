@@ -55,4 +55,29 @@ public class HomeController extends Base {
 
     return "home";
   }
+
+  @GetMapping("/lbsf-charts")
+  public String redirectSofiaChartsUrl() {
+    return "redirect:/pilots/charts/lbsf";
+  }
+
+  @GetMapping("/lbwn-charts")
+  public String redirectVarnaChartsUrl() {
+    return "redirect:/pilots/charts/lbwn";
+  }
+
+  @GetMapping("/lbbg-charts")
+  public String redirectBurgasChartsUrl() {
+    return "redirect:/pilots/charts/lbbg";
+  }
+
+  @GetMapping("/lbpd-charts")
+  public String redirectPlovdivChartsUrl() {
+    return "redirect:/pilots/charts/lbpd";
+  }
+
+  @GetMapping("/lbgo-charts")
+  public String redirectGornaChartsUrl() {
+    return "redirect:/pilots/charts/lbgo";
+  }
 }

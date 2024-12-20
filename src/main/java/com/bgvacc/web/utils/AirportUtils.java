@@ -25,7 +25,7 @@ public class AirportUtils {
     return false;
   }
 
-  private List<String> getKnownAirports() {
+  public static List<String> getKnownAirports() {
 
     List<String> knownAirports = new ArrayList<>();
 

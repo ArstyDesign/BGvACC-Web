@@ -10,6 +10,7 @@ import com.bgvacc.web.responses.statsim.FlightInfoResponse;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.services.*;
+import static com.bgvacc.web.utils.AirportUtils.getKnownAirports;
 import static com.bgvacc.web.utils.AppConstants.MESSAGE_ERROR_PLACEHOLDER;
 import static com.bgvacc.web.utils.AppConstants.MESSAGE_SUCCESS_PLACEHOLDER;
 import static com.bgvacc.web.utils.AppConstants.TITLE_ERROR_PLACEHOLDER;
@@ -21,6 +22,7 @@ import com.bgvacc.web.vatsim.atc.VatsimATCInfo;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -132,6 +134,14 @@ public class PortalEventsController extends Base {
     HasPositions hasPositions = getHasPositions(unassignedPositions);
     model.addAttribute("hasPositions", hasPositions);
 
+    List<String> allKnownAirports = getKnownAirports();
+
+    List<String> unassignedAirports = allKnownAirports.stream()
+            .filter(item -> event.getIcaos().stream().noneMatch(obj -> obj.getIcao().equals(item)))
+            .collect(Collectors.toList());
+
+    model.addAttribute("unassignedAirports", unassignedAirports);
+
     model.addAttribute("pageTitle", event.getName());
     model.addAttribute("page", "events");
 
@@ -177,6 +187,42 @@ public class PortalEventsController extends Base {
     return "portal/events/event";
   }
 
+  @PostMapping("/portal/events/{eventId}/airports/add")
+  public String addAirportToEvent(@PathVariable("eventId") Long eventId, @RequestParam("airport") String airport, RedirectAttributes redirectAttributes) {
+
+    log.debug("Adding airport '" + airport + "' to event with ID '" + eventId + "'");
+
+    boolean isAirportAdded = eventService.addAirportToEvent(eventId, airport);
+
+    if (isAirportAdded) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.airport.add.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.airport.add.modal.error"));
+    }
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
+  @PostMapping("/portal/events/{eventId}/airports/{airport}/remove")
+  public String removeAirportFromEvent(@PathVariable("eventId") Long eventId, @PathVariable("airport") String airport, RedirectAttributes redirectAttributes) {
+
+    log.debug("Removing airport '" + airport + "' from event with ID '" + eventId + "'");
+
+    boolean isAirportRemoved = eventService.removeAirportFromEvent(eventId, airport);
+
+    if (isAirportRemoved) {
+      redirectAttributes.addFlashAttribute(TITLE_SUCCESS_PLACEHOLDER, getMessage("operation.success"));
+      redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS_PLACEHOLDER, getMessage("portal.events.event.airport.remove.modal.success"));
+    } else {
+      redirectAttributes.addFlashAttribute(TITLE_ERROR_PLACEHOLDER, getMessage("operation.error"));
+      redirectAttributes.addFlashAttribute(MESSAGE_ERROR_PLACEHOLDER, getMessage("portal.events.event.airport.remove.modal.error"));
+    }
+
+    return "redirect:/portal/events/" + eventId;
+  }
+
   @PostMapping("/portal/events/{eventId}/positions/add")
   public String addPositionToEvent(@PathVariable("eventId") Long eventId, @RequestParam("position") String position, @RequestParam("minimumRating") Integer minimumRating, @RequestParam(name = "canTraineesApply", defaultValue = "false") boolean canTraineesApply, RedirectAttributes redirectAttributes) {
 
@@ -195,7 +241,7 @@ public class PortalEventsController extends Base {
     return "redirect:/portal/events/" + eventId;
   }
 
-  @PostMapping("/portal/events/{eventId}/positions/remove/{eventPositionId}")
+  @PostMapping("/portal/events/{eventId}/positions/{eventPositionId}/remove")
   public String removePositionFromEvent(@PathVariable("eventId") Long eventId, @PathVariable("eventPositionId") String eventPositionId, RedirectAttributes redirectAttributes) {
 
     log.debug("Removing event position with ID '" + eventPositionId + "' from event with ID '" + eventId + "'.");
