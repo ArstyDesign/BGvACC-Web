@@ -5,6 +5,7 @@ import com.bgvacc.web.beans.SlotsGenerator;
 import com.bgvacc.web.domains.Slot;
 import com.bgvacc.web.responses.events.*;
 import com.bgvacc.web.responses.events.reports.*;
+import com.bgvacc.web.responses.users.UserEventApplicationsResponse;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
@@ -778,6 +779,50 @@ public class EventServiceImpl implements EventService {
     }
 
     return 0L;
+  }
+
+  @Override
+  public UserEventApplicationsResponse getUserEventApplications(String cid) {
+
+    final String getUserEventApplicationsSql = "SELECT COUNT(1) AS total_user_event_applications, COUNT(CASE WHEN status = true THEN 1 END) AS approved_event_applications, ROUND(CASE WHEN COUNT(1) = 0 THEN 0 ELSE COUNT(CASE WHEN status = true THEN 1 END) * 100.0 / COUNT(1) END, 2) AS approved_percentage FROM user_event_applications WHERE user_cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getUserEventApplicationsPstmt.setString(1, cid);
+
+        ResultSet getUserEventApplicationsRset = getUserEventApplicationsPstmt.executeQuery();
+
+        if (getUserEventApplicationsRset.next()) {
+
+          UserEventApplicationsResponse uear = new UserEventApplicationsResponse();
+          uear.setTotalUserEventApplications(getUserEventApplicationsRset.getLong("total_user_event_applications"));
+          uear.setApprovedEventApplications(getUserEventApplicationsRset.getLong("approved_event_applications"));
+          uear.setApprovedPercentage(getUserEventApplicationsRset.getDouble("approved_percentage"));
+
+          return uear;
+        }
+
+      } catch (SQLException ex) {
+        log.error("Error getting total user event application for controller with ID: '" + cid + "'.", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting total user event application for controller with ID: '" + cid + "'.", e);
+    }
+
+    UserEventApplicationsResponse uear = new UserEventApplicationsResponse();
+    uear.setTotalUserEventApplications(0L);
+    uear.setApprovedEventApplications(0L);
+    uear.setApprovedPercentage(0.00d);
+
+    return uear;
   }
 
   @Override

@@ -25,11 +25,21 @@
         <div class="col-sm-6 col-xl-3 mb-3 mb-lg-5">
           <div class="card card-body">
             <h6 class="mb-3">
-              <span th:text="#{portal.dashboard.totaleventsapplications}">Total events applications</span>
-              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.totaleventsapplications.desc}" data-tippy-placement="top">info</span>
+              <span th:text="#{portal.dashboard.eventsapplications}">Events applications</span>
+              <span class="material-symbols-rounded ms-2 fs-6 align-middle opacity-75" th:data-tippy-content="#{portal.dashboard.eventsapplications.desc}" data-tippy-placement="top">info</span>
             </h6>
             <div class="d-flex lh-1 align-items-center">
-              <h4 class="mb-0" th:text="${#numbers.formatInteger(totalUserEventApplications, 0, 'WHITESPACE')}">1 543</h4>
+              <h4 class="text-info mb-0" th:text="${#numbers.formatInteger(userEventApplications.totalUserEventApplications, 0, 'WHITESPACE')}">1 543</h4>
+
+              <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
+
+              <h4 class="text-success mb-0" th:text="${#numbers.formatInteger(userEventApplications.approvedEventApplications, 0, 'WHITESPACE')}">433</h4>
+
+              <div class="vr lh-1 align-self-center opacity-25 mx-3 height-10" style="min-height: auto;"></div>
+
+              <h4 class="mb-0" th:text="${#numbers.formatDecimal(userEventApplications.approvedPercentage, 1, 'WHITESPACE', 0, 'POINT')} + '%'">1 543</h4>
+
+              <!--<h4 class="mb-0" th:text="${#numbers.formatInteger(userEventApplications.totalUserEventApplications, 0, 'WHITESPACE')}">1 543</h4>-->
             </div>
           </div>
         </div>

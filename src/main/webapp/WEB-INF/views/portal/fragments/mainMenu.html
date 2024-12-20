@@ -69,23 +69,23 @@
                     <span class="sidebar-text" th:text="#{portal.menu.atc.title}">ATC</span>
                   </li>
                   <li class="nav-item">
-                    <a href="#" th:href="@{/portal/atc/event-participations}" class="nav-link d-flex align-items-center text-truncate"
-                       th:classappend="${page eq 'atc' and subpage eq 'event-participations'} ? 'active'">
+                    <a href="#" th:href="@{/portal/atc/events-participations}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'atc' and subpage eq 'events-participations'} ? 'active'">
                       <span class="sidebar-icon">
                         <i data-lucide="calendar-check"></i>
                         <!--<span class="material-symbols-rounded">calendar_month</span>-->
                       </span>
-                      <span class="sidebar-text" th:text="#{portal.menu.atc.eventparticipations}">Event participations</span>
+                      <span class="sidebar-text" th:text="#{portal.menu.atc.eventsparticipations}">Events participations</span>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#" th:href="@{/portal/atc/history}" class="nav-link d-flex align-items-center text-truncate"
-                       th:classappend="${page eq 'atc' and subpage eq 'history'} ? 'active'">
+                    <a href="#" th:href="@{/portal/atc/sessions-history}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'atc' and subpage eq 'sessions-history'} ? 'active'">
                       <span class="sidebar-icon">
                         <i data-lucide="history"></i>
                         <!--<span class="material-symbols-rounded">calendar_month</span>-->
                       </span>
-                      <span class="sidebar-text" th:text="#{portal.menu.atc.history}">History</span>
+                      <span class="sidebar-text" th:text="#{portal.menu.atc.sessionshistory}">Sessions history</span>
                     </a>
                   </li>
                 </div>
