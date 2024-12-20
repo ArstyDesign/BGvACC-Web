@@ -1,9 +1,12 @@
 package com.bgvacc.web.controllers.portal;
 
+import com.bgvacc.web.api.statsim.IcaoDepartures;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.CalendarEvent;
 import com.bgvacc.web.domains.HasPositions;
 import com.bgvacc.web.responses.events.*;
+import com.bgvacc.web.responses.statsim.FlightInfoListsResponse;
+import com.bgvacc.web.responses.statsim.FlightInfoResponse;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
 import com.bgvacc.web.services.*;
@@ -46,6 +49,8 @@ public class PortalEventsController extends Base {
   private final MailService mailService;
 
   private final UserService userService;
+
+  private final IcaoDepartures icaoDepartures;
 
   @GetMapping("/portal/events/calendar")
   public String getEventsCalendar(Model model) {
@@ -138,6 +143,29 @@ public class PortalEventsController extends Base {
       model.addAttribute("subpage", "upcoming-events");
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.upcomingevents", null, LocaleContextHolder.getLocale()), "/portal/events/upcoming"));
     } else {
+
+      List<FlightInfoListsResponse> icaosData = new ArrayList<>();
+
+      if (event.getIcaos() != null && !event.getIcaos().isEmpty()) {
+
+        for (EventIcao icao : event.getIcaos()) {
+
+          FlightInfoListsResponse fi = new FlightInfoListsResponse();
+
+          fi.setIcao(icao.getIcao());
+
+          List<FlightInfoResponse> df = icaoDepartures.getDepartingFlightsForAirportAndTime(icao.getIcao(), event.getFormattedStartDateTime("yyyy-MM-dd HH:mm"), event.getFormattedEndDateTime("yyyy-MM-dd HH:mm"));
+          fi.setDepartures(df);
+
+          List<FlightInfoResponse> af = icaoDepartures.getArrivingFlightsForAirportAndTime(icao.getIcao(), event.getFormattedStartDateTime("yyyy-MM-dd HH:mm"), event.getFormattedEndDateTime("yyyy-MM-dd HH:mm"));
+          fi.setArrivals(af);
+
+          icaosData.add(fi);
+        }
+
+        model.addAttribute("icaosData", icaosData);
+      }
+
       model.addAttribute("subpage", "past-events");
       breadcrumbs.add(new Breadcrumb(getMessage("portal.menu.events.pastevents", null, LocaleContextHolder.getLocale()), "/portal/events/past"));
     }

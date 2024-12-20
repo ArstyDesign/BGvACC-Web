@@ -87,6 +87,13 @@ CREATE TABLE events (
     updated_at timestamptz
 );
 
+CREATE TABLE event_icaos (
+	event_icao_id varchar(100) not null primary key default gen_random_uuid(),
+	event_id int not null references events(event_id) on delete cascade,
+	icao varchar(10) not null,
+	CONSTRAINT unique_icao_event_id UNIQUE (event_id, icao)
+);
+
 CREATE TABLE event_connections (
     event_connection_id varchar(100) not null primary key default gen_random_uuid(),
     event_one_id int not null references events(event_id) on delete cascade,
@@ -125,6 +132,7 @@ CREATE TABLE blog_post_tags (
 
 CREATE TABLE controllers_online_log (
 	controller_online_log_id varchar(100) not null primary key default gen_random_uuid(),
+	session_id bigint not null default -1,
 	cid varchar(30),
 	rating int not null,
 	server varchar(50),
@@ -247,3 +255,35 @@ CREATE TABLE saved_user_searches (
 	searched_user_cid varchar(30) not null references users(cid) on delete cascade,
 	added_at timestamp not null default NOW()
 );
+
+CREATE OR REPLACE FUNCTION enforce_single_atc_role()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.rolename LIKE 'ATC_%' AND NEW.rolename != 'ATC_TRAINING' THEN
+        DELETE FROM user_roles
+        WHERE cid = NEW.cid
+        AND rolename LIKE 'ATC_%'
+		AND rolename != 'ATC_TRAINING';
+		
+		UPDATE users
+        SET highest_controller_rating = CASE
+            WHEN NEW.rolename = 'ATC_S1' THEN 2
+            WHEN NEW.rolename = 'ATC_S2' THEN 3
+            WHEN NEW.rolename = 'ATC_S3' THEN 4
+            WHEN NEW.rolename = 'ATC_C1' THEN 5
+            WHEN NEW.rolename = 'ATC_C3' THEN 7
+            WHEN NEW.rolename = 'ATC_I1' THEN 8
+            WHEN NEW.rolename = 'ATC_I3' THEN 10
+            ELSE highest_controller_rating
+        END
+        WHERE cid = NEW.cid;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_enforce_single_atc_role
+BEFORE INSERT ON user_roles
+FOR EACH ROW
+EXECUTE FUNCTION enforce_single_atc_role();

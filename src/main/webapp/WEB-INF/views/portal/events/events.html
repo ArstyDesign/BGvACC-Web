@@ -11,7 +11,7 @@
     <div layout:fragment="contentDiv">
 
       <div th:if="${#lists.isEmpty(events)}" th:remove="tag">
-        <h1 class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</h1>
+        <div class="h4 fst-italic" th:text="#{events.notfound}">Events not found.</div>
       </div>
 
       <div class="row" th:if="${!#lists.isEmpty(events)}">
@@ -58,11 +58,17 @@
                   </div>
                 </div>
 
-                <div class="fw-bold" th:utext="#{events.datetime}">Date &amp; time</div>
-                <div class="text-body-secondary">
-                  <!--                  <span th:text="${#temporals.formatISO(e.startAtTimestamp)}"></span>
-                                    <span th:text="${#temporals.format(e.startAtTimestamp.toInstant(), 'dd.MM.yyyy, HH:mm')}"></span>-->
-                  <span th:text="${e.getFormattedStartDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${e.getFormattedEndDateTime('HH:mm')} + 'z'">Mar 12, 2021</span>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="fw-bold" th:utext="#{events.datetime}">Date &amp; time</div>
+                    <div class="text-body-secondary">
+                      <span th:text="${e.getFormattedStartDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${e.getFormattedEndDateTime('HH:mm')} + 'z'">Mar 12, 2021</span>
+                    </div>
+                  </div>
+                  <div class="ms-auto text-end" th:if="${!#lists.isEmpty(e.icaos)}">
+                    <div class="fw-bold" th:text="#{events.airports}">Airports</div>
+                    <span th:each="i, iterStat : ${e.icaos}" th:text="${i.icao} + (${!iterStat.isLast} ? ', ' : '')"></span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -36,9 +36,11 @@ public class EventServiceImpl implements EventService {
   public List<EventResponse> getAllEvents() {
 
     final String getEventsSql = "SELECT * FROM events";
+    final String getEventIcaosSql = "SELECT * FROM event_icaos WHERE event_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(getEventsSql);
+            PreparedStatement getEventIcaosPstmt = conn.prepareStatement(getEventIcaosSql)) {
 
       try {
 
@@ -83,6 +85,23 @@ public class EventServiceImpl implements EventService {
           ved.setCreatedAt(getEventsRset.getTimestamp("created_at"));
           ved.setUpdatedAt(getEventsRset.getTimestamp("updated_at"));
 
+          List<EventIcao> eventIcaos = new ArrayList<>();
+
+          getEventIcaosPstmt.setLong(1, ved.getEventId());
+
+          ResultSet getEventIcaosRset = getEventIcaosPstmt.executeQuery();
+
+          while (getEventIcaosRset.next()) {
+
+            EventIcao ei = new EventIcao();
+            ei.setEventIcaoId(getEventIcaosRset.getString("event_icao_id"));
+            ei.setIcao(getEventIcaosRset.getString("icao"));
+
+            eventIcaos.add(ei);
+          }
+
+          ved.setIcaos(eventIcaos);
+
           events.add(ved);
         }
 
@@ -121,8 +140,11 @@ public class EventServiceImpl implements EventService {
   @Override
   public List<EventResponse> getEventsBeforeAfterNow(String sql) {
 
+    final String getEventIcaosSql = "SELECT * FROM event_icaos WHERE event_id = ?";
+
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsPstmt = conn.prepareStatement(sql)) {
+            PreparedStatement getEventsPstmt = conn.prepareStatement(sql);
+            PreparedStatement getEventIcaosPstmt = conn.prepareStatement(getEventIcaosSql)) {
 
       try {
 
@@ -139,6 +161,24 @@ public class EventServiceImpl implements EventService {
         while (getEventsRset.next()) {
 
           EventResponse ved = getEventResponseFromResultSet(getEventsRset);
+
+          List<EventIcao> eventIcaos = new ArrayList<>();
+
+          getEventIcaosPstmt.setLong(1, ved.getEventId());
+
+          ResultSet getEventIcaosRset = getEventIcaosPstmt.executeQuery();
+
+          while (getEventIcaosRset.next()) {
+
+            EventIcao ei = new EventIcao();
+            ei.setEventIcaoId(getEventIcaosRset.getString("event_icao_id"));
+            ei.setIcao(getEventIcaosRset.getString("icao"));
+
+            eventIcaos.add(ei);
+          }
+
+          ved.setIcaos(eventIcaos);
+
           events.add(ved);
         }
 
@@ -163,7 +203,7 @@ public class EventServiceImpl implements EventService {
     final String getUpcomingEventsAfterDaysSql = "SELECT * FROM events WHERE DATE(start_at) = CURRENT_DATE + INTERVAL '" + days + " days' ORDER BY priority";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
+            PreparedStatement getUpcomingEventsAfterDaysPstmt = conn.prepareStatement(getUpcomingEventsAfterDaysSql)) {
 
       try {
 
@@ -201,9 +241,11 @@ public class EventServiceImpl implements EventService {
   public EventResponse getEvent(Long eventId) {
 
     final String getEventSql = "SELECT * FROM events WHERE event_id = ?";
+    final String getEventIcaosSql = "SELECT * FROM event_icaos WHERE event_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql)) {
+            PreparedStatement getEventPstmt = conn.prepareStatement(getEventSql);
+            PreparedStatement getEventIcaosPstmt = conn.prepareStatement(getEventIcaosSql)) {
 
       try {
 
@@ -216,6 +258,24 @@ public class EventServiceImpl implements EventService {
         if (getEventsRset.next()) {
 
           EventResponse ved = getEventResponseFromResultSet(getEventsRset);
+
+          List<EventIcao> eventIcaos = new ArrayList<>();
+
+          getEventIcaosPstmt.setLong(1, ved.getEventId());
+
+          ResultSet getEventIcaosRset = getEventIcaosPstmt.executeQuery();
+
+          while (getEventIcaosRset.next()) {
+
+            EventIcao ei = new EventIcao();
+            ei.setEventIcaoId(getEventIcaosRset.getString("event_icao_id"));
+            ei.setIcao(getEventIcaosRset.getString("icao"));
+
+            eventIcaos.add(ei);
+          }
+
+          ved.setIcaos(eventIcaos);
+
           return ved;
         }
 
@@ -245,9 +305,9 @@ public class EventServiceImpl implements EventService {
     final String getUserEventApplicationsSql = "SELECT uea.application_id, uea.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, u.highest_controller_rating, uea.slot_id, uea.status, uea.applied_at FROM user_event_applications uea JOIN users u ON uea.user_cid = u.cid WHERE uea.slot_id = ? ORDER BY uea.applied_at";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
-         PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
-         PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
+            PreparedStatement getEventPositionsPstmt = conn.prepareStatement(getEventPositionsSql);
+            PreparedStatement getEventPositionSlotsPstmt = conn.prepareStatement(getEventPositionSlotsSql);
+            PreparedStatement getUserEventApplicationsPstmt = conn.prepareStatement(getUserEventApplicationsSql)) {
 
       try {
 
@@ -347,7 +407,7 @@ public class EventServiceImpl implements EventService {
     final String getPositionFromEventPositionIdSql = "SELECT position_id FROM event_positions WHERE event_position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getPositionFromEventPositionIdPstmt = conn.prepareStatement(getPositionFromEventPositionIdSql)) {
+            PreparedStatement getPositionFromEventPositionIdPstmt = conn.prepareStatement(getPositionFromEventPositionIdSql)) {
 
       try {
 
@@ -382,7 +442,7 @@ public class EventServiceImpl implements EventService {
     final String addEventPositionSql = "INSERT INTO event_positions (event_id, position_id, minimum_rating, can_trainees_apply) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
+            PreparedStatement addEventPositionPstmt = conn.prepareStatement(addEventPositionSql)) {
 
       try {
 
@@ -418,7 +478,7 @@ public class EventServiceImpl implements EventService {
     final String removeEventPositionSql = "DELETE FROM event_positions WHERE event_position_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
+            PreparedStatement removeEventPositionPstmt = conn.prepareStatement(removeEventPositionSql)) {
 
       try {
 
@@ -452,7 +512,7 @@ public class EventServiceImpl implements EventService {
     final String addSlotsToPositionSql = "INSERT INTO slots (event_position_id, start_time, end_time) VALUES (?, ?, ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
+            PreparedStatement addSlotsToPositionPstmt = conn.prepareStatement(addSlotsToPositionSql)) {
 
       try {
 
@@ -502,8 +562,8 @@ public class EventServiceImpl implements EventService {
 //      log.debug("ved: " + ved.getStart());
 //    }
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
-         PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
+            PreparedStatement checkIfEventExistsInDatabasePstmt = conn.prepareStatement(checkIfEventExistsInDatabaseSql);
+            PreparedStatement synchroniseVatsimEventPstmt = conn.prepareStatement(synchoniseVatsimEventSql)) {
 
       try {
 
@@ -624,7 +684,7 @@ public class EventServiceImpl implements EventService {
     final String getTotalUserEventApplicationsSql = "SELECT COUNT(1) total_user_events_applications FROM user_event_applications WHERE user_cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
+            PreparedStatement getTotalUserEventApplicationsPstmt = conn.prepareStatement(getTotalUserEventApplicationsSql)) {
 
       try {
 
@@ -659,7 +719,7 @@ public class EventServiceImpl implements EventService {
     final String getEventsYearlyReportForYearSql = "SELECT month_series.month, ? AS type, COALESCE(event_counts.event_count, 0) AS event_count FROM (SELECT generate_series(1, 12) AS month) AS month_series LEFT JOIN (SELECT EXTRACT(MONTH FROM start_at) AS month, type, COUNT(*) AS event_count FROM events WHERE EXTRACT(YEAR FROM start_at) = ? AND EXTRACT(YEAR FROM end_at) = ? AND type = ? GROUP BY month, type) AS event_counts ON month_series.month = event_counts.month ORDER BY month_series.month";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
+            PreparedStatement getEventsYearlyReportForYearPstmt = conn.prepareStatement(getEventsYearlyReportForYearSql)) {
 
       try {
 
@@ -704,7 +764,7 @@ public class EventServiceImpl implements EventService {
     final String getEventSlotSql = "SELECT s.slot_id, s.event_position_id, s.start_time, s.end_time, s.user_cid, u.first_name AS user_first_name, u.last_name AS user_last_name, s.is_approved FROM slots s LEFT JOIN users u ON s.user_cid = u.cid WHERE s.slot_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement getEventSlotPstmt = conn.prepareStatement(getEventSlotSql)) {
+            PreparedStatement getEventSlotPstmt = conn.prepareStatement(getEventSlotSql)) {
 
       try {
 
@@ -768,7 +828,7 @@ public class EventServiceImpl implements EventService {
     final String hasUserAlreadyAppliedForSlotSql = "SELECT EXISTS (SELECT 1 FROM user_event_applications WHERE user_cid = ? AND slot_id = ?)";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement hasUserAlreadyAppliedForSlotPstmt = conn.prepareStatement(hasUserAlreadyAppliedForSlotSql)) {
+            PreparedStatement hasUserAlreadyAppliedForSlotPstmt = conn.prepareStatement(hasUserAlreadyAppliedForSlotSql)) {
 
       try {
 
@@ -810,7 +870,7 @@ public class EventServiceImpl implements EventService {
     }
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement applyUserForEventSlotPstmt = conn.prepareStatement(applyUserForEventSlotSql)) {
+            PreparedStatement applyUserForEventSlotPstmt = conn.prepareStatement(applyUserForEventSlotSql)) {
 
       try {
 
@@ -852,10 +912,10 @@ public class EventServiceImpl implements EventService {
     final String setUserForSlotSql = "UPDATE slots SET user_cid = ?, is_approved = true WHERE slot_id = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
-         PreparedStatement approveSlotApplicationPstmt = conn.prepareStatement(approveSlotApplicationSql);
-         PreparedStatement getApprovedUserCidPstmt = conn.prepareStatement(getApprovedUserCidSql);
-         PreparedStatement setApplicationIdsAsStatusRejectedPstmt = conn.prepareStatement(setApplicationIdsAsStatusRejectedSql);
-         PreparedStatement setUserForSlotPstmt = conn.prepareStatement(setUserForSlotSql)) {
+            PreparedStatement approveSlotApplicationPstmt = conn.prepareStatement(approveSlotApplicationSql);
+            PreparedStatement getApprovedUserCidPstmt = conn.prepareStatement(getApprovedUserCidSql);
+            PreparedStatement setApplicationIdsAsStatusRejectedPstmt = conn.prepareStatement(setApplicationIdsAsStatusRejectedSql);
+            PreparedStatement setUserForSlotPstmt = conn.prepareStatement(setUserForSlotSql)) {
 
       try {
 

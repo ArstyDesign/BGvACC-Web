@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.*;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -39,6 +40,7 @@ public class EventResponse implements Serializable {
   private Timestamp endAtTimestamp;
   private Timestamp createdAt;
   private Timestamp updatedAt;
+  private List<EventIcao> icaos;
 
   public boolean isPast() {
 

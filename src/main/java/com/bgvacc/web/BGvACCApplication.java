@@ -5,6 +5,7 @@ import com.bgvacc.web.api.CoreApi;
 import com.bgvacc.web.api.EventApi;
 import com.bgvacc.web.api.MetarApi;
 import com.bgvacc.web.api.discord.DiscordNotifyApi;
+import com.bgvacc.web.api.statsim.IcaoDepartures;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.beans.SlotsGenerator;
 import com.bgvacc.web.beans.Version;
@@ -69,6 +70,11 @@ public class BGvACCApplication {
   @Bean
   public VatEudCoreApi vatEudCoreApi() {
     return new VatEudCoreApi();
+  }
+  
+  @Bean
+  public IcaoDepartures icaoDepartures() {
+    return new IcaoDepartures();
   }
 
   @Bean

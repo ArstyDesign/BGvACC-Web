@@ -5,18 +5,127 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/portalTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{app.portal.title(${pageTitle})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div th:replace="fragments/notify :: #notify"></div>
 
-      <!--      <div class="row">
-              <div class="col-12 mb-3">
-                <div th:text="${user}"></div>
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header d-flex">
+              <div class="h5 mb-0" th:text="#{portal.users.user.roles}">Roles</div>
+              <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
+                <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
+                   class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.roles.add}">Add a user role</a>
               </div>
-            </div>-->
+              <a href="#" data-bs-toggle="modal" data-bs-target="#addUserRoleModal" th:if="${user.cid ne session.loggedUser.cid}"
+                 class="btn btn-primary btn-sm ms-auto" th:text="#{portal.users.user.roles.add}">Add a user role</a>
+            </div>
+            <div class="card-body">
+              <div class="table-nowrap">
+                <div class="table-responsive table-card table-nowrap">
+                  <table class="table align-middle table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th th:text="#{portal.users.user.roles.role}">Number</th>
+                        <th th:text="#{portal.users.user.roles.description}">Description</th>
+                        <th class="text-end" th:text="#{portal.users.user.roles.actions}">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="r, iterStat : ${user.roles}">
+                        <td>
+                          <span class="badge bg-secondary" th:text="${r}"></span>
+                        </td>
+                        <td th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(r)} + '.desc'}">Description</td>
+                        <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                          <div class="d-flex justify-content-end align-items-center">
+                            <div th:if="${r.roleName eq 'USER'}">-</div>
+                            <form th:action="@{/portal/users/} + ${cid} + '/roles/delete'" method="post" th:if="${r.roleName ne 'USER'}">
+                              <input type="hidden" name="role" th:value="${r}"/>
+                              <a href="#" th:data-tippy-content="#{portal.users.user.roles.deleterole}"
+                                 onclick="this.closest('form').submit(); return false;"
+                                 data-bs-toggle="modal" data-bs-target="#deleteUserRoleModal">
+                                <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
+                              </a>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-header d-flex">
+              <div class="h5 mb-0" th:text="#{portal.users.user.authorizedpositions.authorizedpositions}">ATC authorized positions</div>
+              <!--              <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
+                              <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
+                                 class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</a>
+                            </div>-->
+              <a href="#" data-bs-toggle="modal" data-bs-target="#removeAllATCPositionModal" th:if="${#lists.size(userATCAuthorizedPositions) gt 1}"
+                 class="btn btn-danger btn-sm ms-auto me-2">
+                <i data-lucide="trash-2"></i>
+                <span th:text="#{portal.users.user.authorizedpositions.deleteallpositions}">Remove all authorized positions</span>
+              </a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#addATCPositionModal" th:if="${!#lists.isEmpty(unauthorizedPositions)}"
+                 class="btn btn-primary btn-sm" th:classappend="${!#lists.isEmpty(unauthorizedPositions) and #lists.size(userATCAuthorizedPositions) lt 2} ? 'ms-auto'">
+                <i data-lucide="plus"></i>
+                <span th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</span>
+              </a>
+            </div>
+            <div class="card-body">
+              <div th:if="${#lists.isEmpty(userATCAuthorizedPositions)}" class="h6 fst-italic mb-0" th:text="#{portal.users.user.authorizedpositions.notfound}">No authorized ATC positions</div>
+              <table class="table align-middle table-hover mb-0" th:if="${!#lists.isEmpty(userATCAuthorizedPositions)}">
+                <thead>
+                  <tr>
+                    <th th:text="#{portal.users.user.authorizedpositions.position}">Position</th>
+                    <th th:text="#{portal.users.user.authorizedpositions.createdon}">Created on</th>
+                    <th th:text="#{portal.users.user.authorizedpositions.expireson}">Expires on</th>
+                    <th class="text-end" th:text="#{portal.users.user.authorizedpositions.actions}">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="uaap, iterStat : ${userATCAuthorizedPositions}">
+                    <td>
+                      <span class="" th:text="#{positions. + ${#strings.toLowerCase(uaap.position)}}"></span>
+                    </td>
+                    <td>
+                      <span class="" th:text="${#dates.format(uaap.createdOn, 'dd.MM.yyyy, HH:mm')}"></span>
+                    </td>
+                    <td>
+                      <span class="" th:if="${uaap.expiresOn ne null}" th:text="${#dates.format(uaap.expiresOn, 'dd.MM.yyyy, HH:mm')}"></span>
+                      <span class="" th:if="${uaap.expiresOn eq null}" th:text="'-'"></span>
+                    </td>
+                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
+                      <div class="d-flex justify-content-end align-items-center">
+                        <form th:action="@{/portal/users/} + ${cid} + '/position/delete'" method="post">
+                          <input type="hidden" name="position" th:value="${uaap.position}"/>
+                          <a href="#" th:data-tippy-content="#{portal.users.user.authorizedpositions.deleteposition}"
+                             onclick="this.closest('form').submit(); return false;"
+                             data-bs-toggle="modal" data-bs-target="#deleteUserRoleModal">
+                            <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
+                          </a>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="row" th:if="${controllerOnlineSessions ne null and !#lists.isEmpty(controllerOnlineSessions)}">
         <div class="col-12 mb-3">
@@ -99,121 +208,6 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-12 mb-3">
-          <div class="card">
-            <div class="card-header d-flex">
-              <div class="h5 mb-0" th:text="#{portal.users.user.authorizedpositions.authorizedpositions}">ATC authorized positions</div>
-              <!--              <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
-                              <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
-                                 class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</a>
-                            </div>-->
-              <a href="#" data-bs-toggle="modal" data-bs-target="#removeAllATCPositionModal" th:if="${#lists.size(userATCAuthorizedPositions) gt 1}"
-                 class="btn btn-danger btn-sm ms-auto me-2">
-                <i data-lucide="trash-2"></i>
-                <span th:text="#{portal.users.user.authorizedpositions.deleteallpositions}">Remove all authorized positions</span>
-              </a>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#addATCPositionModal" th:if="${!#lists.isEmpty(unauthorizedPositions)}"
-                 class="btn btn-primary btn-sm" th:classappend="${!#lists.isEmpty(unauthorizedPositions) and #lists.size(userATCAuthorizedPositions) lt 2} ? 'ms-auto'">
-                <i data-lucide="plus"></i>
-                <span th:text="#{portal.users.user.authorizedpositions.add}">Add an authorized position</span>
-              </a>
-            </div>
-            <div class="card-body">
-              <div th:if="${#lists.isEmpty(userATCAuthorizedPositions)}" class="h6 fst-italic mb-0" th:text="#{portal.users.user.authorizedpositions.notfound}">No authorized ATC positions</div>
-              <table class="table align-middle table-hover mb-0" th:if="${!#lists.isEmpty(userATCAuthorizedPositions)}">
-                <thead>
-                  <tr>
-                    <th th:text="#{portal.users.user.authorizedpositions.position}">Position</th>
-                    <th th:text="#{portal.users.user.authorizedpositions.createdon}">Created on</th>
-                    <th th:text="#{portal.users.user.authorizedpositions.expireson}">Expires on</th>
-                    <th class="text-end" th:text="#{portal.users.user.authorizedpositions.actions}">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="uaap, iterStat : ${userATCAuthorizedPositions}">
-                    <td>
-                      <span class="" th:text="#{positions. + ${#strings.toLowerCase(uaap.position)}}"></span>
-                    </td>
-                    <td>
-                      <span class="" th:text="${#dates.format(uaap.createdOn, 'dd.MM.yyyy, HH:mm')}"></span>
-                    </td>
-                    <td>
-                      <span class="" th:if="${uaap.expiresOn ne null}" th:text="${#dates.format(uaap.expiresOn, 'dd.MM.yyyy, HH:mm')}"></span>
-                      <span class="" th:if="${uaap.expiresOn eq null}" th:text="'-'"></span>
-                    </td>
-                    <td th:classappend="${isMe} ? 'bg-success-subtle'">
-                      <div class="d-flex justify-content-end align-items-center">
-                        <form th:action="@{/portal/users/} + ${cid} + '/position/delete'" method="post">
-                          <input type="hidden" name="position" th:value="${uaap.position}"/>
-                          <a href="#" th:data-tippy-content="#{portal.users.user.authorizedpositions.deleteposition}"
-                             onclick="this.closest('form').submit(); return false;"
-                             data-bs-toggle="modal" data-bs-target="#deleteUserRoleModal">
-                            <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
-                          </a>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 mb-3">
-          <div class="card">
-            <div class="card-header d-flex">
-              <div class="h5 mb-0" th:text="#{portal.users.user.roles}">Roles</div>
-              <div class="ms-auto" th:data-tippy-content="#{portal.users.user.roles.add.disabled.own}">
-                <a href="#" th:if="${user.cid eq session.loggedUser.cid}"
-                   class="btn btn-primary btn-sm disabled" th:text="#{portal.users.user.roles.add}">Add a user role</a>
-              </div>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#addUserRoleModal" th:if="${user.cid ne session.loggedUser.cid}"
-                 class="btn btn-primary btn-sm ms-auto" th:text="#{portal.users.user.roles.add}">Add a user role</a>
-            </div>
-            <div class="card-body">
-              <div class="table-nowrap">
-                <div class="table-responsive table-card table-nowrap">
-                  <table class="table align-middle table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th th:text="#{portal.users.user.roles.role}">Number</th>
-                        <th th:text="#{portal.users.user.roles.description}">Description</th>
-                        <th class="text-end" th:text="#{portal.users.user.roles.actions}">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr th:each="r, iterStat : ${user.roles}">
-                        <td>
-                          <span class="badge bg-secondary" th:text="${r}"></span>
-                        </td>
-                        <td th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(r)} + '.desc'}">Description</td>
-                        <td th:classappend="${isMe} ? 'bg-success-subtle'">
-                          <div class="d-flex justify-content-end align-items-center">
-                            <div th:if="${r.roleName eq 'USER'}">-</div>
-                            <form th:action="@{/portal/users/} + ${cid} + '/roles/delete'" method="post" th:if="${r.roleName ne 'USER'}">
-                              <input type="hidden" name="role" th:value="${r}"/>
-                              <a href="#" th:data-tippy-content="#{portal.users.user.roles.deleterole}"
-                                 onclick="this.closest('form').submit(); return false;"
-                                 data-bs-toggle="modal" data-bs-target="#deleteUserRoleModal">
-                                <span class="material-symbols-rounded align-middle fs-5 text-body">delete</span>
-                              </a>
-                            </form>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="modal fade" id="addUserRoleModal" tabindex="-1" aria-labelledby="addUserRoleModalLabel" style="display: none;" aria-hidden="true">
         <form th:action="@{/portal/users/} + ${cid} + '/roles/add'" method="post">
           <div class="modal-dialog modal-lg">
@@ -225,7 +219,26 @@
               <div class="modal-body">
                 <label class="form-label required" th:text="#{portal.users.user.roles.add.role}">Role</label>
                 <select class="form-control mb-3" name="role">
-                  <option th:each="ur : ${unassignedRoles}" th:value="${ur}" th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  <optgroup th:label="#{portal.users.user.roles.add.roles.group.system}">
+                    <option th:each="ur : ${unassignedRoles}" th:if="${ur.roleName.contains('SYS')}"
+                            th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  </optgroup>
+                  <optgroup th:label="#{portal.users.user.roles.add.roles.group.staff}">
+                    <option th:each="ur : ${unassignedRoles}" th:if="${ur.roleName.contains('STAFF')}"
+                            th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  </optgroup>
+                  <optgroup th:label="#{portal.users.user.roles.add.roles.group.atc}">
+                    <option th:each="ur : ${unassignedRoles}" th:if="${ur.roleName.contains('ATC')}"
+                            th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  </optgroup>
+                  <optgroup th:label="#{portal.users.user.roles.add.roles.group.examiners}">
+                    <option th:each="ur : ${unassignedRoles}" th:if="${ur.roleName.contains('EXAM')}"
+                            th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  </optgroup>
+                  <optgroup th:label="#{portal.users.user.roles.add.roles.group.others}">
+                    <option th:each="ur : ${unassignedRoles}" th:if="${!ur.roleName.contains('SYS') and !ur.roleName.contains('STAFF') and !ur.roleName.contains('ATC') and !ur.roleName.contains('EXAM')}"
+                            th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                  </optgroup>
                 </select>
               </div>
               <div class="modal-footer">

@@ -636,9 +636,9 @@ public class UserServiceImpl implements UserService {
             }
           }
           
-//          conn.commit();
-//          
-//          return true;
+          conn.commit();
+          
+          return true;
 
         } else {
           log.error("Error adding user role for user with CID '" + cid + "' and role '" + role + "'");
@@ -663,6 +663,7 @@ public class UserServiceImpl implements UserService {
   public boolean removeUserRole(String cid, String role) {
 
     final String removeUserRoleSql = "DELETE FROM user_roles WHERE cid = ? AND rolename = ?";
+    final String checkIfRoleIsATCRole = "SELECT * FROM user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
             PreparedStatement removeUserRolePstmt = conn.prepareStatement(removeUserRoleSql)) {

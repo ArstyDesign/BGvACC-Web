@@ -210,6 +210,7 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
             Timestamp loggedAt = TimeUtils.getNowTimeUTC();
 
             openNewControllerSessionPstmt.setTimestamp(5, loggedAt);
+//            openNewControllerSessionPstmt.setLong(6, onlineAtc.getId());
 
             boolean result = openNewControllerSessionPstmt.executeUpdate() > 0;
 

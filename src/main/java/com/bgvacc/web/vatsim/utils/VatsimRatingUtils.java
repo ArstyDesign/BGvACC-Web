@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class VatsimRatingUtils {
-
+  
   public static Integer getUserRoleToNumber(String rating) {
 
     if (rating == null) {
