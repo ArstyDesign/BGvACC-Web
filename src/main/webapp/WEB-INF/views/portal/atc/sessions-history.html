@@ -19,12 +19,13 @@
       <div class="row" th:if="${!#lists.isEmpty(controllerSessions.items)}">
         <div class="col-12 mb-3">
           <div class="card">
-            <!--            <div class="card-header" th:with="controllerSessionsCount=${#lists.size(controllerSessions)}">
-                          <div class="h4 mb-0" th:text="#{portal.atc.sessionshistory.controllersessions}">Controller's sessions</div>
-                          <div class="text-muted" th:if="${controllerSessionsCount eq 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.1}">1 session found</div>
-                          <div class="text-muted" th:if="${controllerSessionsCount gt 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.n(${#numbers.formatInteger(controllerSessionsCount, 0, 'WHITESPACE')})}">10 sessions found</div>
-                        </div>-->
+            <div class="card-header" th:with="controllerSessionsCount=${#lists.size(controllerSessions)}">
+              <div class="h4 mb-0" th:text="#{portal.atc.sessionshistory.controllersessions}">Controller's sessions</div>
+              <!--<div class="text-muted" th:if="${controllerSessionsCount eq 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.1}">1 session found</div>-->
+              <!--<div class="text-muted" th:if="${controllerSessionsCount gt 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.n(${#numbers.formatInteger(controllerSessionsCount, 0, 'WHITESPACE')})}">10 sessions found</div>-->
+            </div>
             <div class="card-body">
+              <!--<div th:text="${controllerSessions}"></div>-->
               <table class="table table-hover table-striped mb-5">
                 <thead>
                   <tr>
@@ -38,9 +39,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="cs, iterStat : ${controllerSessions.items}">
-                    <!--<td th:text="${iterStat.count}">No.</td>-->
-                    <td th:text="${cs.position}"></td>
+                  <tr th:each="cs, iterStat : ${controllerSessions.items}" th:with="positionMessage='positions.' + ${#strings.toLowerCase(cs.position)}">
+                    <td th:if="${#messages.msgOrNull(positionMessage) ne null}" th:text="#{positions. + ${#strings.toLowerCase(cs.position)}}">Not null</td>
+                    <td th:if="${#messages.msgOrNull(positionMessage) eq null}" th:text="${cs.position}">Null</td>
                     <td th:text="#{members.member.atc. + ${#strings.toLowerCase(cs.atcRatingSymbol)}}"></td>
                     <td th:text="${cs.server}"></td>
                     <td th:text="${#dates.format(cs.sessionStarted, 'dd.MM.yyyy, HH:mm')}"></td>

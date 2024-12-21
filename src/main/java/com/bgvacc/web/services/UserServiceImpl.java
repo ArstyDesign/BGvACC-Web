@@ -4,6 +4,8 @@ import com.aarshinkov.random.Randomy;
 import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
+import com.bgvacc.web.responses.paging.PaginationResponse;
+import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.*;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.utils.VatsimRatingUtils;
@@ -34,7 +36,99 @@ public class UserServiceImpl implements UserService {
   private final Randomy randomy;
 
   @Override
-  public List<UserResponse> getUsers() {
+  public PaginationResponse<UserResponse> getUsers(int page, int limit) {
+
+    if (page < 1) {
+      page = 1;
+    }
+
+    if (limit < 1 && limit != -1) {
+      limit = -1;
+    }
+    
+    log.debug("page: " + page);
+    log.debug("limit: " + limit);
+
+    String getUsersSql = "SELECT * FROM users ORDER BY created_on DESC" + (limit != -1 ? " LIMIT ? OFFSET ?" : "");
+    final String getUsersTotalSql = "SELECT COUNT(1) FROM users";
+    final String getUserRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getUsersTotalPstmt = conn.prepareStatement(getUsersTotalSql);
+            PreparedStatement getUsersPstmt = conn.prepareStatement(getUsersSql);
+            PreparedStatement getUserRolesPstmt = conn.prepareStatement(getUserRolesSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+//        getUsersTotalPstmt.setString(1, cid);
+        ResultSet getControllerSessionsTotalRset = getUsersTotalPstmt.executeQuery();
+
+        int totalItems = 0;
+
+        if (getControllerSessionsTotalRset.next()) {
+          totalItems = getControllerSessionsTotalRset.getInt(1);
+        }
+
+        int totalPages = (int) Math.ceil((double) totalItems / (limit == -1 ? totalItems : limit));
+
+        if (page > totalPages) {
+          throw new IllegalArgumentException("Current page exceeds total pages");
+        }
+
+        int offset = (page - 1) * limit;
+
+//        getUsersPstmt.setString(1, cid);
+        if (limit > 0) {
+          getUsersPstmt.setInt(1, limit);
+          getUsersPstmt.setInt(2, offset);
+        }
+
+        ResultSet getUsersRset = getUsersPstmt.executeQuery();
+
+        List<UserResponse> users = new ArrayList<>();
+
+        while (getUsersRset.next()) {
+
+          UserResponse user = getUserResponseFromResultSet(getUsersRset);
+
+          getUserRolesPstmt.setString(1, user.getCid());
+
+//          if (search != null && search.getRole() != null && !search.getRole().trim().isEmpty()) {
+//            userRolesPstmt.setString(2, search.getRole().trim());
+//          }
+          ResultSet userRolesRset = getUserRolesPstmt.executeQuery();
+
+          List<RoleResponse> roles = new ArrayList<>();
+
+          while (userRolesRset.next()) {
+            RoleResponse role = new RoleResponse(userRolesRset.getString("rolename"));
+            roles.add(role);
+          }
+
+          user.setRoles(roles);
+
+          users.add(user);
+        }
+
+        return new PaginationResponse<>(users, page, totalPages);
+
+      } catch (SQLException ex) {
+        log.error("Error getting users", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error gettig users", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public List<UserResponse> getAllUsers() {
 
     final String usersSql = "SELECT * FROM users ORDER BY created_on DESC";
     final String userRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
@@ -635,9 +729,9 @@ public class UserServiceImpl implements UserService {
               }
             }
           }
-          
+
           conn.commit();
-          
+
           return true;
 
         } else {

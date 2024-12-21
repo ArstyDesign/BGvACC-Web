@@ -62,7 +62,9 @@ public class PortalATCController extends Base {
   }
 
   @GetMapping("/portal/atc/sessions-history")
-  public String getATCControlHistory(@RequestParam(value = "page", required = false, defaultValue = "1") int page, @RequestParam(name = "limit", required = false, defaultValue = "20") int limit, Model model, HttpServletRequest request) {
+  public String getATCControlHistory(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                     @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+                                     Model model, HttpServletRequest request) {
 
     if (page <= 0) {
 
@@ -86,8 +88,6 @@ public class PortalATCController extends Base {
 
       return "redirect:/portal/atc/sessions-history?" + redirectParams;
     }
-    log.debug("page: " + page);
-    log.debug("limit: " + limit);
 
     PaginationResponse<ControllerOnlineLogResponse> controllerSessions = controllerOnlineLogService.getControllerSessions(page, limit, getLoggedUserCid(request));
     model.addAttribute("limit", limit);

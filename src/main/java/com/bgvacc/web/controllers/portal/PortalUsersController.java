@@ -5,6 +5,7 @@ import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
+import com.bgvacc.web.responses.paging.PaginationResponse;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.*;
 import com.bgvacc.web.responses.users.atc.PositionResponse;
@@ -52,23 +53,51 @@ public class PortalUsersController extends Base {
 
   private final MailService mailService;
 
-  @GetMapping("/portal/users")
-  public String getUsers(@ModelAttribute("search") UserSearchModel search, Model model, HttpServletRequest request) {
+  private final int DEFAULT_PAGE_LIMIT = 10;
 
-    List<UserResponse> users = userService.searchUsers(search);
+  @GetMapping("/portal/users")
+  public String getUsers(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+                         Model model, HttpServletRequest request) {
+
+    if (page <= 0) {
+
+      String redirectParams = "page=1";
+
+      if (limit <= 0) {
+        redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
+      }
+      return "redirect:/portal/users?" + redirectParams;
+    }
+
+    if (limit <= 0) {
+
+      String redirectParams = "";
+
+      if (page <= 0) {
+        redirectParams = "page=1";
+      }
+
+      redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
+
+      return "redirect:/portal/users?" + redirectParams;
+    }
+    
+    model.addAttribute("limit", limit);
+
+    PaginationResponse<UserResponse> users = userService.getUsers(page, limit);
 
     List<SavedSearchUser> userSavedUserSearches = userService.getUserSavedUserSearches(getLoggedUserCid(request));
 
-    if (userSavedUserSearches != null && !userSavedUserSearches.isEmpty()) {
+//    if (userSavedUserSearches != null && !userSavedUserSearches.isEmpty()) {
       for (SavedSearchUser usus : userSavedUserSearches) {
-        for (UserResponse user : users) {
+        for (UserResponse user : users.getItems()) {
           if (usus.getCid().equals(user.getCid())) {
             user.setIsSavedSearch(true);
           }
         }
       }
-    }
-
+//    }
     model.addAttribute("users", users);
 
     model.addAttribute("allRoles", userService.getAllUserRoles());

@@ -3,6 +3,7 @@ package com.bgvacc.web.services;
 import com.bgvacc.web.enums.UserRoles;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
+import com.bgvacc.web.responses.paging.PaginationResponse;
 import com.bgvacc.web.responses.users.*;
 import java.util.List;
 
@@ -12,8 +13,10 @@ import java.util.List;
  * @since 1.0.0
  */
 public interface UserService {
+  
+  PaginationResponse<UserResponse> getUsers(int page, int limit);
 
-  List<UserResponse> getUsers();
+  List<UserResponse> getAllUsers();
 
   List<UserResponse> searchUsers(UserSearchModel search);
 

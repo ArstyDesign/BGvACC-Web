@@ -43,7 +43,7 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
       limit = -1;
     }
 
-    String getControllerSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NOT NULL ORDER BY session_started DESC LIMIT ? OFFSET ?";
+    String getControllerSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NOT NULL ORDER BY session_started DESC" + (limit != -1 ? " LIMIT ? OFFSET ?" : "");
     String getControllerSessionsTotalSql = "SELECT COUNT(1) FROM controllers_online_log WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
@@ -64,7 +64,7 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
           totalItems = getControllerSessionsTotalRset.getInt(1);
         }
 
-        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int totalPages = (int) Math.ceil((double) totalItems / (limit == -1 ? totalItems : limit));
 
         if (page > totalPages) {
           throw new IllegalArgumentException("Current page exceeds total pages");
@@ -73,8 +73,11 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
         int offset = (page - 1) * limit;
 
         getControllerSessionsPstmt.setString(1, cid);
-        getControllerSessionsPstmt.setInt(2, limit);
-        getControllerSessionsPstmt.setInt(3, offset);
+
+        if (limit > 0) {
+          getControllerSessionsPstmt.setInt(2, limit);
+          getControllerSessionsPstmt.setInt(3, offset);
+        }
 
         ResultSet getNotCompletedControllerSessionsRset = getControllerSessionsPstmt.executeQuery();
 
