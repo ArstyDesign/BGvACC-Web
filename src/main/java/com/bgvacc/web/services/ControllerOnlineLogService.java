@@ -16,6 +16,8 @@ public interface ControllerOnlineLogService {
   List<ControllerOnlineLogResponse> getControllerOnlineSessions(String cid, int numberOfConnections);
 
   List<NotCompletedControllerSession> getNotCompletedControllerSessions();
+  
+  List<ControllerOnlineLogResponse> getControllerSessions(String cid, int numberOfConnections);
 
   NewlyOpenedControllerSession openNewControllerSession(VatsimATC onlineAtc);
 

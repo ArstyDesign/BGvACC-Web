@@ -287,3 +287,16 @@ CREATE TRIGGER trg_enforce_single_atc_role
 BEFORE INSERT ON user_roles
 FOR EACH ROW
 EXECUTE FUNCTION enforce_single_atc_role();
+
+CREATE OR REPLACE VIEW get_users_event_applications
+AS
+SELECT uea.application_id AS uea_application_id, uea.user_cid AS uea_user_cid, u.first_name AS u_first_name, u.last_name AS u_last_name,
+ep.position_id AS ep_position_id, uea.status AS uea_status, uea.applied_at AS uea_applied_at, uea.is_added_by_staff AS uea_is_added_by_staff,
+uea.added_by_staff_cid AS uea_added_by_staff_cid, ua.first_name AS ua_first_name, ua.last_name AS ua_last_name,
+e.event_id AS e_event_id, e.name AS e_name, e.type AS e_type, e.image_url AS e_image_url, e.start_at AS e_start_at, e.end_at AS e_end_at, e.created_at AS e_created_at
+FROM user_event_applications uea
+JOIN users u ON uea.user_cid = u.cid
+JOIN slots s ON uea.slot_id = s.slot_id
+JOIN event_positions ep ON s.event_position_id = ep.event_position_id
+JOIN events e ON ep.event_id = e.event_id
+LEFT JOIN users ua ON uea.added_by_staff_cid = ua.cid;

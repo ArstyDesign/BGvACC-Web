@@ -10,7 +10,47 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      
+      <div class="row" th:if="${#lists.isEmpty(ueas)}">
+        <div class="col-12">
+          <div class="h4 fst-italic" th:text="#{portal.atc.eventsparticipations.notfound}">No event participations found.</div>
+        </div>
+      </div>
+
+      <div class="row" th:if="${!#lists.isEmpty(ueas)}">
+        <div class="col-12 col-md-6 col-lg-3 mb-3" th:each="uea : ${ueas}">
+          <div class="card h-100">
+            <div class="card-header">
+              <div class="h4 mb-0" th:text="${uea.event.name}">Event name</div>
+              <div class="text-muted" th:text="${uea.event.startAt.getFormattedDateTime('dd.MM.yyyy, HH:mm')} + ' - ' + ${uea.event.endAt.getFormattedDateTime('HH:mm')}"></div>
+            </div>
+            <div class="card-body pt-0">
+
+              <div class="mb-3">
+                <a href="#" th:href="@{/events/} + ${uea.event.eventId}" target="_blank" class="text-reset">
+                  <img src="#" th:src="${uea.event.imageUrl}" alt="" class="img-fluid img-zoom position-relative"/>
+                </a>
+              </div>
+
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <dl class="mb-0">
+                    <dt>Position</dt>
+                    <dd class="mb-md-0" th:text="#{positions. + ${#strings.toLowerCase(uea.position)}}"></dd>
+                  </dl>
+                </div>
+                <div class="col-12 col-md-6 text-md-end">
+                  <dl class="mb-0">
+                    <dt>Slot</dt>
+                    <dd class="mb-md-0" th:text="${uea.slot.startTime.getFormattedDateTime('HH:mm')} + ' - ' + ${uea.slot.endTime.getFormattedDateTime('HH:mm')}"></dd>
+                  </dl>
+                </div>
+              </div>
+
+              <!--<div th:text="${uea}"></div>-->
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

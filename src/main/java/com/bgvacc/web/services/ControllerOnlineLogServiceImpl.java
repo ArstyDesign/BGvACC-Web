@@ -178,6 +178,57 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
 
     return new ArrayList<>();
   }
+  
+  @Override
+  public List<ControllerOnlineLogResponse> getControllerSessions(String cid, int numberOfConnections) {
+
+    String getControllerSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NOT NULL ORDER BY session_started DESC";
+
+    if (numberOfConnections > 0) {
+      getControllerSessionsSql += " LIMIT " + numberOfConnections;
+    }
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllerLastOnlineSessionsPstmt = conn.prepareStatement(getControllerSessionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getControllerLastOnlineSessionsPstmt.setString(1, cid);
+
+        ResultSet getNotCompletedControllerSessionsRset = getControllerLastOnlineSessionsPstmt.executeQuery();
+
+        List<ControllerOnlineLogResponse> controllerLastOnlineSessions = new ArrayList<>();
+
+        while (getNotCompletedControllerSessionsRset.next()) {
+
+          ControllerOnlineLogResponse colr = new ControllerOnlineLogResponse();
+          colr.setControllerOnlineId(getNotCompletedControllerSessionsRset.getString("controller_online_log_id"));
+          colr.setCid(getNotCompletedControllerSessionsRset.getString("cid"));
+          colr.setRating(getNotCompletedControllerSessionsRset.getInt("rating"));
+          colr.setServer(getNotCompletedControllerSessionsRset.getString("server"));
+          colr.setPosition(getNotCompletedControllerSessionsRset.getString("position"));
+          colr.setSessionStarted(getNotCompletedControllerSessionsRset.getTimestamp("session_started"));
+          colr.setSessionEnded(getNotCompletedControllerSessionsRset.getTimestamp("session_ended"));
+
+          controllerLastOnlineSessions.add(colr);
+        }
+
+        return controllerLastOnlineSessions;
+
+      } catch (SQLException ex) {
+        log.error("Error getting controller sessions", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting controller sessions", e);
+    }
+
+    return new ArrayList<>();
+  }
 
   @Override
   public NewlyOpenedControllerSession openNewControllerSession(VatsimATC onlineAtc) {

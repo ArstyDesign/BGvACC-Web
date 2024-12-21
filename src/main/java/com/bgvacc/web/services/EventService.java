@@ -2,7 +2,8 @@ package com.bgvacc.web.services;
 
 import com.bgvacc.web.responses.events.*;
 import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
-import com.bgvacc.web.responses.users.UserEventApplicationsResponse;
+import com.bgvacc.web.responses.users.UserEventApplicationResponse;
+import com.bgvacc.web.responses.users.UserEventApplicationsCountResponse;
 import com.bgvacc.web.vatsim.events.VatsimEventData;
 import java.util.List;
 
@@ -43,7 +44,9 @@ public interface EventService {
 
   Long getTotalUserEventApplications(String cid);
   
-  UserEventApplicationsResponse getUserEventApplications(String cid);
+  UserEventApplicationsCountResponse getUserEventApplicationsCount(String cid);
+  
+  List<UserEventApplicationResponse> getUserEventApplications(String cid);
 
   EventsYearlyReportResponse getEventsYearlyReportForYear(Integer year);
   

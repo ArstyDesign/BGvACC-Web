@@ -48,7 +48,7 @@ public class PortalController extends Base {
     model.addAttribute("member", member);
 
     model.addAttribute("totalATCSessionsCount", controllerOnlineLogService.getTotalATCSessionsForUser(loggedUserCid));
-    model.addAttribute("userEventApplications", eventService.getUserEventApplications(loggedUserCid));
+    model.addAttribute("userEventApplications", eventService.getUserEventApplicationsCount(loggedUserCid));
     model.addAttribute("staffCount", userService.getUsersCountByRoles(UserRoles.STAFF_DIRECTOR, UserRoles.STAFF_EVENTS, UserRoles.STAFF_TRAINING));
     model.addAttribute("usersCount", userService.getUsersCount());
 

@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserEventApplicationsResponse implements Serializable {
+public class UserEventApplicationsCountResponse implements Serializable {
 
   private Long totalUserEventApplications;
   private Long approvedEventApplications;
