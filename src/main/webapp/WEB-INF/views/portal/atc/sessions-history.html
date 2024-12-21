@@ -10,25 +10,25 @@
   <body>
     <div layout:fragment="contentDiv">
 
-      <div class="row" th:if="${#lists.isEmpty(controllerSessions)}">
+      <div class="row" th:if="${#lists.isEmpty(controllerSessions.items)}">
         <div class="col-12">
           <div class="h4 fst-italic" th:text="#{portal.atc.sessionshistory.notfound}">No controller sessions found.</div>
         </div>
       </div>
 
-      <div class="row" th:if="${!#lists.isEmpty(controllerSessions)}">
-        <div class="col-12">
+      <div class="row" th:if="${!#lists.isEmpty(controllerSessions.items)}">
+        <div class="col-12 mb-3">
           <div class="card">
-            <div class="card-header" th:with="controllerSessionsCount=${#lists.size(controllerSessions)}">
-              <div class="h4 mb-0" th:text="#{portal.atc.sessionshistory.controllersessions}">Controller's sessions</div>
-              <div class="text-muted" th:if="${controllerSessionsCount eq 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.1}">1 session found</div>
-              <div class="text-muted" th:if="${controllerSessionsCount gt 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.n(${#numbers.formatInteger(controllerSessionsCount, 0, 'WHITESPACE')})}">10 sessions found</div>
-            </div>
+            <!--            <div class="card-header" th:with="controllerSessionsCount=${#lists.size(controllerSessions)}">
+                          <div class="h4 mb-0" th:text="#{portal.atc.sessionshistory.controllersessions}">Controller's sessions</div>
+                          <div class="text-muted" th:if="${controllerSessionsCount eq 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.1}">1 session found</div>
+                          <div class="text-muted" th:if="${controllerSessionsCount gt 1}" th:text="#{portal.atc.sessionshistory.sessionsfound.n(${#numbers.formatInteger(controllerSessionsCount, 0, 'WHITESPACE')})}">10 sessions found</div>
+                        </div>-->
             <div class="card-body">
-              <table class="table table-hover table-striped mb-0">
+              <table class="table table-hover table-striped mb-5">
                 <thead>
                   <tr>
-                    <td class="fw-bold" th:text="#{portal.atc.sessionshistory.no}">No.</td>
+                    <!--<td class="fw-bold" th:text="#{portal.atc.sessionshistory.no}">No.</td>-->
                     <th class="fw-bold" th:text="#{portal.atc.sessionshistory.position}">Position</th>
                     <th class="fw-bold" th:text="#{portal.atc.sessionshistory.rating}">Rating</th>
                     <th class="fw-bold" th:text="#{portal.atc.sessionshistory.server}">Server</th>
@@ -38,8 +38,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="cs, iterStat : ${controllerSessions}">
-                    <td th:text="${iterStat.count}">No.</td>
+                  <tr th:each="cs, iterStat : ${controllerSessions.items}">
+                    <!--<td th:text="${iterStat.count}">No.</td>-->
                     <td th:text="${cs.position}"></td>
                     <td th:text="#{members.member.atc. + ${#strings.toLowerCase(cs.atcRatingSymbol)}}"></td>
                     <td th:text="${cs.server}"></td>
@@ -49,6 +49,8 @@
                   </tr>
                 </tbody>
               </table>
+
+              <div th:replace="fragments/paging :: #paging(baseLink=@{/portal/atc/sessions-history}, paginationResponse=${controllerSessions}, alignment='center')"></div>
             </div>
           </div>
         </div>

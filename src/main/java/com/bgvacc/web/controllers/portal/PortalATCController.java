@@ -1,6 +1,7 @@
 package com.bgvacc.web.controllers.portal;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.paging.PaginationResponse;
 import com.bgvacc.web.responses.sessions.ControllerOnlineLogResponse;
 import com.bgvacc.web.responses.users.UserEventApplicationResponse;
 import com.bgvacc.web.services.ControllerOnlineLogService;
@@ -36,6 +37,8 @@ public class PortalATCController extends Base {
 
   private final ControllerOnlineLogService controllerOnlineLogService;
 
+  private final int DEFAULT_PAGE_LIMIT = 20;
+
   @GetMapping("/portal/atc/events-participations")
   public String getATCEventParticipations(Model model, HttpServletRequest request) {
 
@@ -59,9 +62,35 @@ public class PortalATCController extends Base {
   }
 
   @GetMapping("/portal/atc/sessions-history")
-  public String getATCControlHistory(@RequestParam(name = "limit", defaultValue = "-1", required = false) Integer limit, Model model, HttpServletRequest request) {
+  public String getATCControlHistory(@RequestParam(value = "page", required = false, defaultValue = "1") int page, @RequestParam(name = "limit", required = false, defaultValue = "20") int limit, Model model, HttpServletRequest request) {
 
-    List<ControllerOnlineLogResponse> controllerSessions = controllerOnlineLogService.getControllerSessions(getLoggedUserCid(request), limit);
+    if (page <= 0) {
+
+      String redirectParams = "page=1";
+
+      if (limit <= 0) {
+        redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
+      }
+      return "redirect:/portal/atc/sessions-history?" + redirectParams;
+    }
+
+    if (limit <= 0) {
+
+      String redirectParams = "";
+
+      if (page <= 0) {
+        redirectParams = "page=1";
+      }
+
+      redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
+
+      return "redirect:/portal/atc/sessions-history?" + redirectParams;
+    }
+    log.debug("page: " + page);
+    log.debug("limit: " + limit);
+
+    PaginationResponse<ControllerOnlineLogResponse> controllerSessions = controllerOnlineLogService.getControllerSessions(page, limit, getLoggedUserCid(request));
+    model.addAttribute("limit", limit);
 
     model.addAttribute("controllerSessions", controllerSessions);
 

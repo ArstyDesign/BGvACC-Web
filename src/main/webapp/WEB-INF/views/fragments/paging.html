@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div id="paging" th:remove="tag">
+      <nav aria-label="Page navigation example" class="d-flex" th:classappend="${alignment ne null} ? ('justify-content-' + ${alignment}) : 'justify-content-start'">
+        <ul class="pagination mb-3">
+
+          <!-- First Page Button -->
+          <li class="page-item" 
+              th:if="${paginationResponse.currentPage > 2}" 
+              th:classappend="${paginationResponse.currentPage == 1} ? 'disabled'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=1&limit=' + limit}" 
+               aria-label="First">
+              <!--<span aria-hidden="true">«</span>-->
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+
+          <!-- Previous Button -->
+          <!--          <li class="page-item" th:classappend="${paginationResponse.isFirst} ? 'disabled'">
+                      <a class="page-link" 
+                         th:href="${baseLink + '?page=' + (paginationResponse.currentPage - 1) + '&limit=' + limit}" 
+                         aria-label="Previous">
+                        <i class="bi bi-chevron-left"></i>
+                      </a>
+                    </li>-->
+
+          <!-- Page Numbers -->
+          <li class="page-item"
+              th:each="pageNumber : ${#numbers.sequence(
+              paginationResponse.currentPage == 1 
+              ? 1 
+              : (paginationResponse.currentPage == paginationResponse.totalPages && paginationResponse.totalPages > 2 
+              ? paginationResponse.totalPages - 2 
+              : paginationResponse.currentPage - 1),
+              paginationResponse.currentPage == 1 
+              ? (paginationResponse.totalPages > 2 ? 3 : paginationResponse.totalPages) 
+              : (paginationResponse.currentPage == paginationResponse.totalPages && paginationResponse.totalPages > 2 
+              ? paginationResponse.totalPages 
+              : paginationResponse.currentPage + 1))}"
+              th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" 
+               th:text="${pageNumber}">1</a>
+          </li>
+
+          <!-- Next Button -->
+          <!--          <li class="page-item" th:classappend="${paginationResponse.isLast} ? 'disabled'">
+                      <a class="page-link" 
+                         th:href="${baseLink + '?page=' + (paginationResponse.currentPage + 1) + '&limit=' + limit}" 
+                         aria-label="Next">
+                        <i class="bi bi-chevron-right"></i>
+                      </a>
+                    </li>-->
+
+          <!-- Last Page Button -->
+          <li class="page-item" 
+              th:if="${paginationResponse.currentPage < paginationResponse.totalPages - 1}" 
+              th:classappend="${paginationResponse.currentPage == paginationResponse.totalPages} ? 'disabled'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=' + paginationResponse.totalPages + '&limit=' + limit}" 
+               aria-label="Last">
+              <!--<span aria-hidden="true">»</span>-->
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div id="paging2" th:remove="tag">
+      <nav aria-label="Page navigation example" class="d-flex justify-content-end">
+        <ul class="pagination mb-0">
+
+          <!-- Previous Button -->
+          <li class="page-item" th:classappend="${paginationResponse.isFirst} ? 'disabled'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=' + (paginationResponse.currentPage - 1) + '&limit=' + limit}" 
+               aria-label="Previous">
+              <span aria-hidden="true">«</span>
+            </a>
+          </li>
+
+          <!-- Page Numbers -->
+          <li class="page-item"
+              th:each="pageNumber : ${#numbers.sequence(
+              paginationResponse.currentPage > 1 ? paginationResponse.currentPage - 1 : 1,
+              paginationResponse.currentPage < paginationResponse.totalPages - 1 
+              ? paginationResponse.currentPage + 1 
+              : paginationResponse.totalPages)}"
+              th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" 
+               th:text="${pageNumber}">1</a>
+          </li>
+
+          <!-- Next Button -->
+          <li class="page-item" th:classappend="${paginationResponse.isLast} ? 'disabled'">
+            <a class="page-link" 
+               th:href="${baseLink + '?page=' + (paginationResponse.currentPage + 1) + '&limit=' + limit}" 
+               aria-label="Next">
+              <span aria-hidden="true">»</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>

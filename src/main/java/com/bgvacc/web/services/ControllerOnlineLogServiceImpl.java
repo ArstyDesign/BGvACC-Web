@@ -2,6 +2,7 @@ package com.bgvacc.web.services;
 
 import com.aarshinkov.datetimecalculator.utils.TimeUtils;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
+import com.bgvacc.web.responses.paging.PaginationResponse;
 import com.bgvacc.web.responses.sessions.*;
 import static com.bgvacc.web.utils.ControllerPositionUtils.getPositionFrequency;
 import com.bgvacc.web.utils.Names;
@@ -30,6 +31,83 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   private final JdbcTemplate jdbcTemplate;
 
   private final VatEudCoreApi vatEudCoreApi;
+
+  @Override
+  public PaginationResponse<ControllerOnlineLogResponse> getControllerSessions(int page, int limit, String cid) {
+
+    if (page < 1) {
+      page = 1;
+    }
+
+    if (limit < 1 && limit != -1) {
+      limit = -1;
+    }
+
+    String getControllerSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NOT NULL ORDER BY session_started DESC LIMIT ? OFFSET ?";
+    String getControllerSessionsTotalSql = "SELECT COUNT(1) FROM controllers_online_log WHERE cid = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getControllerSessionsTotalPstmt = conn.prepareStatement(getControllerSessionsTotalSql);
+            PreparedStatement getControllerSessionsPstmt = conn.prepareStatement(getControllerSessionsSql)) {
+
+      try {
+
+        conn.setAutoCommit(false);
+
+        getControllerSessionsTotalPstmt.setString(1, cid);
+
+        ResultSet getControllerSessionsTotalRset = getControllerSessionsTotalPstmt.executeQuery();
+
+        int totalItems = 0;
+
+        if (getControllerSessionsTotalRset.next()) {
+          totalItems = getControllerSessionsTotalRset.getInt(1);
+        }
+
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+
+        if (page > totalPages) {
+          throw new IllegalArgumentException("Current page exceeds total pages");
+        }
+
+        int offset = (page - 1) * limit;
+
+        getControllerSessionsPstmt.setString(1, cid);
+        getControllerSessionsPstmt.setInt(2, limit);
+        getControllerSessionsPstmt.setInt(3, offset);
+
+        ResultSet getNotCompletedControllerSessionsRset = getControllerSessionsPstmt.executeQuery();
+
+        List<ControllerOnlineLogResponse> controllerLastOnlineSessions = new ArrayList<>();
+
+        while (getNotCompletedControllerSessionsRset.next()) {
+
+          ControllerOnlineLogResponse colr = new ControllerOnlineLogResponse();
+          colr.setControllerOnlineId(getNotCompletedControllerSessionsRset.getString("controller_online_log_id"));
+          colr.setCid(getNotCompletedControllerSessionsRset.getString("cid"));
+          colr.setRating(getNotCompletedControllerSessionsRset.getInt("rating"));
+          colr.setServer(getNotCompletedControllerSessionsRset.getString("server"));
+          colr.setPosition(getNotCompletedControllerSessionsRset.getString("position"));
+          colr.setSessionStarted(getNotCompletedControllerSessionsRset.getTimestamp("session_started"));
+          colr.setSessionEnded(getNotCompletedControllerSessionsRset.getTimestamp("session_ended"));
+
+          controllerLastOnlineSessions.add(colr);
+        }
+
+        return new PaginationResponse<>(controllerLastOnlineSessions, page, totalPages);
+
+      } catch (SQLException ex) {
+        log.error("Error getting controller sessions", ex);
+//        conn.rollback();
+      } finally {
+        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting controller sessions", e);
+    }
+
+    return null;
+  }
 
   @Override
   public List<ControllerOnlineLogResponse> getControllerLastOnlineSessions(String cid, int numberOfConnections, boolean shouldIncludeNonCompleted) {
@@ -178,9 +256,9 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
 
     return new ArrayList<>();
   }
-  
+
   @Override
-  public List<ControllerOnlineLogResponse> getControllerSessions(String cid, int numberOfConnections) {
+  public List<ControllerOnlineLogResponse> getAllControllerSessions(String cid, int numberOfConnections) {
 
     String getControllerSessionsSql = "SELECT * FROM controllers_online_log WHERE cid = ? AND session_ended IS NOT NULL ORDER BY session_started DESC";
 

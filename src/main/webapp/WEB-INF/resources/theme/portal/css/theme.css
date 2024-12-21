@@ -18628,6 +18628,10 @@ div.dt-container.dt-empty-footer tbody > tr:last-child > * {
   height: 18px;
 }
 
+.page-link {
+  border-color: #dfdfdf !important;
+}
+
 /*.footer {
   position: absolute;
   right: 0;
