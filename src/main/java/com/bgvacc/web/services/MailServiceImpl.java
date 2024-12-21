@@ -132,8 +132,8 @@ public class MailServiceImpl extends Base implements MailService {
 
       String htmlContent = templateEngine.process("event-application-approved-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, "a.arshinkov97@gmail.com");
 //      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, email);
+      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, "a.arshinkov97@gmail.com");
 
       mailSender.sendMail(mail, email);
 
