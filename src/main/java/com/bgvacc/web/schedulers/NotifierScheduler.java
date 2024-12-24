@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +26,7 @@ public class NotifierScheduler {
   private final EventService eventService;
 
   private final ControllerOnlineLogService controllerOnlineLogService;
-  
+
   private final DiscordNotifyApi discordNotifyApi;
 
 //  @Scheduled(fixedRate = 15000)
@@ -44,12 +45,13 @@ public class NotifierScheduler {
       }
     }
   }
-  
-//  @Scheduled(fixedRate = 15000)
-  public void sendLastWeekControllersLogReport() {
-    
+
+  @Scheduled(cron = "0 0 18 * * MON", zone = "UTC")
+  public void sendLastWeekControllersLogReport() throws JsonProcessingException {
+
+    log.debug("Generating weekly ATC report...");
     ControllersOnlineReportResponse report = controllerOnlineLogService.getControllersOnlinePastWeekReport();
-    
-    
+
+    discordNotifyApi.generateWeeklyATCReport(report);
   }
 }

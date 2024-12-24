@@ -300,3 +300,45 @@ JOIN slots s ON uea.slot_id = s.slot_id
 JOIN event_positions ep ON s.event_position_id = ep.event_position_id
 JOIN events e ON ep.event_id = e.event_id
 LEFT JOIN users ua ON uea.added_by_staff_cid = ua.cid;
+
+CREATE MATERIALIZED VIEW weekly_controller_report AS
+WITH weekly_sessions AS (
+    SELECT
+        cid,
+        position,
+        session_started,
+        session_ended,
+        COALESCE(ROUND(EXTRACT(EPOCH FROM (session_ended - session_started))), 0) AS session_duration_seconds
+    FROM
+        controllers_online_log
+    WHERE
+        session_started >= date_trunc('week', NOW()) - INTERVAL '1 week'
+        AND session_started < date_trunc('week', NOW()) + INTERVAL '4 hour'
+),
+aggregated_data AS (
+    SELECT
+        cid,
+        position,
+        SUM(session_duration_seconds)::BIGINT AS total_duration_seconds
+    FROM
+        weekly_sessions
+    GROUP BY
+        cid, position
+),
+formatted_data AS (
+    SELECT
+        a.cid AS cid,
+        a.position AS position,
+        a.total_duration_seconds AS time_in_seconds
+    FROM
+        aggregated_data a
+    LEFT JOIN users u ON a.cid = u.cid
+    ORDER BY
+        a.total_duration_seconds DESC
+)
+SELECT
+    cid,
+    position,
+    time_in_seconds
+FROM
+    formatted_data;

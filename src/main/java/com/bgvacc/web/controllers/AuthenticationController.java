@@ -61,8 +61,6 @@ public class AuthenticationController extends Base {
   @PostMapping("/login")
   public String login(@ModelAttribute("lm") @Valid LoginModel login, BindingResult bindingResult, HttpServletRequest req, HttpServletResponse res, RedirectAttributes redirectAttributes, Model model) throws IOException, ServletException, Exception {
 
-    log.debug(login.toString());
-
     if (bindingResult.hasErrors()) {
 
       model.addAttribute("page", "login");
@@ -103,7 +101,6 @@ public class AuthenticationController extends Base {
       WebAuthenticationDetails details = new WebAuthenticationDetails(req);
       authReq.setDetails(details);
       authentication = authenticationManager.authenticate(authReq);
-      log.debug("Auth Response: " + authenticationResponse);
     } catch (GeneralErrorException e) {
 
       log.error("Erorr: " + e);

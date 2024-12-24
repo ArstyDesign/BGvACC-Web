@@ -26,6 +26,40 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+    
+    <appender name="FILE_AOP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/bgvacc-web-aop.log</file>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} BGvACC Web AOP | %-5level | %logger{0} \(%line\) - %msg%n</Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_DIR}/archive/bgvacc-web-aop.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    
+    <appender name="FILE_SCHEDULERS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/bgvacc-web-schedulers.log</file>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} BGvACC Web Schedulers | %-5level | %logger{0} \(%line\) - %msg%n</Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_DIR}/archive/bgvacc-web-schedulers.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -33,9 +67,24 @@
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} BGvACC Web | %-5level | %logger{0} \(%line\) - %msg%n</Pattern>
         </encoder>
     </appender>
+    
+    <logger name="com.bgvacc.web.aop" level="debug" additivity="false">
+        <appender-ref ref="FILE_AOP"/>
+        <appender-ref ref="console"/>
+    </logger>
 
-    <logger name="com.bgvacc.web" level="debug" additivity="false">
+    <logger name="com.bgvacc.web.controllers" level="debug" additivity="false">
         <appender-ref ref="FILE_GENERAL"/>
+        <appender-ref ref="console"/>
+    </logger>
+    
+    <logger name="com.bgvacc.web.services" level="debug" additivity="false">
+        <appender-ref ref="FILE_GENERAL"/>
+        <appender-ref ref="console"/>
+    </logger>
+    
+    <logger name="com.bgvacc.web.schedulers" level="debug" additivity="false">
+        <appender-ref ref="FILE_SCHEDULERS"/>
         <appender-ref ref="console"/>
     </logger>
 

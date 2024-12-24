@@ -2,6 +2,7 @@ package com.bgvacc.web.responses.sessions;
 
 import com.aarshinkov.datetimecalculator.domain.Time;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 
@@ -13,11 +14,9 @@ import lombok.*;
 @ToString
 public class ControllersOnlineReportResponse implements Serializable {
 
-  private List<ControllersOnlineReportItemResponse> towerPositions;
-  private List<ControllersOnlineReportItemResponse> approachPositions;
-  private List<ControllersOnlineReportItemResponse> controlPositions;
-  private int cidColumnMaxWidth;
-  private int namesColumnMaxWidth;
+  private List<ControllersOnlineReportItemResponse> towerPositions = new ArrayList<>();
+  private List<ControllersOnlineReportItemResponse> approachPositions = new ArrayList<>();
+  private List<ControllersOnlineReportItemResponse> controlPositions = new ArrayList<>();
 
   public Time getTotalTimeControlled() {
     return new Time(getTotalSecondsControlled());
@@ -47,6 +46,57 @@ public class ControllersOnlineReportResponse implements Serializable {
 
     return totalSecondsControlled;
   }
+  
+  public Time getTotalTimeControlledTower() {
+    return new Time(getTotalSecondsControlledTower());
+  }
+
+  public Long getTotalSecondsControlledTower() {
+
+    Long totalSecondsControlledTower = 0L;
+
+    if (towerPositions != null) {
+      for (ControllersOnlineReportItemResponse tp : towerPositions) {
+        totalSecondsControlledTower += tp.getSecondsControlled();
+      }
+    }
+
+    return totalSecondsControlledTower;
+  }
+  
+  public Time getTotalTimeControlledApproach() {
+    return new Time(getTotalSecondsControlledApproach());
+  }
+
+  public Long getTotalSecondsControlledApproach() {
+
+    Long totalSecondsControlledApproach = 0L;
+
+    if (approachPositions != null) {
+      for (ControllersOnlineReportItemResponse ap : approachPositions) {
+        totalSecondsControlledApproach += ap.getSecondsControlled();
+      }
+    }
+
+    return totalSecondsControlledApproach;
+  }
+  
+  public Time getTotalTimeControlledControl() {
+    return new Time(getTotalSecondsControlledControl());
+  }
+
+  public Long getTotalSecondsControlledControl() {
+
+    Long totalSecondsControlledControl = 0L;
+
+    if (controlPositions != null) {
+      for (ControllersOnlineReportItemResponse cp : controlPositions) {
+        totalSecondsControlledControl += cp.getSecondsControlled();
+      }
+    }
+
+    return totalSecondsControlledControl;
+  }
 
   public List<ControllersOnlineReportItemResponse> getTowerPositions() {
     return towerPositions;
@@ -70,21 +120,5 @@ public class ControllersOnlineReportResponse implements Serializable {
 
   public void setControlPositions(List<ControllersOnlineReportItemResponse> controlPositions) {
     this.controlPositions = controlPositions;
-  }
-
-  public int getCidColumnMaxWidth() {
-    return cidColumnMaxWidth;
-  }
-
-  public void setCidColumnMaxWidth(int cidColumnMaxWidth) {
-    this.cidColumnMaxWidth = cidColumnMaxWidth;
-  }
-
-  public int getNamesColumnMaxWidth() {
-    return namesColumnMaxWidth;
-  }
-
-  public void setNamesColumnMaxWidth(int namesColumnMaxWidth) {
-    this.namesColumnMaxWidth = namesColumnMaxWidth;
   }
 }

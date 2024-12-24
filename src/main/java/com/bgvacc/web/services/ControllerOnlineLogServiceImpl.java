@@ -451,79 +451,88 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
   @Override
   public ControllersOnlineReportResponse getControllersOnlinePastWeekReport() {
 
-    final String getControllersOnlinePastWeekReportSql = "SELECT cid, position, SUM(CAST(EXTRACT(EPOCH FROM (session_ended - session_started)) AS INTEGER)) AS seconds_controlled FROM controllers_online_log WHERE session_started >= date_trunc('week', NOW() - INTERVAL '1 week') AND session_ended <= date_trunc('week', NOW()) + INTERVAL '4 hour' GROUP BY cid, position ORDER BY position, seconds_controlled DESC";
+    final String refreshPastWeekReportSql = "REFRESH MATERIALIZED VIEW weekly_controller_report";
+    final String getControllersOnlinePastWeekReportSql = "SELECT wcr.cid, u.first_name, u.last_name, wcr.position, wcr.time_in_seconds FROM weekly_controller_report wcr LEFT JOIN users u ON wcr.cid = u.cid";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement refreshPastWeekReportPstmt = conn.prepareStatement(refreshPastWeekReportSql);
             PreparedStatement getControllersOnlinePastWeekReportPstmt = conn.prepareStatement(getControllersOnlinePastWeekReportSql)) {
 
       try {
 
         conn.setAutoCommit(false);
 
-        ResultSet getControllersOnlinePastWeekReportRset = getControllersOnlinePastWeekReportPstmt.executeQuery();
+        boolean isResult = refreshPastWeekReportPstmt.execute();
 
-        List<ControllersOnlineReportItemResponse> towerPositions = new ArrayList<>();
-        List<ControllersOnlineReportItemResponse> approachPositions = new ArrayList<>();
-        List<ControllersOnlineReportItemResponse> controlPositions = new ArrayList<>();
+        if (!isResult) {
 
-        Map<String, Names> controllers = new HashMap<>();
+          ResultSet getControllersOnlinePastWeekReportRset = getControllersOnlinePastWeekReportPstmt.executeQuery();
 
-        int cidColumnMaxWidth = 0;
-        String namesMostLetters = "";
-        int namesColumnMaxWidth = 0;
+          List<ControllersOnlineReportItemResponse> towerPositions = new ArrayList<>();
+          List<ControllersOnlineReportItemResponse> approachPositions = new ArrayList<>();
+          List<ControllersOnlineReportItemResponse> controlPositions = new ArrayList<>();
 
-        while (getControllersOnlinePastWeekReportRset.next()) {
+          Map<String, Names> controllers = new HashMap<>();
 
-          ControllersOnlineReportItemResponse cori = new ControllersOnlineReportItemResponse();
-          cori.setCid(getControllersOnlinePastWeekReportRset.getString("cid"));
-          cori.setPosition(getControllersOnlinePastWeekReportRset.getString("position"));
-          cori.setSecondsControlled(getControllersOnlinePastWeekReportRset.getLong("seconds_controlled"));
+          while (getControllersOnlinePastWeekReportRset.next()) {
 
-          Names names;
+            ControllersOnlineReportItemResponse cori = new ControllersOnlineReportItemResponse();
+            cori.setCid(getControllersOnlinePastWeekReportRset.getString("cid"));
+            cori.setPosition(getControllersOnlinePastWeekReportRset.getString("position"));
+            cori.setSecondsControlled(getControllersOnlinePastWeekReportRset.getLong("time_in_seconds"));
 
-          if (!controllers.containsKey(cori.getCid())) {
-            VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(Long.valueOf(cori.getCid()));
-            names = Names.builder().firstName(memberDetails.getData().getFirstName()).lastName(memberDetails.getData().getLastName()).build();
-            controllers.put(cori.getCid(), names);
-          } else {
-            names = controllers.get(cori.getCid());
+            Names names = null;
+
+            if (getControllersOnlinePastWeekReportRset.getString("first_name") == null) {
+              if (!controllers.containsKey(cori.getCid())) {
+                VatEudUser memberDetails = vatEudCoreApi.getMemberDetails(Long.valueOf(cori.getCid()));
+                if (memberDetails != null) {
+                  names = Names.builder().firstName(memberDetails.getData().getFirstName()).lastName(memberDetails.getData().getLastName()).build();
+                  controllers.put(cori.getCid(), names);
+                }
+              } else {
+                names = controllers.get(cori.getCid());
+              }
+            } else {
+              if (!controllers.containsKey(cori.getCid())) {
+                names = Names.builder().firstName(getControllersOnlinePastWeekReportRset.getString("first_name")).lastName(getControllersOnlinePastWeekReportRset.getString("last_name")).build();
+                controllers.put(cori.getCid(), names);
+              } else {
+                names = controllers.get(cori.getCid());
+              }
+            }
+
+            cori.setControllerName(names);
+
+            if (cori.getPosition().contains("_TWR")) {
+              towerPositions.add(cori);
+            }
+
+            if (cori.getPosition().contains("_APP")) {
+              approachPositions.add(cori);
+            }
+
+            if (cori.getPosition().contains("_CTR")) {
+              controlPositions.add(cori);
+            }
           }
-
-          if (cori.getCid().length() > cidColumnMaxWidth) {
-            cidColumnMaxWidth = cori.getCid().length();
-          }
-
-          if (names.getFullName().length() > namesColumnMaxWidth) {
-            namesColumnMaxWidth = names.getFullName().length();
-            namesMostLetters = names.getFullName();
-          }
-
-          cori.setControllerName(names);
-
-          if (cori.getPosition().contains("_TWR")) {
-            towerPositions.add(cori);
-          }
-
-          if (cori.getPosition().contains("_APP")) {
-            approachPositions.add(cori);
-          }
-
-          if (cori.getPosition().contains("_CTR")) {
-            controlPositions.add(cori);
-          }
-        }
 
 //        log.debug("cidColumnMaxWidth: " + cidColumnMaxWidth);
 //        log.debug("namesMostLetters: " + namesMostLetters);
 //        log.debug("namesColumnMaxWidth: " + namesColumnMaxWidth);
-        ControllersOnlineReportResponse response = new ControllersOnlineReportResponse();
-        response.setTowerPositions(towerPositions);
-        response.setApproachPositions(approachPositions);
-        response.setControlPositions(controlPositions);
-        response.setCidColumnMaxWidth(cidColumnMaxWidth);
-        response.setNamesColumnMaxWidth(namesColumnMaxWidth);
+          ControllersOnlineReportResponse response = new ControllersOnlineReportResponse();
+          response.setTowerPositions(towerPositions);
+          response.setApproachPositions(approachPositions);
+          response.setControlPositions(controlPositions);
+          
+          conn.commit();
 
-        return response;
+          return response;
+        }
+        
+        conn.rollback();
+
+        return null;
 
       } catch (SQLException ex) {
         log.error("Error getting controllers online past week report.", ex);

@@ -8,8 +8,7 @@ import com.bgvacc.web.requests.discord.weeklyreport.DiscordWeeklyATCReportReques
 import com.bgvacc.web.responses.atc.report.*;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.UpcomingEventsResponse;
-import com.bgvacc.web.responses.sessions.ClosedControllerSession;
-import com.bgvacc.web.responses.sessions.NewlyOpenedControllerSession;
+import com.bgvacc.web.responses.sessions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -28,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DiscordNotifyApi extends Api {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
-  
+
   final int START_END_SPACES_COUNT = 2;
 
   @Autowired
@@ -204,7 +203,7 @@ public class DiscordNotifyApi extends Api {
 //    doRequest(Methods.POST, url, denr, Void.class);
   }
 
-  public void generateWeeklyATCReport(ATCWeeklyReportResponse atcReport) throws JsonProcessingException {
+  public void generateWeeklyATCReport(ControllersOnlineReportResponse report) throws JsonProcessingException {
 
     final String url = "https://discord.com/api/webhooks/" + discordProperties.getDiscordWeeklyATCReportChannelId() + "/" + discordProperties.getDiscordWeeklyATCReportWebhookId();
 
@@ -213,34 +212,37 @@ public class DiscordNotifyApi extends Api {
     dwarr.setUsername("BGvACC");
 
     StringBuilder cb = new StringBuilder();
-    cb.append("Hello, fellow aviators! I present you the ATC report from last week.\n\n");
+    cb.append("@everyone Hello, fellow aviators! I present you the ATC report from last week.\n\n");
 
-    if (atcReport.getAtcTower() == null || atcReport.getAtcTower().isEmpty()) {
+    if (report.getTowerPositions() == null || report.getTowerPositions().isEmpty()) {
       cb.append("**NOBODY CONTROLLED TWR THIS WEEK** :cry:\n\n");
     } else {
-      cb.append("**WEEKLY CONTROLLER REPORT FOR TWR :saluting_face:**");
-      cb = generatePositionReport(atcReport.getAtcTower(), cb);
-      cb.append("\n");
+      cb.append("**:date:  WEEKLY CONTROLLER REPORT FOR TWR :saluting_face:**");
+      cb = generatePositionReport(report.getTowerPositions(), cb);
+      cb.append("Total controlled time on Tower: **").append(report.getTotalTimeControlledTower().printTimeLeadingZeros(true, true, false)).append("**");
+      cb.append("\n\n");
     }
 
-    if (atcReport.getAtcApproach() == null || atcReport.getAtcApproach().isEmpty()) {
+    if (report.getApproachPositions() == null || report.getApproachPositions().isEmpty()) {
       cb.append("**NOBODY CONTROLLED APP THIS WEEK** :cry:\n\n");
     } else {
-      cb.append("**WEEKLY CONTROLLER REPORT FOR APPROACH :saluting_face:**");
-      cb = generatePositionReport(atcReport.getAtcApproach(), cb);
-      cb.append("\n");
+      cb.append("**:date:  WEEKLY CONTROLLER REPORT FOR APP :saluting_face:**");
+      cb = generatePositionReport(report.getApproachPositions(), cb);
+      cb.append("Total controlled time on Approach: **").append(report.getTotalTimeControlledApproach().printTimeLeadingZeros(true, true, false)).append("**");
+      cb.append("\n\n");
     }
 
-    if (atcReport.getAtcControl() == null || atcReport.getAtcControl().isEmpty()) {
+    if (report.getControlPositions() == null || report.getControlPositions().isEmpty()) {
       cb.append("**NOBODY CONTROLLED CTR THIS WEEK** :cry:\n\n");
     } else {
-      cb.append("**WEEKLY CONTROLLER REPORT FOR CONTROL :saluting_face:**");
-      cb = generatePositionReport(atcReport.getAtcControl(), cb);
-      cb.append("\n");
+      cb.append("**:date:  WEEKLY CONTROLLER REPORT FOR CTR :saluting_face:**");
+      cb = generatePositionReport(report.getControlPositions(), cb);
+      cb.append("Total controlled time on Control: **").append(report.getTotalTimeControlledControl().printTimeLeadingZeros(true, true, false)).append("**");
+      cb.append("\n\n");
     }
 
     cb.append("CONGRATULATIONS AND GOOD JOB EVERYBODY! :clap:\n\n");
-    cb.append("TOGETHER YOU MANAGED TO CONTROL TOTAL OF **10 hours and 41 minutes** :partying_face:\n\n");
+    cb.append("TOGETHER YOU MANAGED TO CONTROL TOTAL TIME - **").append(report.getTotalTimeControlled().printTimeLeadingZeros(true, true, false)).append("** :partying_face:\n\n");
     cb.append("See you next week,\n");
     cb.append("BGvACC Bot");
 
@@ -253,16 +255,16 @@ public class DiscordNotifyApi extends Api {
     doRequest(Methods.POST, url, dwarr, Void.class);
   }
 
-  private StringBuilder generatePositionReport(List<ATCWeeklyReportItem> items, StringBuilder b) {
+  private StringBuilder generatePositionReport(List<ControllersOnlineReportItemResponse> items, StringBuilder b) {
 
     List<String> names = new ArrayList<>();
     List<String> callsigns = new ArrayList<>();
     List<String> times = new ArrayList<>();
 
     items.forEach(item -> {
-      names.add(item.getName());
-      callsigns.add(item.getCallsign());
-      times.add(item.getTime());
+      names.add(item.getControllerName() != null ? item.getControllerName().getFullName() : "-");
+      callsigns.add(item.getPosition());
+      times.add(item.getTotalTimeControlled().printTimeLeadingZeros(true, true, false));
     });
 
     b.append("```| ");
@@ -331,18 +333,19 @@ public class DiscordNotifyApi extends Api {
         b.append(" ");
       }
       b.append(" | ");
-      b.append(items.get(i).getName());
-      for (int j = 1; j <= nch.getColumnMostChars() - items.get(i).getName().length() - START_END_SPACES_COUNT; j++) {
+      String name = items.get(i).getControllerName() != null ? items.get(i).getControllerName().getFullName() : "-";
+      b.append(name);
+      for (int j = 1; j <= nch.getColumnMostChars() - name.length() - START_END_SPACES_COUNT; j++) {
         b.append(" ");
       }
       b.append(" | ");
-      b.append(items.get(i).getCallsign());
-      for (int j = 1; j <= cch.getColumnMostChars() - items.get(i).getCallsign().length() - START_END_SPACES_COUNT; j++) {
+      b.append(items.get(i).getPosition());
+      for (int j = 1; j <= cch.getColumnMostChars() - items.get(i).getPosition().length() - START_END_SPACES_COUNT; j++) {
         b.append(" ");
       }
       b.append(" | ");
-      b.append(items.get(i).getTime());
-      for (int j = 1; j <= tch.getColumnMostChars() - items.get(i).getTime().length() - START_END_SPACES_COUNT; j++) {
+      b.append(items.get(i).getTotalTimeControlled().printTimeLeadingZeros(true, true, false));
+      for (int j = 1; j <= tch.getColumnMostChars() - items.get(i).getTotalTimeControlled().printTimeLeadingZeros(true, true, false).length() - START_END_SPACES_COUNT; j++) {
         b.append(" ");
       }
       b.append(" |\n");
