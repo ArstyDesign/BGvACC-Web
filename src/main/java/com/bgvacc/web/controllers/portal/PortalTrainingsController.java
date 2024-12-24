@@ -5,7 +5,9 @@ import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.models.portal.trainings.CreateTrainingNoteModel;
 import com.bgvacc.web.responses.trainings.CreateTrainingNoteResponse;
+import com.bgvacc.web.responses.users.SavedSearchUser;
 import com.bgvacc.web.security.LoggedUser;
+import com.bgvacc.web.services.UserService;
 import com.bgvacc.web.utils.Breadcrumb;
 import com.bgvacc.web.utils.Names;
 import com.bgvacc.web.vatsim.members.VatsimMemberSoloValidation;
@@ -38,9 +40,13 @@ public class PortalTrainingsController extends Base {
 
   private final CoreApi coreApi;
 
-//  @RequestMapping(value = "/portal/trainings/notes", method = {RequestMethod.GET, RequestMethod.POST})
+  private final UserService userService;
+
   @GetMapping("/portal/trainings/notes")
-  public String getTrainingNotes(Model model) {
+  public String getTrainingNotes(Model model, HttpServletRequest request) {
+
+    List<SavedSearchUser> savedSearches = userService.getUserSavedUserSearches(getLoggedUserCid(request));
+    model.addAttribute("savedSearches", savedSearches);
 
     model.addAttribute("pageTitle", getMessage("portal.trainings.notes.title"));
     model.addAttribute("page", "trainings");
@@ -69,7 +75,7 @@ public class PortalTrainingsController extends Base {
   }
 
   @GetMapping("/portal/trainings/notes/{cid}")
-  public String getTrainingNotesForUser(@PathVariable("cid") Long cid, Model model, RedirectAttributes redirectAttributes) {
+  public String getTrainingNotesForUser(@PathVariable("cid") Long cid, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
     model.addAttribute("cid", cid);
 
@@ -95,6 +101,9 @@ public class PortalTrainingsController extends Base {
     }
 
     model.addAttribute("notes", memberNotes);
+
+    List<SavedSearchUser> savedSearches = userService.getUserSavedUserSearches(getLoggedUserCid(request));
+    model.addAttribute("savedSearches", savedSearches);
 
     model.addAttribute("pageTitle", getMessage("portal.trainings.notes.title.member", memberDetails.getData().getFullName(), memberDetails.getData().getCid()));
     model.addAttribute("page", "trainings");
