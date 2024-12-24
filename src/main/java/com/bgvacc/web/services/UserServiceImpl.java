@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public PaginationResponse<UserResponse> getUsers(int page, int limit, UserFilter filter) {
 
+    final String getUsersTotalSql = "SELECT COUNT(1) FROM (SELECT DISTINCT u.* FROM users u LEFT JOIN user_roles ur ON u.cid = ur.cid LEFT JOIN roles r ON ur.rolename = r.rolename WHERE COALESCE(u.cid, '') LIKE COALESCE('%' || ? || '%', u.cid) AND (LOWER(COALESCE(u.email, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email)) OR LOWER(COALESCE(u.email_vatsim, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email_vatsim))) AND LOWER(COALESCE(u.first_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.first_name, '')) AND LOWER(COALESCE(u.last_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.last_name, '')) AND COALESCE(r.rolename, '') LIKE COALESCE('%' || ? || '%', r.rolename, '') ORDER BY u.created_on DESC)";
     final String getUsersSql = "SELECT DISTINCT u.* FROM users u LEFT JOIN user_roles ur ON u.cid = ur.cid LEFT JOIN roles r ON ur.rolename = r.rolename WHERE COALESCE(u.cid, '') LIKE COALESCE('%' || ? || '%', u.cid) AND (LOWER(COALESCE(u.email, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email)) OR LOWER(COALESCE(u.email_vatsim, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email_vatsim))) AND LOWER(COALESCE(u.first_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.first_name, '')) AND LOWER(COALESCE(u.last_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.last_name, '')) AND COALESCE(r.rolename, '') LIKE COALESCE('%' || ? || '%', r.rolename, '') ORDER BY u.created_on DESC" + (limit != -1 ? " LIMIT ? OFFSET ?" : "");
-    final String getUsersTotalSql = "SELECT COUNT(1) FROM users";
     final String getUserRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
 
     try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
@@ -52,10 +52,29 @@ public class UserServiceImpl implements UserService {
 
         conn.setAutoCommit(false);
 
+//        ResultSet getUsersTotalRset = getUsersTotalPstmt.executeQuery();
+//
+//        int totalItems = 0;
+//
+//        if (getUsersTotalRset.next()) {
+//          totalItems = getUsersTotalRset.getInt(1);
+//        }
+        getUsersTotalPstmt.setString(1, filter.getCid());
+        getUsersTotalPstmt.setString(2, filter.getEmail());
+        getUsersTotalPstmt.setString(3, filter.getEmail());
+        getUsersTotalPstmt.setString(4, filter.getFirstName());
+        getUsersTotalPstmt.setString(5, filter.getLastName());
+
+        if (!filter.getRole().equals("all")) {
+          getUsersTotalPstmt.setString(6, filter.getRole());
+        } else {
+          getUsersTotalPstmt.setString(6, null);
+        }
+
         ResultSet getUsersTotalRset = getUsersTotalPstmt.executeQuery();
 
         int totalItems = 0;
-
+//
         if (getUsersTotalRset.next()) {
           totalItems = getUsersTotalRset.getInt(1);
         }

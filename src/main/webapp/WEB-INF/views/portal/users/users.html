@@ -23,7 +23,7 @@
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#usersSearchCollapse" aria-expanded="true" aria-controls="usersSearchCollapse">
                       <div class="fs-5 mb-0">
                         <span class="material-symbols-rounded me-1">search</span>
-                        <span>Search</span>
+                        <span th:text="#{portal.users.search.title}">Search</span>
                       </div>
                     </button>
                   </h2>
@@ -32,23 +32,23 @@
                       <form th:action="@{/portal/users}" method="get" th:object="${filter}">
                         <div class="row">
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="cidInput" class="form-label">CID</label>
+                            <label for="cidInput" class="form-label" th:text="#{portal.users.search.cid}">CID</label>
                             <input id="cidInput" type="text" class="form-control" th:field="*{cid}"/>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="firstNameInput" class="form-label">First name</label>
+                            <label for="firstNameInput" class="form-label" th:text="#{portal.users.search.firstname}">First name</label>
                             <input id="firstNameInput" type="text" class="form-control" th:field="*{firstName}"/>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="lastNameInput" class="form-label">Last name</label>
+                            <label for="lastNameInput" class="form-label" th:text="#{portal.users.search.lastname}">Last name</label>
                             <input id="lastNameInput" type="text" class="form-control" th:field="*{lastName}"/>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="emailInput" class="form-label">Email</label>
+                            <label for="emailInput" class="form-label" th:text="#{portal.users.search.email}">Email</label>
                             <input id="emailInput" type="text" class="form-control" th:field="*{email}"/>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="roleInput" class="form-label">Role</label>
+                            <label for="roleInput" class="form-label" th:text="#{portal.users.search.role}">Role</label>
                             <select id="roleInput" class="form-control" th:field="*{role}">
                               <option th:text="#{portal.users.users.search.role.all}" value="all">- All roles -</option>
 
@@ -75,7 +75,7 @@
                             </select>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-                            <label for="limitInput" class="form-label">Items per page</label>
+                            <label for="limitInput" class="form-label" th:text="#{portal.users.search.itemsperpage}">Items per page</label>
                             <select id="limitInput" class="form-control" name="limit">
                               <option value="5" th:selected="${limit eq 5}">5</option>
                               <option value="10" th:selected="${limit eq 10}">10</option>
@@ -88,8 +88,8 @@
                         </div>
                         <div class="row">
                           <div class="col-12 col-md-6 col-lg-4 mb-0">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                            <a href="#" th:href="@{/portal/users}" class="btn btn-outline-dark" th:if="${filter.isSearched}">Clear</a>
+                            <button type="submit" class="btn btn-primary" th:text="#{portal.users.search.search}">Search</button>
+                            <a href="#" th:href="@{/portal/users}" class="btn btn-outline-dark" th:if="${filter.isSearched}" th:text="#{portal.users.search.clear}">Clear</a>
                           </div>
                         </div>
                       </form>
@@ -184,7 +184,7 @@
         </div>
 
         <div class="col-12 mb-3">
-          <div th:replace="fragments/paging :: #paging(baseLink=@{/portal/users}, paginationResponse=${users}, alignment='center')"></div>
+          <div th:replace="fragments/paging :: #paging(baseLink=@{/portal/users}, paginationResponse=${users}, alignment='center', otherParams=${otherParameters} + ${filter.pagingParams})"></div>
         </div>
       </div>
 

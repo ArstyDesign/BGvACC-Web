@@ -11,7 +11,7 @@
               th:if="${paginationResponse.currentPage > 2}" 
               th:classappend="${paginationResponse.currentPage == 1} ? 'disabled'">
             <a class="page-link" 
-               th:href="${baseLink + '?page=1&limit=' + limit}" 
+               th:href="${baseLink + '?page=1' + ${otherParams ne null ? otherParams : ''}}" 
                aria-label="First">
               <!--<span aria-hidden="true">«</span>-->
               <i class="bi bi-chevron-double-left"></i>
@@ -30,26 +30,26 @@
           <li class="page-item" th:if="${paginationResponse.currentPage == 1}"
               th:each="pageNumber : ${#numbers.sequence(1, paginationResponse.totalPages > 3 ? 3 : paginationResponse.totalPages)}"
               th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
-            <a class="page-link" th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" th:text="${pageNumber}"></a>
+            <a class="page-link" th:href="${baseLink} + '?page=' + ${pageNumber} + ${otherParams ne null ? otherParams : ''}" th:text="${pageNumber}"></a>
           </li>
 
           <li class="page-item" th:if="${paginationResponse.currentPage > 1 and paginationResponse.currentPage < paginationResponse.totalPages}"
               th:each="pageNumber : ${#numbers.sequence(paginationResponse.currentPage - 1, paginationResponse.currentPage + 1)}"
               th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
-            <a class="page-link" th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" th:text="${pageNumber}"></a>
+            <a class="page-link" th:href="${baseLink} + '?page=' + ${pageNumber} + ${otherParams ne null ? otherParams : ''}" th:text="${pageNumber}"></a>
           </li>
 
           <li class="page-item" th:if="${paginationResponse.currentPage == paginationResponse.totalPages}"
               th:each="pageNumber : ${#numbers.sequence(paginationResponse.totalPages > 3 ? (paginationResponse.totalPages - 2) : 1, paginationResponse.totalPages)}"
               th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
-            <a class="page-link" th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" th:text="${pageNumber}"></a>
+            <a class="page-link" th:href="${baseLink} + '?page=' + ${pageNumber} + ${otherParams ne null ? otherParams : ''}" th:text="${pageNumber}"></a>
           </li>
 
 
           <!-- Next Button -->
           <!--          <li class="page-item" th:classappend="${paginationResponse.isLast} ? 'disabled'">
                       <a class="page-link" 
-                         th:href="${baseLink + '?page=' + (paginationResponse.currentPage + 1) + '&limit=' + limit}" 
+                         th:href="${baseLink + '?page=' + (paginationResponse.currentPage + 1) + ${otherParams ne null ? otherParams : ''}}" 
                          aria-label="Next">
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -60,7 +60,7 @@
               th:if="${paginationResponse.currentPage < paginationResponse.totalPages - 1}" 
               th:classappend="${paginationResponse.currentPage == paginationResponse.totalPages} ? 'disabled'">
             <a class="page-link" 
-               th:href="${baseLink + '?page=' + paginationResponse.totalPages + '&limit=' + limit}" 
+               th:href="${baseLink} + '?page=' + ${paginationResponse.totalPages} + ${otherParams ne null ? otherParams : ''}" 
                aria-label="Last">
               <!--<span aria-hidden="true">»</span>-->
               <i class="bi bi-chevron-double-right"></i>
@@ -77,7 +77,7 @@
           <!-- Previous Button -->
           <li class="page-item" th:classappend="${paginationResponse.isFirst} ? 'disabled'">
             <a class="page-link" 
-               th:href="${baseLink + '?page=' + (paginationResponse.currentPage - 1) + '&limit=' + limit}" 
+               th:href="${baseLink} + '?page=' + (${paginationResponse.currentPage - 1}) + ${otherParams ne null ? otherParams : ''}" 
                aria-label="Previous">
               <span aria-hidden="true">«</span>
             </a>
@@ -92,14 +92,14 @@
               : paginationResponse.totalPages)}"
               th:classappend="${pageNumber == paginationResponse.currentPage} ? 'active'">
             <a class="page-link" 
-               th:href="${baseLink + '?page=' + pageNumber + '&limit=' + limit}" 
+               th:href="${baseLink} + '?page=' + ${pageNumber} + ${otherParams ne null ? otherParams : ''}" 
                th:text="${pageNumber}">1</a>
           </li>
 
           <!-- Next Button -->
           <li class="page-item" th:classappend="${paginationResponse.isLast} ? 'disabled'">
             <a class="page-link" 
-               th:href="${baseLink + '?page=' + (paginationResponse.currentPage + 1) + '&limit=' + limit}" 
+               th:href="${baseLink} + '?page=' + (${paginationResponse.currentPage + 1}) + ${otherParams ne null ? otherParams : ''}" 
                aria-label="Next">
               <span aria-hidden="true">»</span>
             </a>

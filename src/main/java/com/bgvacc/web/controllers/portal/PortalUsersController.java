@@ -71,6 +71,9 @@ public class PortalUsersController extends Base {
     }
 
     model.addAttribute("limit", limit);
+    
+    String otherParams = "&limit=" + limit;
+    model.addAttribute("otherParameters", otherParams);
 
     PaginationResponse<UserResponse> users = userService.getUsers(page, limit, filter);
 
