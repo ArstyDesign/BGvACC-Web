@@ -1,6 +1,7 @@
 package com.bgvacc.web.services;
 
 import com.bgvacc.web.enums.UserRoles;
+import com.bgvacc.web.filters.UserFilter;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.paging.PaginationResponse;
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public interface UserService {
   
-  PaginationResponse<UserResponse> getUsers(int page, int limit);
+  PaginationResponse<UserResponse> getUsers(int page, int limit, UserFilter filter);
 
   List<UserResponse> getAllUsers();
 

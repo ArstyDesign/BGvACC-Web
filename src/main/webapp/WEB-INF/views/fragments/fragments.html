@@ -293,7 +293,7 @@
                 <ul class="nav flex-column mb-0">
                   <li class="nav-item">
                     <a class="nav-link" href="#" th:href="@{/rules/privacy-policy}"
-                       th:text="#{footer.rules.privacypolicy}">Privacy Policy</a>
+                       th:text="#{footer.rules.privacypolicy}">Privacy policy</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#" th:href="@{/resources/rules/BGvACC_constitution.pdf}" target="_blank"
@@ -324,6 +324,11 @@
                     <a class="nav-link" href="#" th:href="@{/pilots/bulgarian-sceneries}"
                        th:text="#{footer.resources.sceneries}">Sceneries</a>
                   </li>
+                  
+<!--                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:href="@{/feedback}"
+                       th:text="#{footer.resources.feedback}">Feedback</a>
+                  </li>-->
                 </ul>
 
                 <hr class="mb-4"/>
@@ -400,7 +405,7 @@
               <div class="col-12 col-md-6 col-lg-4">
                 <dl>
                   <dt th:text="#{home.weatherinfo.wind}">Wind</dt>
-                  <dd th:text="(${arm.metar.windFromDirection}) + (${arm.metar.windFromDirection ne 'VRB'} ? '&deg;' : '') + ' ' + (${arm.metar.windStrength ge 0 and arm.metar.windStrength lt 10} ? ('0' + ${arm.metar.windStrength}) : ${arm.metar.windStrength}) + 'KT'"></dd>
+                  <dd th:text="(${arm.metar.windFromDirection}) + (${arm.metar.windFromDirection ne 'VRB'} ? '&deg;' : '') + ' ' + (${arm.metar.windStrength ge 0 and arm.metar.windStrength lt 10} ? ('0' + ${arm.metar.windStrength}) : ${arm.metar.windStrength}) + 'KT' + (${arm.metar.windGust gt 0} ? (' G ' + ${arm.metar.windGust} + 'KT') : '')"></dd>
                 </dl>
               </div>
               <div class="col-12 col-md-6 col-lg-4">

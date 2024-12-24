@@ -1,12 +1,17 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.api.EventApi;
+import com.bgvacc.web.api.discord.DiscordNotifyApi;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.responses.atc.ATCReservationResponse;
+import com.bgvacc.web.responses.atc.report.ATCWeeklyReportItem;
+import com.bgvacc.web.responses.atc.report.ATCWeeklyReportResponse;
 import com.bgvacc.web.responses.events.reports.EventsYearlyReportResponse;
 import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,9 +38,34 @@ public class TestController extends Base {
   private final EventService eventService;
 
   private final ControllerOnlineLogService controllerOnlineLogService;
-  
+
   private final ATCReservationService atcReservationService;
-  
+
+  private final DiscordNotifyApi discordNotifyApi;
+
+  @GetMapping("/test/atc/report")
+  @ResponseBody
+  public void generateWeeklyATCReport() throws JsonProcessingException {
+
+    List<ATCWeeklyReportItem> items = new ArrayList<>();
+    items.add(new ATCWeeklyReportItem("John", "LBSF_TWR", "20 h 25 m"));
+    items.add(new ATCWeeklyReportItem("Janet", "LBSF_M_APP", "5 h 12 m"));
+    items.add(new ATCWeeklyReportItem("Alexandros", "LBSR_CTR", "0 h 32 m"));
+    items.add(new ATCWeeklyReportItem("Constantinos", "LBWN_APP", "210 h 54 m"));
+    items.add(new ATCWeeklyReportItem("Petar", "LBBG_APP", "54 h 3 m"));
+    items.add(new ATCWeeklyReportItem("Nikolaos", "LBPD_TWR", "3 h 33 m"));
+    items.add(new ATCWeeklyReportItem("Atanas Arshinkov", "LBPD_TWR", "6 h 00 m"));
+    items.add(new ATCWeeklyReportItem("Tsvetan Mitov", "LBSF_APP", "26 h 23 m"));
+    items.add(new ATCWeeklyReportItem("Kristian Hristov", "LBSF_TWR", "5 h 36 m"));
+    items.add(new ATCWeeklyReportItem("Martin Martinov", "LBBG_TWR", "0 h 56 m"));
+    items.add(new ATCWeeklyReportItem("Ivan Avramov", "LBWN_TWR", "2 h 20 m"));
+
+    ATCWeeklyReportResponse response = new ATCWeeklyReportResponse();
+    response.setAtcTower(items);
+
+    discordNotifyApi.generateWeeklyATCReport(response);
+  }
+
   @GetMapping("/test/atc/reservations")
   @ResponseBody
   public List<ATCReservationResponse> getATCReservations() {

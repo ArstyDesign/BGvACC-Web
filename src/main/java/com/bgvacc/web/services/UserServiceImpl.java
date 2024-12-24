@@ -2,6 +2,7 @@ package com.bgvacc.web.services;
 
 import com.aarshinkov.random.Randomy;
 import com.bgvacc.web.enums.UserRoles;
+import com.bgvacc.web.filters.UserFilter;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.paging.PaginationResponse;
@@ -36,20 +37,9 @@ public class UserServiceImpl implements UserService {
   private final Randomy randomy;
 
   @Override
-  public PaginationResponse<UserResponse> getUsers(int page, int limit) {
+  public PaginationResponse<UserResponse> getUsers(int page, int limit, UserFilter filter) {
 
-    if (page < 1) {
-      page = 1;
-    }
-
-    if (limit < 1 && limit != -1) {
-      limit = -1;
-    }
-    
-    log.debug("page: " + page);
-    log.debug("limit: " + limit);
-
-    String getUsersSql = "SELECT * FROM users ORDER BY created_on DESC" + (limit != -1 ? " LIMIT ? OFFSET ?" : "");
+    final String getUsersSql = "SELECT DISTINCT u.* FROM users u LEFT JOIN user_roles ur ON u.cid = ur.cid LEFT JOIN roles r ON ur.rolename = r.rolename WHERE COALESCE(u.cid, '') LIKE COALESCE('%' || ? || '%', u.cid) AND (LOWER(COALESCE(u.email, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email)) OR LOWER(COALESCE(u.email_vatsim, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.email_vatsim))) AND LOWER(COALESCE(u.first_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.first_name, '')) AND LOWER(COALESCE(u.last_name, '')) LIKE LOWER(COALESCE('%' || ? || '%', u.last_name, '')) AND COALESCE(r.rolename, '') LIKE COALESCE('%' || ? || '%', r.rolename, '') ORDER BY u.created_on DESC" + (limit != -1 ? " LIMIT ? OFFSET ?" : "");
     final String getUsersTotalSql = "SELECT COUNT(1) FROM users";
     final String getUserRolesSql = "SELECT * FROM user_roles WHERE cid = ?";
 
@@ -62,27 +52,36 @@ public class UserServiceImpl implements UserService {
 
         conn.setAutoCommit(false);
 
-//        getUsersTotalPstmt.setString(1, cid);
-        ResultSet getControllerSessionsTotalRset = getUsersTotalPstmt.executeQuery();
+        ResultSet getUsersTotalRset = getUsersTotalPstmt.executeQuery();
 
         int totalItems = 0;
 
-        if (getControllerSessionsTotalRset.next()) {
-          totalItems = getControllerSessionsTotalRset.getInt(1);
+        if (getUsersTotalRset.next()) {
+          totalItems = getUsersTotalRset.getInt(1);
         }
 
         int totalPages = (int) Math.ceil((double) totalItems / (limit == -1 ? totalItems : limit));
 
-        if (page > totalPages) {
-          throw new IllegalArgumentException("Current page exceeds total pages");
-        }
-
+//        if (page > totalPages) {
+//          throw new IllegalArgumentException("Current page exceeds total pages");
+//        }
         int offset = (page - 1) * limit;
 
-//        getUsersPstmt.setString(1, cid);
+        getUsersPstmt.setString(1, filter.getCid());
+        getUsersPstmt.setString(2, filter.getEmail());
+        getUsersPstmt.setString(3, filter.getEmail());
+        getUsersPstmt.setString(4, filter.getFirstName());
+        getUsersPstmt.setString(5, filter.getLastName());
+
+        if (!filter.getRole().equals("all")) {
+          getUsersPstmt.setString(6, filter.getRole());
+        } else {
+          getUsersPstmt.setString(6, null);
+        }
+
         if (limit > 0) {
-          getUsersPstmt.setInt(1, limit);
-          getUsersPstmt.setInt(2, offset);
+          getUsersPstmt.setInt(7, limit);
+          getUsersPstmt.setInt(8, offset);
         }
 
         ResultSet getUsersRset = getUsersPstmt.executeQuery();
@@ -95,9 +94,6 @@ public class UserServiceImpl implements UserService {
 
           getUserRolesPstmt.setString(1, user.getCid());
 
-//          if (search != null && search.getRole() != null && !search.getRole().trim().isEmpty()) {
-//            userRolesPstmt.setString(2, search.getRole().trim());
-//          }
           ResultSet userRolesRset = getUserRolesPstmt.executeQuery();
 
           List<RoleResponse> roles = new ArrayList<>();

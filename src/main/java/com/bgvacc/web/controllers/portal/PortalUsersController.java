@@ -3,6 +3,7 @@ package com.bgvacc.web.controllers.portal;
 import com.aarshinkov.datetimecalculator.domain.Time;
 import com.bgvacc.web.api.vateud.VatEudCoreApi;
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.filters.UserFilter;
 import com.bgvacc.web.models.portal.users.UserCreateModel;
 import com.bgvacc.web.models.portal.users.UserSearchModel;
 import com.bgvacc.web.responses.paging.PaginationResponse;
@@ -56,48 +57,33 @@ public class PortalUsersController extends Base {
   private final int DEFAULT_PAGE_LIMIT = 10;
 
   @GetMapping("/portal/users")
-  public String getUsers(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                         @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
-                         Model model, HttpServletRequest request) {
+  public String getUsers(@ModelAttribute("filter") UserFilter filter,
+                         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                         HttpServletRequest request, Model model) {
 
     if (page <= 0) {
-
-      String redirectParams = "page=1";
-
-      if (limit <= 0) {
-        redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
-      }
-      return "redirect:/portal/users?" + redirectParams;
+      return "redirect:/portal/users?page=1" + filter.getPagingParams();
     }
 
     if (limit <= 0) {
-
-      String redirectParams = "";
-
-      if (page <= 0) {
-        redirectParams = "page=1";
-      }
-
-      redirectParams += "&limit=" + DEFAULT_PAGE_LIMIT;
-
-      return "redirect:/portal/users?" + redirectParams;
+      return "redirect:/portal/users?limit=" + DEFAULT_PAGE_LIMIT + filter.getPagingParams();
     }
-    
+
     model.addAttribute("limit", limit);
 
-    PaginationResponse<UserResponse> users = userService.getUsers(page, limit);
+    PaginationResponse<UserResponse> users = userService.getUsers(page, limit, filter);
 
     List<SavedSearchUser> userSavedUserSearches = userService.getUserSavedUserSearches(getLoggedUserCid(request));
-
-//    if (userSavedUserSearches != null && !userSavedUserSearches.isEmpty()) {
-      for (SavedSearchUser usus : userSavedUserSearches) {
-        for (UserResponse user : users.getItems()) {
-          if (usus.getCid().equals(user.getCid())) {
-            user.setIsSavedSearch(true);
-          }
+    
+    for (SavedSearchUser usus : userSavedUserSearches) {
+      for (UserResponse user : users.getItems()) {
+        if (usus.getCid().equals(user.getCid())) {
+          user.setIsSavedSearch(true);
         }
       }
-//    }
+    }
+    
     model.addAttribute("users", users);
 
     model.addAttribute("allRoles", userService.getAllUserRoles());

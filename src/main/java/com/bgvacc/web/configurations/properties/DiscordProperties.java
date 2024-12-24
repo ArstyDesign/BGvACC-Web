@@ -35,6 +35,14 @@ public class DiscordProperties {
   public String getDiscordEventsWebhookId() {
     return getProperty("config/discord/events/webhook-id");
   }
+  
+  public String getDiscordWeeklyATCReportChannelId() {
+    return getProperty("config/discord/weekly-atc-report/report-channel-id");
+  }
+
+  public String getDiscordWeeklyATCReportWebhookId() {
+    return getProperty("config/discord/weekly-atc-report/webhook-id");
+  }
 
   private String getProperty(String propertyName) {
     try {

@@ -1,17 +1,14 @@
 package com.bgvacc.web.schedulers;
 
 import com.bgvacc.web.api.discord.DiscordNotifyApi;
-import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.UpcomingEventsResponse;
 import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
 import com.bgvacc.web.services.ControllerOnlineLogService;
 import com.bgvacc.web.services.EventService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**

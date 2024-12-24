@@ -4,6 +4,8 @@ import com.bgvacc.web.api.Api;
 import com.bgvacc.web.configurations.properties.DiscordProperties;
 import com.bgvacc.web.enums.Methods;
 import com.bgvacc.web.requests.discord.*;
+import com.bgvacc.web.requests.discord.weeklyreport.DiscordWeeklyATCReportRequest;
+import com.bgvacc.web.responses.atc.report.*;
 import com.bgvacc.web.responses.events.EventResponse;
 import com.bgvacc.web.responses.events.UpcomingEventsResponse;
 import com.bgvacc.web.responses.sessions.ClosedControllerSession;
@@ -13,8 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DiscordNotifyApi extends Api {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
+  
+  final int START_END_SPACES_COUNT = 2;
 
   @Autowired
   private DiscordProperties discordProperties;
@@ -199,5 +202,178 @@ public class DiscordNotifyApi extends Api {
 
     log.debug("JSON: " + json);
 //    doRequest(Methods.POST, url, denr, Void.class);
+  }
+
+  public void generateWeeklyATCReport(ATCWeeklyReportResponse atcReport) throws JsonProcessingException {
+
+    final String url = "https://discord.com/api/webhooks/" + discordProperties.getDiscordWeeklyATCReportChannelId() + "/" + discordProperties.getDiscordWeeklyATCReportWebhookId();
+
+    DiscordWeeklyATCReportRequest dwarr = new DiscordWeeklyATCReportRequest();
+
+    dwarr.setUsername("BGvACC");
+
+    StringBuilder cb = new StringBuilder();
+    cb.append("Hello, fellow aviators! I present you the ATC report from last week.\n\n");
+
+    if (atcReport.getAtcTower() == null || atcReport.getAtcTower().isEmpty()) {
+      cb.append("**NOBODY CONTROLLED TWR THIS WEEK** :cry:\n\n");
+    } else {
+      cb.append("**WEEKLY CONTROLLER REPORT FOR TWR :saluting_face:**");
+      cb = generatePositionReport(atcReport.getAtcTower(), cb);
+      cb.append("\n");
+    }
+
+    if (atcReport.getAtcApproach() == null || atcReport.getAtcApproach().isEmpty()) {
+      cb.append("**NOBODY CONTROLLED APP THIS WEEK** :cry:\n\n");
+    } else {
+      cb.append("**WEEKLY CONTROLLER REPORT FOR APPROACH :saluting_face:**");
+      cb = generatePositionReport(atcReport.getAtcApproach(), cb);
+      cb.append("\n");
+    }
+
+    if (atcReport.getAtcControl() == null || atcReport.getAtcControl().isEmpty()) {
+      cb.append("**NOBODY CONTROLLED CTR THIS WEEK** :cry:\n\n");
+    } else {
+      cb.append("**WEEKLY CONTROLLER REPORT FOR CONTROL :saluting_face:**");
+      cb = generatePositionReport(atcReport.getAtcControl(), cb);
+      cb.append("\n");
+    }
+
+    cb.append("CONGRATULATIONS AND GOOD JOB EVERYBODY! :clap:\n\n");
+    cb.append("TOGETHER YOU MANAGED TO CONTROL TOTAL OF **10 hours and 41 minutes** :partying_face:\n\n");
+    cb.append("See you next week,\n");
+    cb.append("BGvACC Bot");
+
+    dwarr.setContent(String.valueOf(cb));
+
+    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    String json = ow.writeValueAsString(dwarr);
+
+    log.debug("JSON: " + json);
+    doRequest(Methods.POST, url, dwarr, Void.class);
+  }
+
+  private StringBuilder generatePositionReport(List<ATCWeeklyReportItem> items, StringBuilder b) {
+
+    List<String> names = new ArrayList<>();
+    List<String> callsigns = new ArrayList<>();
+    List<String> times = new ArrayList<>();
+
+    items.forEach(item -> {
+      names.add(item.getName());
+      callsigns.add(item.getCallsign());
+      times.add(item.getTime());
+    });
+
+    b.append("```| ");
+
+    int totalControllers = names.size();
+
+    List<String> numbers = new ArrayList<>();
+    for (int i = 1; i <= totalControllers; i++) {
+      numbers.add(i + ".");
+    }
+
+    final String NO_COLUMN_HEADER = "No.";
+    b.append(NO_COLUMN_HEADER);
+    ColumnHeaderResponse nuch = generateColumnHeader(NO_COLUMN_HEADER, b, numbers);
+    b = nuch.getStringBuilder();
+
+    final String NAME_COLUMN_HEADER = "Name";
+    b.append(" | ").append(NAME_COLUMN_HEADER);
+    ColumnHeaderResponse nch = generateColumnHeader(NAME_COLUMN_HEADER, b, names);
+    b = nch.getStringBuilder();
+
+    final String CALLSIGN_COLUMN_HEADER = "Callsign";
+    b.append(" | ").append(CALLSIGN_COLUMN_HEADER);
+    ColumnHeaderResponse cch = generateColumnHeader(CALLSIGN_COLUMN_HEADER, b, callsigns);
+    b = cch.getStringBuilder();
+
+    final String TIME_COLUMN_HEADER = "Time";
+    b.append(" | ").append(TIME_COLUMN_HEADER);
+    ColumnHeaderResponse tch = generateColumnHeader(TIME_COLUMN_HEADER, b, times);
+    b = tch.getStringBuilder();
+
+    b.append(" |\n");
+
+    // Row 2
+    b.append("| ");
+
+    for (int i = 1; i <= nuch.getColumnMostChars() - START_END_SPACES_COUNT; i++) {
+      b.append("-");
+    }
+
+    b.append(" | ");
+
+    for (int i = 1; i <= nch.getColumnMostChars() - START_END_SPACES_COUNT; i++) {
+      b.append("-");
+    }
+
+    b.append(" | ");
+
+    for (int i = 1; i <= cch.getColumnMostChars() - START_END_SPACES_COUNT; i++) {
+      b.append("-");
+    }
+
+    b.append(" | ");
+
+    for (int i = 1; i <= tch.getColumnMostChars() - START_END_SPACES_COUNT; i++) {
+      b.append("-");
+    }
+
+    b.append(" |").append("\n");
+
+    // Row 3 and onwards
+    for (int i = 0; i < items.size(); i++) {
+      b.append("| ");
+      b.append(numbers.get(i));
+      for (int j = 1; j <= nuch.getColumnMostChars() - numbers.get(i).length() - START_END_SPACES_COUNT; j++) {
+        b.append(" ");
+      }
+      b.append(" | ");
+      b.append(items.get(i).getName());
+      for (int j = 1; j <= nch.getColumnMostChars() - items.get(i).getName().length() - START_END_SPACES_COUNT; j++) {
+        b.append(" ");
+      }
+      b.append(" | ");
+      b.append(items.get(i).getCallsign());
+      for (int j = 1; j <= cch.getColumnMostChars() - items.get(i).getCallsign().length() - START_END_SPACES_COUNT; j++) {
+        b.append(" ");
+      }
+      b.append(" | ");
+      b.append(items.get(i).getTime());
+      for (int j = 1; j <= tch.getColumnMostChars() - items.get(i).getTime().length() - START_END_SPACES_COUNT; j++) {
+        b.append(" ");
+      }
+      b.append(" |\n");
+    }
+
+    b.append("```");
+
+    return b;
+  }
+
+  private ColumnHeaderResponse generateColumnHeader(String columnName, StringBuilder b, List<String> items) {
+
+    int columnMinimumChars = columnName.length() + START_END_SPACES_COUNT; // For space before and after column name
+    int columnMostChars = columnMinimumChars;
+
+    for (String item : items) {
+      if (item.length() + START_END_SPACES_COUNT > columnMostChars) {
+        columnMostChars = item.length() + START_END_SPACES_COUNT;
+      }
+    }
+
+    if (columnMostChars > columnMinimumChars - START_END_SPACES_COUNT) {
+      for (int i = 1; i <= columnMostChars - columnName.length() - START_END_SPACES_COUNT; i++) {
+        b.append(" ");
+      }
+    }
+
+    ColumnHeaderResponse chr = new ColumnHeaderResponse();
+    chr.setColumnMostChars(columnMostChars);
+    chr.setStringBuilder(b);
+
+    return chr;
   }
 }

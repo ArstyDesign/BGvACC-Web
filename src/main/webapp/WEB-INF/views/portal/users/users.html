@@ -14,49 +14,92 @@
 
       <div class="row">
 
-        <!--        <div class="col-12 mb-3">
-                  <div class="card overflow-hidden">
-                    <div class="card-body p-0">
-                      <div class="accordion accordion-flush" id="accordionExample">
-                        <div class="accordion-item">
-                          <h2 class="accordion-header" id="usersSearch">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#usersSearchCollapse" aria-expanded="true" aria-controls="usersSearchCollapse">
-                              Search
-                            </button>
-                          </h2>
-                          <div id="usersSearchCollapse" class="accordion-collapse collapse show" aria-labelledby="usersSearch" data-bs-parent="#accordionExample" style="">
-                            <div class="accordion-body">
-                              <form th:action="@{/portal/users}" method="get" th:object="${search}">
-                                <div class="row">
-                                  <div class="col-12 col-lg-4 mb-3">
-                                    <label for="cidInput" class="form-label">CID</label>
-                                    <input id="cidInput" type="text" class="form-control" th:field="*{cid}"/>
-                                  </div>
-                                  <div class="col-12 col-lg-4 mb-3">
-                                    <label for="nameInput" class="form-label">Name</label>
-                                    <input id="nameInput" type="text" class="form-control" th:field="*{name}"/>
-                                  </div>
-                                  <div class="col-12 col-lg-4 mb-3">
-                                    <label for="roleInput" class="form-label">Role</label>
-                                    <select id="roleInput" class="form-control" th:field="*{role}">
-                                      <option th:text="#{portal.users.users.search.role.all}" value="all">- All roles -</option>
-                                      <option th:each="r : ${allRoles}" th:text="#{portal.users.user.roles.atc. + ${#strings.toLowerCase(r)}}" th:value="${r}">Role</option>
-                                    </select>
-                                  </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-12 col-lg-4 mb-0">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                  </div>
-                                </div>
-                              </form>
-                            </div>
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-body p-0">
+              <div class="accordion accordion-flush" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="usersSearch">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#usersSearchCollapse" aria-expanded="true" aria-controls="usersSearchCollapse">
+                      <div class="fs-5 mb-0">
+                        <span class="material-symbols-rounded me-1">search</span>
+                        <span>Search</span>
+                      </div>
+                    </button>
+                  </h2>
+                  <div id="usersSearchCollapse" class="accordion-collapse collapse show" aria-labelledby="usersSearch" data-bs-parent="#accordionExample" style="">
+                    <div class="accordion-body">
+                      <form th:action="@{/portal/users}" method="get" th:object="${filter}">
+                        <div class="row">
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="cidInput" class="form-label">CID</label>
+                            <input id="cidInput" type="text" class="form-control" th:field="*{cid}"/>
+                          </div>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="firstNameInput" class="form-label">First name</label>
+                            <input id="firstNameInput" type="text" class="form-control" th:field="*{firstName}"/>
+                          </div>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="lastNameInput" class="form-label">Last name</label>
+                            <input id="lastNameInput" type="text" class="form-control" th:field="*{lastName}"/>
+                          </div>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="emailInput" class="form-label">Email</label>
+                            <input id="emailInput" type="text" class="form-control" th:field="*{email}"/>
+                          </div>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="roleInput" class="form-label">Role</label>
+                            <select id="roleInput" class="form-control" th:field="*{role}">
+                              <option th:text="#{portal.users.users.search.role.all}" value="all">- All roles -</option>
+
+                              <optgroup th:label="#{portal.users.user.roles.add.roles.group.system}">
+                                <option th:each="ur : ${allRoles}" th:if="${ur.roleName.contains('SYS')}"
+                                        th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                              </optgroup>
+                              <optgroup th:label="#{portal.users.user.roles.add.roles.group.staff}">
+                                <option th:each="ur : ${allRoles}" th:if="${ur.roleName.contains('STAFF')}"
+                                        th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                              </optgroup>
+                              <optgroup th:label="#{portal.users.user.roles.add.roles.group.atc}">
+                                <option th:each="ur : ${allRoles}" th:if="${ur.roleName.contains('ATC')}"
+                                        th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                              </optgroup>
+                              <optgroup th:label="#{portal.users.user.roles.add.roles.group.examiners}">
+                                <option th:each="ur : ${allRoles}" th:if="${ur.roleName.contains('EXAM')}"
+                                        th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                              </optgroup>
+                              <optgroup th:label="#{portal.users.user.roles.add.roles.group.others}">
+                                <option th:each="ur : ${allRoles}" th:if="${!ur.roleName.contains('SYS') and !ur.roleName.contains('STAFF') and !ur.roleName.contains('ATC') and !ur.roleName.contains('EXAM')}"
+                                        th:value="${ur}" th:text="${ur} + ' - ' + #{portal.users.user.roles.atc. + ${#strings.toLowerCase(ur)}}">User role</option>
+                              </optgroup>
+                            </select>
+                          </div>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+                            <label for="limitInput" class="form-label">Items per page</label>
+                            <select id="limitInput" class="form-control" name="limit">
+                              <option value="5" th:selected="${limit eq 5}">5</option>
+                              <option value="10" th:selected="${limit eq 10}">10</option>
+                              <option value="20" th:selected="${limit eq 20}">20</option>
+                              <option value="30" th:selected="${limit eq 30}">30</option>
+                              <option value="50" th:selected="${limit eq 50}">50</option>
+                              <option value="100" th:selected="${limit eq 100}">100</option>
+                            </select>
                           </div>
                         </div>
-                      </div>
+                        <div class="row">
+                          <div class="col-12 col-md-6 col-lg-4 mb-0">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                            <a href="#" th:href="@{/portal/users}" class="btn btn-outline-dark" th:if="${filter.isSearched}">Clear</a>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
-                </div>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="col-12 mb-3">
           <div class="card table-card table-nowrap">
@@ -106,7 +149,7 @@
                       </div>
                     </td>
                     <td th:classappend="${isMe} ? 'bg-success-subtle'">
-                      <span class="badge fs-6" th:classappend="${u.isActive} ? 'bg-success' : 'bg-danger'"
+                      <span class="badge fs-6" th:classappend="${u.isActive} ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'"
                             th:text="${u.isActive} ? #{portal.users.users.status.active} : #{portal.users.users.status.inactive}">Active/inactive</span>
                     </td>
                     <td th:classappend="${isMe} ? 'bg-success-subtle'">
