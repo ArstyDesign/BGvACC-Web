@@ -14,6 +14,8 @@ public interface ATCReservationService {
 
   List<ATCReservationResponse> getAllFutureATCReservations();
   
+  ATCReservationResponse getATCReservation(String reservationId);
+  
   boolean createNewATCReservation(CreateATCReservationModel carm);
   
   boolean isPositionFreeForTimeSlot(String position, LocalDateTime startTime, LocalDateTime endTime);

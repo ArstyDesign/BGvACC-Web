@@ -3,6 +3,7 @@ package com.bgvacc.web.controllers;
 import com.bgvacc.web.base.Base;
 import com.bgvacc.web.domains.ATCCanControlPositions;
 import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
+import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.responses.mentortrainees.MentorTraineeResponse;
 import com.bgvacc.web.responses.users.UserResponse;
 import com.bgvacc.web.responses.users.atc.UserATCAuthorizedPositionResponse;
@@ -51,7 +52,19 @@ public class ATCReservationsController extends Base {
   @GetMapping("/atc-reservations/{reservationId}")
   public String viewATCReservation(@PathVariable("reservationId") String reservationId, Model model) {
 
-    model.addAttribute("page", "atc-reservations");
+    ATCReservationResponse reservation = atcReservationService.getATCReservation(reservationId);
+
+    model.addAttribute("reservation", reservation);
+
+    model.addAttribute("pageTitle", getMessage("atcreservation.title"));
+    model.addAttribute("page", "atc-reservation");
+
+    List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.calendar", null, LocaleContextHolder.getLocale()), "/calendar"));
+    breadcrumbs.add(new Breadcrumb(getMessage("menu.atcreservation", null, LocaleContextHolder.getLocale()), null));
+
+    model.addAttribute("breadcrumbs", breadcrumbs);
 
     return "atc-reservations/atc-reservation";
   }
@@ -79,7 +92,7 @@ public class ATCReservationsController extends Base {
     model.addAttribute("carm", carm);
 
     model.addAttribute("pageTitle", getMessage("calendar.reservation.create.title"));
-    model.addAttribute("page", "atc-reservations");
+    model.addAttribute("page", "atc-reservation");
 
     List<Breadcrumb> breadcrumbs = new ArrayList<>();
     breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));
@@ -114,7 +127,7 @@ public class ATCReservationsController extends Base {
       model.addAttribute("mentorTrainees", mentorTrainees);
 
       model.addAttribute("pageTitle", getMessage("calendar.reservation.create.title"));
-      model.addAttribute("page", "atc-reservations");
+      model.addAttribute("page", "atc-reservation");
 
       List<Breadcrumb> breadcrumbs = new ArrayList<>();
       breadcrumbs.add(new Breadcrumb(getMessage("menu.home", null, LocaleContextHolder.getLocale()), "/"));

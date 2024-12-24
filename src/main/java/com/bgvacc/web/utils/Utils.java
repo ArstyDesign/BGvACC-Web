@@ -75,8 +75,8 @@ public class Utils extends Base {
       }
 
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-      String startDate = atcr.getFromTime().format(formatter);
-      String endDate = atcr.getToTime().format(formatter);
+      String startDate = atcr.getFromTime().getZoneTime().format(formatter);
+      String endDate = atcr.getToTime().getZoneTime().format(formatter);
 
       ce.setStart(startDate);
       ce.setEnd(endDate);

@@ -4,14 +4,106 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{templates/mainTemplate}">
   <head>
-    <title>Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+    <title th:text="#{app.title(#{atcreservation.title})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
   </head>
   <body>
     <div layout:fragment="contentDiv">
 
       <div class="row">
-        <div class="col-12 mb-3">
-          <div>ATC reservation</div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-user-tie me-2"></i>
+                <span th:if="${reservation.reservationType eq 'Normal'}" th:text="#{atcreservation.atc.title}">Controller information</span>
+                <span th:if="${reservation.reservationType eq 'Training'}" th:text="#{atcreservation.mentor.title}">Mentor information</span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <h6 class="text-muted">
+                <i class="fas fa-id-badge me-2"></i>
+                <span th:if="${reservation.reservationType eq 'Normal'}" th:text="#{atcreservation.atc}">Air traffic controller</span>
+                <span th:if="${reservation.reservationType eq 'Training'}" th:text="#{atcreservation.mentor}">Mentor</span>
+              </h6>
+              <div class="fw-bold" th:text="${reservation.userCid} + ' - ' + ${reservation.userNames.fullName}"></div>
+              <h6 class="text-muted mt-3">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                <span th:text="#{atcreservation.position}">Position</span>
+              </h6>
+              <div class="fw-bold" th:text="#{positions. + ${#strings.toLowerCase(reservation.position)}}"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-clock me-2"></i>
+                <span th:text="#{atcreservation.time.title}">Timing details</span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <h6 class="text-muted">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <span th:text="#{atcreservation.time.date}">Reservation date</span>
+              </h6>
+              <div class="fw-bold mb-3" th:text="${reservation.fromTime.getFormattedDateTime('dd.MM.yyyy')}"></div>
+              <div class="row">
+                <div class="col-12 col-md-6 mb-3 mb-md-0">
+                  <h6 class="text-muted">
+                    <i class="fas fa-hourglass-start me-2"></i>
+                    <span th:text="#{atcreservation.time.start}">Start time</span>
+                  </h6>
+                  <div class="fw-bold" th:text="${reservation.fromTime.getFormattedDateTime('HH:mm')} + ' Z'"></div>
+                </div>
+                <div class="col-12 col-md-6 text-md-end">
+                  <h6 class="text-muted">
+                    <i class="fas fa-hourglass-end me-2"></i>
+                    <span th:text="#{atcreservation.time.end}">End time</span>
+                  </h6>
+                  <div class="fw-bold" th:text="${reservation.toTime.getFormattedDateTime('HH:mm')} + ' Z'"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header text-white" th:classappend="${reservation.reservationType eq 'Training'} ? 'bg-warning' : 'bg-secondary'">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            <span th:text="#{atcreservation.other.title}">Additional information</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-md-4" th:classappend="${reservation.reservationType eq 'Training'} ? 'mb-3 mb-md-0'">
+              <h6 class="text-muted">
+                <i class="fas fa-tag me-2"></i>
+                <span th:text="#{atcreservation.other.reservationtype}">Reservation type</span>
+              </h6>
+              <div class="fw-bold" th:if="${reservation.reservationType eq 'Normal'}" th:text="#{atcreservation.other.reservationtype.normal}">Normal</div>
+              <div class="fw-bold" th:if="${reservation.reservationType eq 'Training'}" th:text="#{atcreservation.other.reservationtype.training}">Training</div>
+            </div>
+            <div th:if="${reservation.reservationType eq 'Training'}" th:remove="tag">
+              <div class="col-12 col-md-4 text-md-center mb-3 mb-md-0">
+                <h6 class="text-muted">
+                  <i class="fas fa-user me-2"></i>
+                  <span th:text="#{atcreservation.other.trainee.cid}">Trainee CID</span>
+                </h6>
+                <div class="fw-bold" th:text="${reservation.traineeCid}"></div>
+              </div>
+              <div class="col-12 col-md-4 mb-0 text-md-end">
+                <h6 class="text-muted">
+                  <i class="fas fa-user-graduate me-2"></i>
+                  <span th:text="#{atcreservation.other.trainee.name}">Trainee name</span>
+                </h6>
+                <div class="fw-bold" th:text="${reservation.traineeNames.fullName}"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

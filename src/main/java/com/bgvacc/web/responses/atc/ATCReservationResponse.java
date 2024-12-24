@@ -1,5 +1,6 @@
 package com.bgvacc.web.responses.atc;
 
+import com.bgvacc.web.domains.UTCDateTime;
 import com.bgvacc.web.utils.Names;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -26,28 +27,7 @@ public class ATCReservationResponse implements Serializable {
   private Names userNames;
   private String traineeCid;
   private Names traineeNames;
-  private ZonedDateTime fromTime;
-  private Timestamp fromTimeTimestamp;
-  private ZonedDateTime toTime;
-  private Timestamp toTimeTimestamp;
-  private ZonedDateTime createdAt;
-  private Timestamp createdAtTimestamp;
-
-  public void setFromTime(ZonedDateTime fromTime) {
-    this.fromTime = fromTime;
-    ZonedDateTime utcDateTime = fromTime.withZoneSameInstant(ZoneOffset.UTC);
-    this.fromTimeTimestamp = Timestamp.from(utcDateTime.toInstant());
-  }
-
-  public void setEndAt(ZonedDateTime toTime) {
-    this.toTime = toTime;
-    ZonedDateTime utcDateTime = toTime.withZoneSameInstant(ZoneOffset.UTC);
-    this.toTimeTimestamp = Timestamp.from(utcDateTime.toInstant());
-  }
-
-  public void setCreatedAt(ZonedDateTime createdAt) {
-    this.createdAt = createdAt;
-    ZonedDateTime utcDateTime = createdAt.withZoneSameInstant(ZoneOffset.UTC);
-    this.createdAtTimestamp = Timestamp.from(utcDateTime.toInstant());
-  }
+  private UTCDateTime fromTime;
+  private UTCDateTime toTime;
+  private UTCDateTime createdAt;
 }

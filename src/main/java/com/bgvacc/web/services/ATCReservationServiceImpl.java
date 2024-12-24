@@ -1,5 +1,6 @@
 package com.bgvacc.web.services;
 
+import com.bgvacc.web.domains.UTCDateTime;
 import com.bgvacc.web.models.atcreservations.CreateATCReservationModel;
 import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.utils.Names;
@@ -39,7 +40,6 @@ public class ATCReservationServiceImpl implements ATCReservationService {
       try {
 
 //        conn.setAutoCommit(false);
-
         List<ATCReservationResponse> atcReservations = new ArrayList<>();
 
         ResultSet getAllFutureATCReservationsRset = getAllFutureATCReservationsPstmt.executeQuery();
@@ -61,6 +61,43 @@ public class ATCReservationServiceImpl implements ATCReservationService {
       }
     } catch (Exception e) {
       log.error("Error getting all future ATC reservations.", e);
+    }
+
+    return null;
+  }
+
+  @Override
+  public ATCReservationResponse getATCReservation(String reservationId) {
+
+    final String getATCReservationSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE reservation_id = ?";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getATCReservationPstmt = conn.prepareStatement(getATCReservationSql)) {
+
+      try {
+
+//        conn.setAutoCommit(false);
+        getATCReservationPstmt.setString(1, reservationId);
+
+        ResultSet getATCReservationPstmtRset = getATCReservationPstmt.executeQuery();
+
+        if (getATCReservationPstmtRset.next()) {
+
+          ATCReservationResponse ar = getATCReservation(getATCReservationPstmtRset);
+
+          return ar;
+        }
+
+        return null;
+
+      } catch (SQLException ex) {
+        log.error("Error getting ATC reservation with ID '" + reservationId + "'.", ex);
+//        conn.rollback();
+      } finally {
+//        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting ATC reservation with ID '" + reservationId + "'.", e);
     }
 
     return null;
@@ -172,10 +209,10 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 
     return false;
   }
-  
+
   @Override
   public boolean isThereAnEventForTimeSlot(LocalDateTime startTime, LocalDateTime endTime) {
-    
+
     return false;
   }
 
@@ -259,37 +296,19 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     Timestamp fromTimeTimestamp = rset.getTimestamp("from_time");
 
     if (fromTimeTimestamp != null) {
-      // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
-      ZonedDateTime fromTimeZonedDateTime = fromTimeTimestamp.toInstant()
-              .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
-              .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
-
-//            System.out.println("Event Start Time: " + zonedDateTime);
-      ar.setFromTime(fromTimeZonedDateTime);
+      ar.setFromTime(new UTCDateTime(fromTimeTimestamp));
     }
 
     Timestamp toTimeTimestamp = rset.getTimestamp("to_time");
 
     if (toTimeTimestamp != null) {
-      // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
-      ZonedDateTime toTimeZonedDateTime = toTimeTimestamp.toInstant()
-              .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
-              .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
-
-//            System.out.println("Event Start Time: " + zonedDateTime);
-      ar.setToTime(toTimeZonedDateTime);
+      ar.setToTime(new UTCDateTime(toTimeTimestamp));
     }
 
     Timestamp createdAtTimestamp = rset.getTimestamp("created_at");
 
     if (createdAtTimestamp != null) {
-      // Преобразуване на Timestamp в ZonedDateTime в желаната времева зона
-      ZonedDateTime createdAtZonedDateTime = createdAtTimestamp.toInstant()
-              .atZone(ZoneId.of("UTC")) // Използваме UTC времева зона
-              .withZoneSameInstant(ZoneId.of("Europe/Sofia")); // Конвертиране в желаната времева зона
-
-//            System.out.println("Event Start Time: " + zonedDateTime);
-      ar.setCreatedAt(createdAtZonedDateTime);
+      ar.setCreatedAt(new UTCDateTime(createdAtTimestamp));
     }
 
     return ar;

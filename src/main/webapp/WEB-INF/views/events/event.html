@@ -117,15 +117,21 @@
                     </div>
 
                     <div th:if="${!sl.isApproved}" th:remove="tag">
-                      <span th:if="${sl.hasUserAlreadyApplied}" class="fst-italic" th:text="#{event.roster.alreadyapplied}">You already applied for slot</span>
-                      <a href="#" th:if="${ep.canUserApplyForPosition and !sl.hasUserAlreadyApplied}" class="btn btn-primary btn-sm"
-                         data-bs-toggle="modal" data-bs-target="#applyForSlotModal" th:data-slot-id="${sl.slotId}" 
-                         th:data-msg="#{event.roster.applyforslot.modal.message(${event.name})}"
-                         th:data-position="${ep.positionId}"
-                         th:data-date="${event.getFormattedStartDateTime('dd.MM.yyyy')}"
-                         th:data-time-slot="${sl.getFormattedStartDateTime('HH:mm')} + ' - ' + ${sl.getFormattedEndDateTime('HH:mm')} + 'z'"
-                         th:text="#{event.roster.applyforslot}">Apply for slot</a>
-                      <span th:if="${!ep.canUserApplyForPosition}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+
+                      <div th:if="${event.isPast}" th:remove="tag">
+                        <span>-</span>
+                      </div>
+                      <div th:if="${!event.isPast}" th:remove="tag">
+                        <span th:if="${sl.hasUserAlreadyApplied}" class="fst-italic" th:text="#{event.roster.alreadyapplied}">You already applied for slot</span>
+                        <a href="#" th:if="${ep.canUserApplyForPosition and !sl.hasUserAlreadyApplied}" class="btn btn-primary btn-sm"
+                           data-bs-toggle="modal" data-bs-target="#applyForSlotModal" th:data-slot-id="${sl.slotId}" 
+                           th:data-msg="#{event.roster.applyforslot.modal.message(${event.name})}"
+                           th:data-position="${ep.positionId}"
+                           th:data-date="${event.getFormattedStartDateTime('dd.MM.yyyy')}"
+                           th:data-time-slot="${sl.getFormattedStartDateTime('HH:mm')} + ' - ' + ${sl.getFormattedEndDateTime('HH:mm')} + 'z'"
+                           th:text="#{event.roster.applyforslot}">Apply for slot</a>
+                        <span th:if="${!ep.canUserApplyForPosition}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                      </div>
                     </div>
                   </div>
                   <div sec:authorize="!isAuthenticated()" th:remove="tag">
