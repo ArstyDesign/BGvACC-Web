@@ -45,7 +45,7 @@ public class VatsimCoreController {
 
   @GetMapping("/atc/bg-online/count")
   @ResponseBody
-  private Long getOnlineBGControllersCount() {
+  public Long getOnlineBGControllersCount() {
     Memory memory = Memory.getInstance();
     return Long.valueOf(memory.getOnlineATCListSize(true));
   }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/mainTemplate}">
+  <body>
+    <div id="booking" th:remove="tag">
+      <div class="text-center" th:if="${#lists.isEmpty(bookings)}">
+        <small class="text-muted" th:text="#{home.bookings.notfound}">No bookings</small>
+      </div>
+
+      <div th:if="${!#lists.isEmpty(bookings)}" th:remove="tag">
+        <table class="table table-hover table-striped table-sm mb-2">
+          <thead>
+            <tr>
+              <th class="fw-bold" th:text="#{home.bookings.position}">Position</th>
+              <th class="fw-bold" th:text="#{home.bookings.from}">From</th>
+              <th class="fw-bold text-end" th:text="#{home.bookings.to}">To</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="b : ${bookings}">
+              <td class="text-primary">
+                <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" th:classappend="${b.reservationType eq 'Training'} ? 'text-warning' : 'text-primary'"
+                   th:data-bs-original-title="${b.reservationType eq 'Training'} ? (#{home.bookings.atcinfo.training(${b.userCid}, ${b.userNames.fullName}, ${b.traineeCid}, ${b.traineeNames.fullName})}) : (#{home.bookings.atcinfo(${b.userCid}, ${b.userNames.fullName})})"
+                   th:text="${b.reservationType eq 'Training'} ? (${b.position} + ' (T)') : ${b.position}">LBSF_APP</a>
+              </td>
+              <td th:text="${b.fromTime.getFormattedDateTime('HH:mm')}">19:00</td>
+              <td class="text-end" th:text="${b.toTime.getFormattedDateTime('HH:mm')}">23:00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="text-center text-muted">
+          <small th:text="#{home.bookings.alltimes}">(all times are in UTC (Zulu) time)</small>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

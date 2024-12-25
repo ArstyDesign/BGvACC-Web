@@ -1,8 +1,12 @@
 package com.bgvacc.web.controllers;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.responses.atc.ATCReservationResponse;
 import com.bgvacc.web.responses.events.EventResponse;
+import com.bgvacc.web.services.ATCReservationService;
 import com.bgvacc.web.services.EventService;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -24,6 +29,8 @@ public class HomeController extends Base {
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final EventService eventService;
+
+  private final ATCReservationService atcReservationService;
 
   @GetMapping(value = "/")
   public String home(Model model) {
@@ -50,10 +57,32 @@ public class HomeController extends Base {
 
     model.addAttribute("upcomingEvents", upcomingEventsPart);
 
+    Instant nowUtc = Instant.now();
+    LocalDateTime localDateTimeUtc = LocalDateTime.ofInstant(nowUtc, ZoneOffset.UTC);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    String currentDate = localDateTimeUtc.format(formatter);
+
+    model.addAttribute("currentDate", currentDate);
+
+    List<ATCReservationResponse> bookings = atcReservationService.getAllReservationsForDate(LocalDate.parse(currentDate, formatter));
+    model.addAttribute("bookings", bookings);
+
     model.addAttribute("pageTitle", getMessage("home.title"));
     model.addAttribute("page", "home");
 
     return "home";
+  }
+  
+  @GetMapping("/atc/reservations/{date}")
+  public String getATCReservations(@PathVariable("date") String date, Model model) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    List<ATCReservationResponse> bookings = atcReservationService.getAllReservationsForDate(LocalDate.parse(date, formatter));
+
+    model.addAttribute("bookings", bookings);
+
+    return "components/booking-components :: #booking";
   }
 
   @GetMapping("/lbsf-charts")

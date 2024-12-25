@@ -66,6 +66,51 @@ public class ATCReservationServiceImpl implements ATCReservationService {
     return null;
   }
 
+  public List<ATCReservationResponse> getAllReservationsForDate(LocalDate date) {
+
+    final String getAllReservationsForDateSql = "SELECT ar.reservation_id, ar.reservation_type, ar.position_id, ar.user_cid, u.first_name user_first_name, u.last_name user_last_name, ar.trainee_cid, tu.first_name trainee_first_name, tu.last_name trainee_last_name, ar.from_time, ar.to_time, ar.created_at FROM atc_reservations ar JOIN users u ON ar.user_cid = u.cid LEFT JOIN users tu ON ar.trainee_cid = tu.cid WHERE is_canceled = false AND DATE(from_time) = to_date(?, ?) ORDER BY ar.from_time, ar.to_time";
+
+    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+            PreparedStatement getAllReservationsForDatePstmt = conn.prepareStatement(getAllReservationsForDateSql)) {
+
+      try {
+
+//        conn.setAutoCommit(false);
+        List<ATCReservationResponse> atcReservations = new ArrayList<>();
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        String stringDate = date.format(format);
+
+        log.debug("String date: " + stringDate);
+
+        getAllReservationsForDatePstmt.setString(1, stringDate);
+        getAllReservationsForDatePstmt.setString(2, "dd.MM.yyyy");
+
+        ResultSet getAllReservationsForDateRset = getAllReservationsForDatePstmt.executeQuery();
+
+        while (getAllReservationsForDateRset.next()) {
+
+          ATCReservationResponse ar = getATCReservation(getAllReservationsForDateRset);
+
+          atcReservations.add(ar);
+        }
+
+        return atcReservations;
+
+      } catch (SQLException ex) {
+        log.error("Error getting all future ATC reservations.", ex);
+//        conn.rollback();
+      } finally {
+//        conn.setAutoCommit(true);
+      }
+    } catch (Exception e) {
+      log.error("Error getting all future ATC reservations.", e);
+    }
+
+    return null;
+  }
+
   @Override
   public ATCReservationResponse getATCReservation(String reservationId) {
 

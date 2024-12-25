@@ -10,7 +10,7 @@
     <div layout:fragment="contentDiv">
 
       <div class="row">
-        <div class="col-12 col-md-9 mb-3">
+        <div class="col-12 col-lg-9 mb-3">
 
           <span id="testttt"></span>
 
@@ -115,12 +115,73 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-3 mb-3">
+        <div class="col-12 col-lg-3 mb-3">
 
           <a href="#" th:href="@{/atc-reservations/create}" class="btn btn-success text-white btn-sm mb-3" sec:authorize="isAuthenticated()" th:if="${@securityChecks.hasUserAuthorizedPositions(session.loggedUser.cid)}">
             <i class="bi bi-plus-circle me-1"></i>
             <span th:text="#{calendar.makereservation}">Make a reservation</span>
           </a>
+
+          <div>
+            <div class="h5">
+              <span th:text="#{home.bookings.title}">Booked positions</span>
+            </div>
+
+            <ul class="nav d-flex justify-content-between">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" onclick="bookingPreviousPage();" href="#">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <div id="currentDateDiv" class="nav-link" style="font-weight: bold !important;" th:text="${currentDate}">24.12.2024</div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" onclick="bookingNextPage();">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+
+              <input id="currentDate" type="hidden" th:value="${currentDate}"/>
+            </ul>
+
+            <div id="bookingDiv">
+              <div class="text-center" th:if="${#lists.isEmpty(bookings)}">
+                <small class="text-muted" th:text="#{home.bookings.notfound}">No bookings</small>
+              </div>
+
+              <div th:if="${!#lists.isEmpty(bookings)}" th:remove="tag">
+                <table class="table table-hover table-striped table-sm mb-2">
+                  <thead>
+                    <tr>
+                      <th class="fw-bold" th:text="#{home.bookings.position}">Position</th>
+                      <th class="fw-bold" th:text="#{home.bookings.from}">From</th>
+                      <th class="fw-bold text-end" th:text="#{home.bookings.to}">To</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="b : ${bookings}">
+                      <!--<div th:text="${b}"></div>-->
+                      <td class="text-primary">
+                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" th:classappend="${b.reservationType eq 'Training'} ? 'text-warning' : 'text-primary'"
+                           th:data-bs-original-title="${b.reservationType eq 'Training'} ? (#{home.bookings.atcinfo.training(${b.userCid}, ${b.userNames.fullName}, ${b.traineeCid}, ${b.traineeNames.fullName})}) : (#{home.bookings.atcinfo(${b.userCid}, ${b.userNames.fullName})})"
+                           th:text="${b.reservationType eq 'Training'} ? (${b.position} + ' (T)') : ${b.position}">LBSF_APP</a>
+                      </td>
+                      <td th:text="${b.fromTime.getFormattedDateTime('HH:mm')}">19:00</td>
+                      <td class="text-end" th:text="${b.toTime.getFormattedDateTime('HH:mm')}">23:00</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="text-center text-muted">
+                  <small th:text="#{home.bookings.alltimes}">(all times are in UTC (Zulu) time)</small>
+                </div>
+              </div>
+            </div>
+
+
+            <hr class="my-4"/>
+          </div>
 
           <div>
             <div class="h5">
@@ -226,8 +287,81 @@
                 let lbwnAppStatusUrl = /*[[@{/atc/status/lbwn-app}]]*/;
                 let lbpdTwrStatusUrl = /*[[@{/atc/status/lbpd-twr}]]*/;
                 let lbgoTwrStatusUrl = /*[[@{/atc/status/lbgo-twr}]]*/;
-                let aux = /*[[@{/}]]*/;
+                let nextPreviousDateUrl = /*[[@{/api/date}]]*/;
+                let getBookingsUrl = /*[[@{/atc/reservations}]]*/;
         /*]]>*/
+
+        function bookingNextPage() {
+          let url = nextPreviousDateUrl + '/' + $('#currentDate').val() + '/next';
+
+          $.ajax({
+            url: url,
+            type: 'get',
+            success: function (data)
+            {
+              $('#currentDateDiv').empty().append(data.nextDate);
+              $('#currentDate').val(data.nextDate);
+
+              $.ajax({
+                url: getBookingsUrl + '/' + data.nextDate,
+                type: 'get',
+                success: function (data)
+                {
+                  $("#bookingDiv").empty().append(data);
+
+                  const tooltipTriggerList2 = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                  tooltipTriggerList2.forEach(function (tooltipTriggerEl) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                  });
+                },
+                error: function (xhr, status, error)
+                {
+                  //                    alert("fail");
+                }
+              });
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+        }
+
+        function bookingPreviousPage() {
+          let url = nextPreviousDateUrl + '/' + $('#currentDate').val() + '/previous';
+
+          $.ajax({
+            url: url,
+            type: 'get',
+            success: function (data)
+            {
+              $('#currentDateDiv').empty().append(data.previousDate);
+              $('#currentDate').val(data.previousDate);
+
+              $.ajax({
+                url: getBookingsUrl + '/' + data.previousDate,
+                type: 'get',
+                success: function (data)
+                {
+                  $("#bookingDiv").empty().append(data);
+
+                  const tooltipTriggerList2 = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                  tooltipTriggerList2.forEach(function (tooltipTriggerEl) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                  });
+                },
+                error: function (xhr, status, error)
+                {
+                  //                    alert("fail");
+                }
+              });
+            },
+            error: function (xhr, status, error)
+            {
+              //                    alert("fail");
+            }
+          });
+        }
 
         function getAllMetars() {
           getMetarAtICAO("LBSF", "metarLBSF");

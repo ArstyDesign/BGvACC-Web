@@ -11,8 +11,9 @@ import com.bgvacc.web.responses.sessions.ControllersOnlineReportResponse;
 import com.bgvacc.web.services.*;
 import com.bgvacc.web.vatsim.events.VatsimEvents;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,6 @@ public class TestController extends Base {
 //
 //    return "Testing events sync";
 //  }
-
 //  @GetMapping("/test/addController")
 //  public String testAddController(Model model) {
 //    log.debug("Controller added...");
