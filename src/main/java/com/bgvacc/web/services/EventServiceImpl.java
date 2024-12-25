@@ -731,7 +731,7 @@ public class EventServiceImpl implements EventService {
 
             } else {
 
-              log.debug("Event with ID '" + ved.getId() + "' exists. Ignoring.");
+//              log.debug("Event with ID '" + ved.getId() + "' exists. Ignoring.");
             }
           }
         }

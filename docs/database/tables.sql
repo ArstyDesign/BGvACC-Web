@@ -165,7 +165,7 @@ INSERT INTO positions (position_id, name, order_priority) VALUES ('LBGO_TWR', 'G
 
 CREATE TABLE event_positions (
     event_position_id varchar(100) not null primary key default gen_random_uuid(),
-    event_id int not null references events(event_id),
+    event_id int not null references events(event_id) on delete cascade,
     position_id varchar(30) not null references positions(position_id),
 	minimum_rating int,
 	can_trainees_apply boolean not null default false,
