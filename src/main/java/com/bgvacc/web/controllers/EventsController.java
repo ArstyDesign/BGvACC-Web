@@ -76,11 +76,11 @@ public class EventsController extends Base {
           boolean canUserApply = eventService.canUserApplyForPosition(loggedUserCid, ep.getEventPositionId());
           ep.setCanUserApplyForPosition(canUserApply);
 
-          if (canUserApply) {
-            for (EventSlotResponse slot : ep.getSlots()) {
-              slot.setHasUserAlreadyApplied(eventService.hasUserAlreadyAppliedForSlot(loggedUserCid, slot.getSlotId()));
-            }
+//          if (canUserApply) {
+          for (EventSlotResponse slot : ep.getSlots()) {
+            slot.setHasUserAlreadyApplied(eventService.hasUserAlreadyAppliedForSlot(loggedUserCid, slot.getSlotId()));
           }
+//          }
         }
       }
     }

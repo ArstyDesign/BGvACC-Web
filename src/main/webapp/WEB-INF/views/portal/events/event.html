@@ -182,11 +182,11 @@
                                 <span class="material-symbols-rounded">check_circle</span>
                                 <span th:text="#{portal.events.event.approve}">Approve</span>
                               </a>
-                              <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectSlotApplicationModal" th:data-application-id="${uea.applicationId}" th:data-position="#{positions. + ${#strings.toLowerCase(ep.positionId)}}" th:data-user-cid="${uea.user.cid}" th:data-user-name="${uea.user.names.fullName}"
+<!--                              <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectSlotApplicationModal" th:data-application-id="${uea.applicationId}" th:data-position="#{positions. + ${#strings.toLowerCase(ep.positionId)}}" th:data-user-cid="${uea.user.cid}" th:data-user-name="${uea.user.names.fullName}"
                                  th:data-slot-id="${es.slotId}" th:data-time-slot="${#dates.format(es.startTime, 'HH:mm')} + ' - ' + ${#dates.format(es.endTime, 'HH:mm')} + 'z'">
                                 <span class="material-symbols-rounded">cancel</span>
                                 <span th:text="#{portal.events.event.reject}">Reject</span>
-                              </a>
+                              </a>-->
                             </div>
                             <span th:if="${!isStatusPending}">-</span>
                           </td>

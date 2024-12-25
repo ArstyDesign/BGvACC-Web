@@ -38,7 +38,8 @@
       <!--Card-->
       <div class="card shadow border-0 mb-4">
         <div class="d-flex flex-lg-row flex-column overflow-hidden ">
-          <div class="">
+          <img src="#" th:src="${event.imageUrl}" alt="" class="d-none d-lg-block img-fluid border rounded" style="max-width: 50% !important;"/>
+          <div class="d-block d-lg-none">
             <!--Image-->
             <img src="#" th:src="${event.imageUrl}" alt="" class="img-fluid border rounded"/>
           </div>
@@ -130,7 +131,7 @@
                            th:data-date="${event.getFormattedStartDateTime('dd.MM.yyyy')}"
                            th:data-time-slot="${sl.getFormattedStartDateTime('HH:mm')} + ' - ' + ${sl.getFormattedEndDateTime('HH:mm')} + 'z'"
                            th:text="#{event.roster.applyforslot}">Apply for slot</a>
-                        <span th:if="${!ep.canUserApplyForPosition}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
+                        <span th:if="${!ep.canUserApplyForPosition and !sl.hasUserAlreadyApplied}" th:text="${sl.user != null ? sl.user.names.fullName : '-'}"></span>
                       </div>
                     </div>
                   </div>
