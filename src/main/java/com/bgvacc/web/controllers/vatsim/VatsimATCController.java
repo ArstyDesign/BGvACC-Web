@@ -186,6 +186,8 @@ public class VatsimATCController extends Base {
 
   @GetMapping("/atc/downloads")
   public String getDownloads(Model model) {
+    
+    model.addAttribute("environment", isTestEnvironment());
 
     model.addAttribute("pageTitle", getMessage("atc.downloads.title"));
     model.addAttribute("page", "atc");

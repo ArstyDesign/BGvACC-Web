@@ -10,57 +10,116 @@
     <div layout:fragment="contentDiv">
 
       <div class="row">
-        <div class="col-12 mb-3">
-          <h2>Recommended Euroscope version</h2>
-          <ul>
-            <li>
-              <a href="https://www.euroscope.hu/wp/2024/06/09/v3-2-2-3-and-v3-2-3-2-with-token-authentication-update/" target="_blank" class="text-primary link-underline">Euroscope 3.2.2.3 &amp; Euroscope 3.2.3.2</a>
-            </li>
-          </ul>
-          
-          <h2>vATIS</h2>
-          <ul>
-            <li>
-              <a href="https://github.com/vatis-project/vatis/releases" target="_blank" class="text-primary link-underline">vATIS Download</a>
-            </li>
-            <li>
-              <a href="https://bgvacc.com/download/vatis-profile-bulgaria/" target="_blank" class="text-primary link-underline">vATIS Profile – Bulgaria</a>
-            </li>
-          </ul>
-          
-          <h2>Sector files</h2>
-          <ul>
-            <li>
-              <a href="https://files.aero-nav.com/LBSR" target="_blank" class="text-primary link-underline">Sector files download</a>
-            </li>
-          </ul>
-          
-          <h2>Standard Operating Procedures</h2>
-          <ul>
-            <li>
-              <a href="#" th:href="@{/resources/atc-downloads/Standard_operations_in_Bulgaria.pdf}" target="_blank" class="text-primary link-underline">SOP</a>
-            </li>
-          </ul>
-          
-          <h2>Airport information</h2>
-          <ul>
-            <li>
-              <a href="https://bgvacc.com/download/sofia-airport/" target="_blank" class="text-primary link-underline">Sofia Airport</a>
-            </li>
-            <li>
-              <a href="https://bgvacc.com/download/varna-airport/" target="_blank" class="text-primary link-underline">Varna Airport</a>
-            </li>
-            <li>
-              <a href="https://bgvacc.com/download/sofia-airport/" target="_blank" class="text-primary link-underline">Burgas Airport</a>
-            </li>
-          </ul>
-          
-          <h2>Visiting controllers</h2>
-          <ul>
-            <li>
-              <a href="#" th:href="@{/resources/atc-downloads/BGvACC_Visiting_Controller_Procedure.pdf}" target="_blank" class="text-primary link-underline">Visiting Procedures</a>
-            </li>
-          </ul>
+        <div class="col-12">
+          <!-- Recommended Euroscope Version -->
+          <section class="mb-5">
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-terminal-fill me-2"></i> Recommended Euroscope Version
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">The latest stable versions recommended for vATIS compatibility:</p>
+              <a href="https://www.euroscope.hu/wp/2024/06/09/v3-2-2-3-and-v3-2-3-2-with-token-authentication-update/" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-download text-primary me-2 fs-4"></i>
+                <span>Euroscope 3.2.2.3 &amp; 3.2.3.2</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- vATIS -->
+          <section class="mb-5">
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-cloud-download-fill me-2"></i>
+              <span>vATIS</span>
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">Download and set up the vATIS software for automated ATIS generation:</p>
+              <a href="https://github.com/vatis-project/vatis/releases" 
+                 target="_blank" class="d-flex align-items-center mb-2">
+                <i class="bi bi-box-arrow-in-down text-primary me-2 fs-4"></i>
+                <span>Download vATIS</span>
+              </a>
+              <a href="https://bgvacc.com/download/vatis-profile-bulgaria/" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-geo-alt text-primary me-2 fs-4"></i>
+                <span>vATIS Profile – Bulgaria</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- Sector Files -->
+          <section class="mb-5">
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-map-fill me-2"></i>
+              <span>Sector Files</span>
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">Download the latest sector files for Bulgaria:</p>
+              <a href="https://files.aero-nav.com/LBSR" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-folder-symlink text-primary me-2 fs-4"></i>
+                <span>Sector Files Download</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- Standard Operating Procedures -->
+          <section class="mb-5">
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-journal-text me-2"></i>
+              <span>Standard Operating Procedures</span>
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">Detailed SOPs for Bulgarian airspace:</p>
+              <a href="#" th:href="@{/resources/atc-downloads/Standard_operations_in_Bulgaria.pdf}" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-file-earmark-richtext text-primary me-2 fs-4"></i>
+                <span>View SOP</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- Airport Information -->
+          <section class="mb-5">
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-airplane-fill me-2"></i>
+              <span>Airport Information</span>
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">Resources for major airports in Bulgaria:</p>
+              <a href="https://bgvacc.com/download/sofia-airport/" 
+                 target="_blank" class="d-flex align-items-center mb-2">
+                <i class="bi bi-geo-alt-fill text-primary me-2 fs-4"></i>
+                <span>Sofia Airport</span>
+              </a>
+              <a href="https://bgvacc.com/download/varna-airport/" 
+                 target="_blank" class="d-flex align-items-center mb-2">
+                <i class="bi bi-geo-alt-fill text-primary me-2 fs-4"></i>
+                <span>Varna Airport</span>
+              </a>
+              <a href="https://bgvacc.com/download/sofia-airport/" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-geo-alt-fill text-primary me-2 fs-4"></i>
+                <span>Burgas Airport</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- Visiting Controllers -->
+          <section>
+            <h4 class="text-uppercase text-primary mb-3">
+              <i class="bi bi-person-badge-fill me-2"></i>
+              <span>Visiting Controllers</span>
+            </h4>
+            <div class="bg-light border rounded p-4 shadow-sm position-relative hover-scale">
+              <p class="mb-2">Guidelines for visiting controllers:</p>
+              <a href="#" th:href="@{/resources/atc-downloads/BGvACC_Visiting_Controller_Procedure.pdf}" 
+                 target="_blank" class="d-flex align-items-center">
+                <i class="bi bi-person-check-fill text-primary me-2 fs-4"></i>
+                <span>Visiting Procedures</span>
+              </a>
+            </div>
+          </section>
         </div>
       </div>
     </div>

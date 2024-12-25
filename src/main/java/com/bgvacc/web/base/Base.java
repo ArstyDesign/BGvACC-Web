@@ -1,5 +1,6 @@
 package com.bgvacc.web.base;
 
+import com.bgvacc.web.configurations.properties.EnvironmentProperties;
 import com.bgvacc.web.security.LoggedUser;
 import com.bgvacc.web.security.SecurityChecks;
 import com.bgvacc.web.services.SystemService;
@@ -29,6 +30,9 @@ public class Base {
 
   @Autowired
   private SecurityChecks securityChecks;
+
+  @Autowired
+  private EnvironmentProperties environmentProperties;
 
   public MessageSource getMessageSource() {
     return messageSource;
@@ -87,5 +91,50 @@ public class Base {
     } catch (NoSuchMessageException e) {
       return "";
     }
+  }
+
+  protected String getEnvironment() {
+    return environmentProperties.getEnvironment();
+  }
+
+  protected boolean isTestEnvironment() {
+
+    String environment = getEnvironment();
+
+    if (environment != null) {
+      return environment.equalsIgnoreCase("test");
+    }
+
+    return false;
+  }
+
+  protected boolean isUATEnvironment() {
+
+    String environment = getEnvironment();
+
+    if (environment != null) {
+      return environment.equalsIgnoreCase("uat");
+    }
+
+    return false;
+  }
+
+  protected boolean isProductionEnvironment() {
+
+    String environment = getEnvironment();
+
+    if (environment != null) {
+      return environment.equalsIgnoreCase("prod");
+    }
+
+    return true;
+  }
+
+  protected String getTestEmailReceiver() {
+    return environmentProperties.getTestEmailReceiver();
+  }
+
+  protected String getBaseUrl() {
+    return environmentProperties.getBaseUrl();
   }
 }

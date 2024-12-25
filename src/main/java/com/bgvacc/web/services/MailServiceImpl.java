@@ -1,6 +1,7 @@
 package com.bgvacc.web.services;
 
 import com.bgvacc.web.base.Base;
+import com.bgvacc.web.configurations.properties.MailProperties;
 import com.bgvacc.web.domains.MailDomain;
 import com.bgvacc.web.requests.atc.ATCApplicationRequest;
 import com.bgvacc.web.tasks.MailSender;
@@ -35,6 +36,8 @@ public class MailServiceImpl extends Base implements MailService {
   private final MailSender mailSender;
 
   private final Translator translator;
+  
+  private final MailProperties mailProperties;
 
   @Override
   public boolean sendNewATCTrainingApplicationMail(ATCApplicationRequest atcApplication) {
@@ -49,7 +52,7 @@ public class MailServiceImpl extends Base implements MailService {
       String htmlContent = templateEngine.process("atc-application-mail.html", ctx);
 
 //      MailEntity mail = createMail(mailSettings.getSender(), "Policy expiring notification", htmlContent, "a.arshinkov97@gmail.com");
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "New ATC Application", htmlContent, "a.arshinkov97@gmail.com");
+      MailDomain mail = createMail(mailProperties.getUsername(), "New ATC Application", htmlContent, "a.arshinkov97@gmail.com");
 
       mailSender.sendMail(mail, "a.arshinkov97@gmail.com");
 
@@ -67,15 +70,20 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://31.13.207.134");
+      ctx.setVariable("appUrl", getBaseUrl());
       ctx.setVariable("names", names);
       ctx.setVariable("email", email);
       ctx.setVariable("passwordResetToken", passwordResetToken);
 
       String htmlContent = templateEngine.process("forgotten-password-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "Forgotten password", htmlContent, email);
-//      MailDomain mail = createMail("mycardocsapp@gmail.com", "Forgotten password", htmlContent, "a.arshinkov97@gmail.com");
+      String recipients = email;
+
+      if (!isProductionEnvironment() && !isUATEnvironment()) {
+        recipients = getTestEmailReceiver();
+      }
+
+      MailDomain mail = createMail(mailProperties.getUsername(), "Forgotten password", htmlContent, recipients);
 
       mailSender.sendMail(mail, email);
 
@@ -93,7 +101,7 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://31.13.207.134");
+      ctx.setVariable("appUrl", getBaseUrl());
       ctx.setVariable("cid", cid);
       ctx.setVariable("email", email);
       ctx.setVariable("names", names);
@@ -101,8 +109,13 @@ public class MailServiceImpl extends Base implements MailService {
 
       String htmlContent = templateEngine.process("user-created-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "User account created", htmlContent, email);
-//      MailDomain mail = createMail("mycardocsapp@gmail.com", "User account created", htmlContent, "a.arshinkov97@gmail.com");
+      String recipients = email;
+
+      if (!isProductionEnvironment() && !isUATEnvironment()) {
+        recipients = getTestEmailReceiver();
+      }
+
+      MailDomain mail = createMail(mailProperties.getUsername(), "User account created", htmlContent, recipients);
 
       mailSender.sendMail(mail, email);
 
@@ -120,7 +133,7 @@ public class MailServiceImpl extends Base implements MailService {
     try {
       Context ctx = new Context();
 
-      ctx.setVariable("appUrl", "http://31.13.207.134");
+      ctx.setVariable("appUrl", getBaseUrl());
       ctx.setVariable("names", names);
       ctx.setVariable("cid", cid);
       ctx.setVariable("email", email);
@@ -132,8 +145,13 @@ public class MailServiceImpl extends Base implements MailService {
 
       String htmlContent = templateEngine.process("event-application-approved-mail.html", ctx);
 
-      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, email);
-//      MailDomain mail = createMail("mycardocsapp@gmail.com", "Event application approved", htmlContent, "a.arshinkov97@gmail.com");
+      String recipients = email;
+
+      if (!isProductionEnvironment() && !isUATEnvironment()) {
+        recipients = getTestEmailReceiver();
+      }
+
+      MailDomain mail = createMail(mailProperties.getUsername(), "Event application approved", htmlContent, recipients);
 
       mailSender.sendMail(mail, email);
 
