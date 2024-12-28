@@ -20,6 +20,7 @@ public class LanguageConfiguration implements WebMvcConfigurer {
     CookieLocaleResolver localeResolver = new CookieLocaleResolver();
     localeResolver.setCookieName(AppConstants.LANG_COOKIE_NAME);
     localeResolver.setDefaultLocale(new Locale(AppConstants.LANG_DEFAULT));
+    localeResolver.setCookieMaxAge(Integer.MAX_VALUE);
 
     return localeResolver;
   }
