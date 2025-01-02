@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class EnvironmentProperties {
 
   public String getEnvironment() {
-    return getProperty("config/environment");
+    return getProperty("config/environment/type");
   }
 
   public String getTestEmailReceiver() {

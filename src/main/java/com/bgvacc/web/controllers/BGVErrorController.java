@@ -30,7 +30,7 @@ public class BGVErrorController extends Base implements ErrorController {
 
     // Можеш да логваш или да извършиш друга логика тук
     if (originalUrl != null) {
-      log.debug("Error accessing URL: " + originalUrl.toString());
+//      log.debug("Error accessing URL: " + originalUrl.toString());
 
       if (originalUrl.toString().contains("portal")) {
         isPortal = true;

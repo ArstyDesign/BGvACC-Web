@@ -32,7 +32,7 @@ public class Base {
   private SecurityChecks securityChecks;
 
   @Autowired
-  private EnvironmentProperties environmentProperties;
+  private EnvironmentProperties environmentProps;
 
   public MessageSource getMessageSource() {
     return messageSource;
@@ -94,7 +94,7 @@ public class Base {
   }
 
   protected String getEnvironment() {
-    return environmentProperties.getEnvironment();
+    return environmentProps.getEnvironment();
   }
 
   protected boolean isTestEnvironment() {
@@ -131,10 +131,10 @@ public class Base {
   }
 
   protected String getTestEmailReceiver() {
-    return environmentProperties.getTestEmailReceiver();
+    return environmentProps.getTestEmailReceiver();
   }
 
   protected String getBaseUrl() {
-    return environmentProperties.getBaseUrl();
+    return environmentProps.getBaseUrl();
   }
 }

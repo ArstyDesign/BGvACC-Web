@@ -356,6 +356,10 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
 
               VatsimATCInfo positionInfo = getPositionFrequency(onlineAtc.getCallsign());
 
+              if (positionInfo == null) {
+                return null;
+              }
+
               nocs.setPositionCallsign(positionInfo.getCallsign());
               nocs.setPositionName(positionInfo.getName());
               nocs.setFrequency(positionInfo.getFrequency());
@@ -524,12 +528,12 @@ public class ControllerOnlineLogServiceImpl implements ControllerOnlineLogServic
           response.setTowerPositions(towerPositions);
           response.setApproachPositions(approachPositions);
           response.setControlPositions(controlPositions);
-          
+
           conn.commit();
 
           return response;
         }
-        
+
         conn.rollback();
 
         return null;

@@ -82,8 +82,6 @@ public class ATCReservationServiceImpl implements ATCReservationService {
 
         String stringDate = date.format(format);
 
-        log.debug("String date: " + stringDate);
-
         getAllReservationsForDatePstmt.setString(1, stringDate);
         getAllReservationsForDatePstmt.setString(2, "dd.MM.yyyy");
 
