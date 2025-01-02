@@ -169,6 +169,23 @@
                     </a>
                   </li>
                 </div>
+                
+                <div sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR')" th:remove="tag">
+                  <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">
+                    <i class="bi bi-three-dots"></i>
+                    <span class="sidebar-text" th:text="#{portal.menu.system.title}">System</span>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" th:href="@{/portal/airports}" class="nav-link d-flex align-items-center text-truncate"
+                       th:classappend="${page eq 'system' and subpage eq 'airports'} ? 'active'">
+                      <span class="sidebar-icon">
+                        <i data-lucide="tower-control"></i>
+                        <!--<span class="material-symbols-rounded">groups_2</span>-->
+                      </span>
+                      <span class="sidebar-text" th:text="#{portal.menu.system.airports.airports}">Airports</span>
+                    </a>
+                  </li>
+                </div>
 
                 <div sec:authorize="hasAnyRole('SYS_ADMIN', 'STAFF_DIRECTOR', 'BLOG_MANAGER')" th:remove="tag">
                   <li class="nav-item mt-2 sidebar-title text-truncate small opacity-50">

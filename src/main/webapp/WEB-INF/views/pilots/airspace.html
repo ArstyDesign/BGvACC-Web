@@ -21,20 +21,48 @@
 
         </div>
       </div>
-<!--      <div class="row">
-        <div class="col-12 mb-3">
-          <meter id="disk_c" value="8" min="0" max="10">2 out of 10</meter>
-        </div>
-      </div>-->
+      <!--      <div class="row">
+              <div class="col-12 mb-3">
+                <meter id="disk_c" value="8" min="0" max="10">2 out of 10</meter>
+              </div>
+            </div>-->
+
       <div class="row">
-        <div class="col-12 col-lg-8 mb-3">
-          <img src="#" th:src="@{/resources/img/bg_map_outline.png}"/>
+        <div class="col-12 col-lg-8 mb-4">
+          <img src="#" th:src="@{/resources/img/bg_map_outline.png}" class="img-fluid"/>
         </div>
 
-        <div class="col-12 col-lg-4 mb-3">
-          <img src="#" th:src="@{/resources/img/levels.png}"/>
+        <div class="col-12 col-lg-4 mb-4">
+          <img src="#" th:src="@{/resources/img/levels.png}" class="img-fluid"/>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-12 d-none d-lg-block mb-3">
+          <!--<div id="pdf-viewer"></div>-->
+          <iframe class="" src="#" th:src="@{/resources/charts/aeronautical-chart-map.pdf}" frameborder="0" scrolling="yes" seamless="seamless" style="display:block; width:100%; height:100vh;"></iframe>
+        </div>
+
+        <div class="col-12 d-block d-lg-none mb-3">
+          <!--<div id="pdf-viewer"></div>-->
+          <a href="#" th:href="@{/resources/charts/aeronautical-chart-map.pdf}" download="aeronautical-chart-map.pdf" class="btn btn-primary btn-sm">
+            <span class="material-symbols-rounded align-middle" th:text="#{atc.information.atccareer.download}">Download</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.3.0/pdfobject.min.js"></script>
+
+      <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        let chartUrl = /*[[@{/resources/charts/aeronautical-chart-map.pdf}]]*/;
+                let chartAux = /*[[@{/}]]*/;
+        /*]]>*/
+
+        PDFObject.embed(chartUrl, "#pdf-viewer");
+      </script>
     </div>
   </body>
 </html>

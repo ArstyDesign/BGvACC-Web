@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/portalTemplate}">
+  <head>
+    <title th:text="#{app.title(#{app.portal.title(${ap.name})})}">Bulgaria vACC – Bulgarian Virtual Area Control Center</title>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  </head>
+  <body>
+    <div layout:fragment="contentDiv">
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-header d-flex align-items-center">
+              <div class="h3 mb-0">Details</div>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered border-dark border-opacity-25 table-striped table-hover mb-0">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">ICAO</td>
+                    <td class="text-center" th:text="${ap.airportId}">ICAO</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">IATA</td>
+                    <td class="text-center" th:text="${ap.iata ne null} ? ${ap.iata} : '-'">SOF</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Name</td>
+                    <td class="text-center" th:text="${ap.name ne null} ? ${ap.name} : '-'">Name</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">City</td>
+                    <td class="text-center" th:text="${ap.location ne null} ? ${ap.location} : '-'">City</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Major</td>
+                    <td class="text-center">
+                      <i data-lucide="square-check" class="text-success" th:if="${ap.isMajor}"></i>
+                      <i data-lucide="square-x" class="text-danger" th:if="${!ap.isMajor}"></i>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Elevation</td>
+                    <td class="text-center" th:text="${ap.elevation ne null} ? (${ap.elevation} + ' ft.') : '-'">Elevation</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Transition altitude</td>
+                    <td class="text-center" th:text="${ap.transitionAltitude ne null} ? (${ap.transitionAltitude} + ' ft.') : '-'">Transition altitude</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Transition level</td>
+                    <td class="text-center" th:text="${ap.transitionLevel ne null} ? ${ap.transitionLevel} : '-'">Transition level</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">MSA</td>
+                    <td class="text-center" th:text="${ap.msa ne null} ? (${ap.msa} + ' ft.') : '-'">MSA</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Latitude</td>
+                    <td class="text-center" th:text="${ap.latitude ne null} ? ${ap.latitude} : '-'">Latitude</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Longitude</td>
+                    <td class="text-center" th:text="${ap.longitude ne null} ? ${ap.longitude} : '-'">Longitude</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <iframe
+                width="600"
+                height="450"
+                frameborder="0"
+                scrolling="no"
+                marginheight="0"
+                marginwidth="0"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=23.3962%2C42.6902%2C23.4162%2C42.7002&amp;layer=mapnik&amp;marker=42.6952%2C23.4062"
+                style="border: 1px solid black;">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="card overflow-hidden">
+            <div class="card-header d-flex align-items-center">
+              <div class="h3 mb-0">Runways</div>
+              <!--dropdown-->
+              <div class="flex-shrink-0 ms-auto">
+                <a href="#" role="button">View All</a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div th:each="r : ${runways}">Runway</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-xl-3 mb-4">
+          <a href="#" th:href="@{/portal/airports/} + ${ap.airportId} + '/charts'" class="btn btn-primary">Charts</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

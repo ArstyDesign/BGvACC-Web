@@ -342,3 +342,123 @@ SELECT
     time_in_seconds
 FROM
     formatted_data;
+	
+----------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE airports (
+    airport_id varchar(10) not null primary key,
+    name varchar(255) not null,
+    location varchar(255),
+	image_path text not null
+);
+
+CREATE TABLE airport_details (
+	airport_detail_id varchar(100) not null primary key default gen_random_uuid(),
+	airport_id varchar(10) not null references airports(airport_id) on delete cascade,
+	icao varchar(10),
+	iata varchar(10),
+	is_major boolean not null default false,
+	elevation int,
+	transition_altitude int,
+	transition_level int,
+	msa int,
+	latitude numeric,
+	longitude numeric
+);
+
+CREATE OR REPLACE FUNCTION capitalize_airport_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.airport_id := UPPER(NEW.airport_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_capitalize_airport_id
+BEFORE INSERT OR UPDATE ON airports
+FOR EACH ROW
+EXECUTE FUNCTION capitalize_airport_id();
+
+CREATE TABLE runways (
+    runway_id varchar(100) not null primary key default gen_random_uuid(),
+    airport_id varchar(10) not null references airports(airport_id) on delete cascade,
+    name varchar(50) not null,
+    description TEXT,
+	is_automatically_created boolean not null default false
+);
+
+CREATE TABLE map_categories (
+    map_category_id varchar(100) not null primary key default gen_random_uuid(),
+    name varchar(100) not null,
+    description text
+);
+
+CREATE TABLE map_files (
+    map_file_id varchar(100) not null primary key default gen_random_uuid(),
+    airport_id varchar(10) not null references airports(airport_id) on delete cascade,
+    runway_id varchar(100) references runways(runway_id) on delete set null,
+    category_id varchar(100) references map_categories(map_category_id) on delete set null,
+    name varchar(255) not null,
+    file_path text not null,
+	description text,
+	order_number int not null,
+	created_at timestamp not null default NOW(),
+    updated_at timestamp not null default NOW()
+);
+
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at := NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_updated_at
+BEFORE UPDATE ON map_files
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
+
+CREATE OR REPLACE FUNCTION create_opposite_runway()
+RETURNS TRIGGER AS $$
+DECLARE
+    opposite_name varchar(50);
+BEGIN
+    IF NEW.is_automatically_created THEN
+        RETURN NEW;
+    END IF;
+	
+    opposite_name := LPAD(((CAST(SUBSTRING(NEW.name, 1, 2) AS INT) + 18) % 36)::TEXT, 2, '0');
+	
+    INSERT INTO runways (airport_id, name, description, is_automatically_created)
+    VALUES (NEW.airport_id, opposite_name, 'Automatically created opposite runway', TRUE);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_create_opposite_runway
+AFTER INSERT ON runways
+FOR EACH ROW
+EXECUTE FUNCTION create_opposite_runway();
+
+CREATE OR REPLACE FUNCTION delete_opposite_runway()
+RETURNS TRIGGER AS $$
+DECLARE
+    opposite_name VARCHAR(50);
+BEGIN
+    IF OLD.name ~ '^[0-9]{2}$' THEN
+        opposite_name := LPAD((CAST(SUBSTRING(OLD.name, 1, 2) AS INT) + 18) % 36, 2, '0');
+
+        DELETE FROM runways
+        WHERE airport_id = OLD.airport_id AND name = opposite_name;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_delete_opposite_runway
+AFTER DELETE ON runways
+FOR EACH ROW
+EXECUTE FUNCTION delete_opposite_runway();
